@@ -1,0 +1,16 @@
+services:
+  postgres:
+    container_name: citadel_postgres
+    image: 'postgres:13'
+    ports:
+      - '5432:5432'
+    environment:
+      PGPASSWORD: citadel
+      POSTGRES_DB: citadel
+      POSTGRES_USER: citadel
+      POSTGRES_PASSWORD: citadel
+    volumes:
+      - 'citadel_postgres:/var/lib/postgresql/data'
+
+volumes:
+  citadel_postgres:
