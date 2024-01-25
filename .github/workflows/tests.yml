@@ -30,8 +30,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run migrations
-        run: node ace migration:run
-
-      - name: Run tests
-        run: npm test
+      - name: Run migrations and tests
+        run: node ace migration:run npm test
+        env:
+          TZ: UTC
+          PORT: 3333
+          HOST: 0.0.0.0
+          LOG_LEVEL: info
+          APP_URL: http://localhost:3333
+          APP_KEY: Vy0q9v_W-JeIacwV1zv0ae4EGUTv_d0p
+          NODE_ENV: development
+          CACHE_VIEWS: false
+          SESSION_DRIVER: memory
+          GITHUB_CLIENT_ID: bipbip
+          GITHUB_CLIENT_SECRET: bopbop
+          DB_HOST: postgres
+          DB_PORT: 5432
+          DB_USER: citadel
+          DB_PASSWORD: citadel
+          DB_DATABASE: citadel
+          RESEND_API_KEY: bipboop
