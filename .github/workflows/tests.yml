@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Run migrations and tests
-        run: node ace migration:run npm test
+        run: node ace migration:run && npm test
         env:
           TZ: UTC
           PORT: 3333
