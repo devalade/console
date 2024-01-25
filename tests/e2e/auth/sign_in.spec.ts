@@ -27,7 +27,7 @@ test.group('Auth / Sign in', () => {
     assert.isTrue(await page.isVisible('#auth-error'))
   })
 
-  test('should redirect to /dashboard if the sign in process is successful', async ({ visit }) => {
+  test('should redirect to /settings if the sign in process is successful', async ({ visit }) => {
     const password = faker.internet.password()
     const user = await UserFactory.merge({ password }).create()
     const page = await visit('/auth/sign_in')
