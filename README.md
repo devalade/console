@@ -4,7 +4,7 @@
 
 ## About
 
-Software Citadel Console is a PaaS (Platform as a Service) built on top of Docker Swarm and designed to be self-hosted.
+Software Citadel Console is a PaaS (Platform as a Service) built on top of Docker Swarm.
 
 ## Stack
 

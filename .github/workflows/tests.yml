@@ -1,0 +1,37 @@
+name: Tests
+on: push
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    container: node:21
+
+    services:
+      postgres:
+        image: postgres
+
+        env:
+          PGPASSWORD: citadel
+          POSTGRES_DB: citadel
+          POSTGRES_USER: citadel
+          POSTGRES_PASSWORD: citadel
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run migrations
+        run: node ace migration:run
+
+      - name: Run tests
+        run: npm test
