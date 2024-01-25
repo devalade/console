@@ -18,10 +18,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
   },
-  "include": [
-    "env.d.ts",
-    "./**/*.ts",
-    "./**/*.tsx",
-    "concerns/auth/emails/reset_password_email.edge",
-  ],
+  "include": ["env.d.ts", "./**/*.ts", "./**/*.tsx"],
 }

@@ -36,7 +36,7 @@ const Button: React.FunctionComponent<React.PropsWithChildren<ButtonProps>> = ({
   return (
     <button disabled={loading || disabled} {...props} className={buttonVariants({ variant })}>
       {loading && <Spinner className="mr-2 h-4 w-4 animate-spin" />}
-      <span>{children}</span>
+      {children}
     </button>
   )
 }

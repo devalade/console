@@ -41,4 +41,6 @@ router.post('/auth/sign_out', [SignOutController, 'handle'])
 router.get('/auth/github/redirect', [GithubController, 'redirect'])
 router.get('/auth/github/callback', [GithubController, 'callback'])
 
-router.get('/settings', [SettingsController, 'show']).use(middleware.auth())
+router.get('/settings', [SettingsController, 'edit']).use(middleware.auth())
+router.patch('/settings', [SettingsController, 'update']).use(middleware.auth())
+router.delete('/settings', [SettingsController, 'destroy']).use(middleware.auth())

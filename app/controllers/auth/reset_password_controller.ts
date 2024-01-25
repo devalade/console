@@ -1,5 +1,5 @@
 import User from '#models/user'
-import { resetPasswordValidator } from '#validators/reset_password_validator'
+import { resetPasswordValidator } from '#validators/auth/reset_password_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class ResetPasswordController {

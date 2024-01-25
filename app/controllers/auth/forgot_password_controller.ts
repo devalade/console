@@ -1,6 +1,6 @@
 import ResetPasswordNotification from '#mails/reset_password_notification'
 import User from '#models/user'
-import { forgotPasswordValidator } from '#validators/forgot_password_validator'
+import { forgotPasswordValidator } from '#validators/auth/forgot_password_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 import mail from '@adonisjs/mail/services/main'
 
