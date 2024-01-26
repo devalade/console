@@ -1,4 +1,4 @@
-import AuthLayout from '@/concerns/auth/auth_layout'
+import AuthLayout from '@/layouts/auth_layout'
 import { Link, useForm } from '@inertiajs/react'
 import * as React from 'react'
 import clsx from 'clsx'

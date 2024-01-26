@@ -4,6 +4,7 @@ import type { Config } from '@japa/runner/types'
 import { pluginAdonisJS } from '@japa/plugin-adonisjs'
 import testUtils from '@adonisjs/core/services/test_utils'
 import { browserClient } from '@japa/browser-client'
+import { authBrowserClient } from '@adonisjs/auth/plugins/browser_client'
 
 /**
  * This file is imported by the "bin/test.ts" entrypoint file
@@ -15,13 +16,13 @@ import { browserClient } from '@japa/browser-client'
  */
 export const plugins: Config['plugins'] = [
   assert(),
-  pluginAdonisJS(app),
   browserClient({
     runInSuites: ['e2e'],
     contextOptions: {
       baseURL: 'http://127.0.0.1:3333',
     },
   }),
+  authBrowserClient(app),
 ]
 
 /**

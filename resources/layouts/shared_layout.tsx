@@ -1,35 +1,31 @@
 import * as React from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import {
-  IconExternalLink,
-  IconMenu,
-  IconSettings,
-  IconX,
-  type TablerIconsProps,
-} from '@tabler/icons-react'
+import { IconExternalLink, IconMenu, IconX, type TablerIconsProps } from '@tabler/icons-react'
 import { Link } from '@inertiajs/react'
-import Button from './components/button'
-import Logo from './components/logo'
-import { Toaster } from './components/toaster'
-import AccountDropdown from './components/account_dropdown'
+import Button from '@/components/button'
+import Logo from '@/components/logo'
+import { Toaster } from '@/components/toaster'
+import AccountDropdown from '@/components/account_dropdown'
 import clsx from 'clsx'
 
-export default function MainLayout({ children }: React.PropsWithChildren) {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false)
-  const navigation: Array<{
+interface SharedLayoutProps extends React.PropsWithChildren {
+  navigationItems: Array<{
     name: string
     href: string
     icon: (props: TablerIconsProps) => JSX.Element
     current: boolean
-    comingSoon?: boolean
-  }> = [
-    {
-      name: 'Settings',
-      href: '/settings',
-      icon: IconSettings,
-      current: window.location.pathname === '/settings',
-    },
-  ]
+  }>
+  sidebarHeaderChildren?: React.ReactNode
+  sidebarFooterChildren?: React.ReactNode
+}
+
+const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
+  children,
+  navigationItems,
+  sidebarHeaderChildren,
+  sidebarFooterChildren,
+}) => {
+  const [sidebarOpen, setSidebarOpen] = React.useState(false)
 
   return (
     <>
@@ -88,10 +84,13 @@ export default function MainLayout({ children }: React.PropsWithChildren) {
                       <span className="font-clash font-medium text-xl">Software Citadel</span>
                     </div>
                     <nav className="flex flex-1 flex-col">
-                      <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                      <ul role="list" className="flex flex-1 flex-col gap-y-3">
+                        {sidebarHeaderChildren ? (
+                          <li className="px-6">{sidebarHeaderChildren}</li>
+                        ) : null}
                         <li className="px-6">
                           <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => (
+                            {navigationItems.map((item) => (
                               <li key={item.name}>
                                 <Link
                                   href={item.href}
@@ -99,8 +98,7 @@ export default function MainLayout({ children }: React.PropsWithChildren) {
                                     item.current
                                       ? 'bg-accent'
                                       : 'text-zinc-900 hover:bg-accent/40 transition-colors',
-                                    'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-medium',
-                                    item.comingSoon && 'cursor-not-allowed opacity-50'
+                                    'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-medium'
                                   )}
                                 >
                                   <item.icon
@@ -114,7 +112,16 @@ export default function MainLayout({ children }: React.PropsWithChildren) {
                           </ul>
                         </li>
 
-                        <li className="mt-auto border-t border-zinc-200 px-6">
+                        {sidebarFooterChildren ? (
+                          <li className="mt-auto px-6">{sidebarFooterChildren}</li>
+                        ) : null}
+
+                        <li
+                          className={clsx(
+                            'border-t border-zinc-200 px-6',
+                            !sidebarFooterChildren && 'mt-auto'
+                          )}
+                        >
                           <AccountDropdown />
                         </li>
                       </ul>
@@ -134,17 +141,18 @@ export default function MainLayout({ children }: React.PropsWithChildren) {
               <span className="font-clash text-xl font-medium">Software Citadel</span>
             </div>
             <nav className="flex flex-1 flex-col">
-              <ul role="list" className="flex flex-1 flex-col gap-y-7">
+              <ul role="list" className="flex flex-1 flex-col gap-y-3">
+                {sidebarHeaderChildren ? <li className="px-6">{sidebarHeaderChildren}</li> : null}
+
                 <li className="px-6">
                   <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
+                    {navigationItems.map((item) => (
                       <li key={item.name}>
                         <Link
                           href={item.href}
                           className={clsx(
                             item.current ? 'bg-accent' : ' hover:bg-accent/40 transition-colors',
-                            'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-zinc-900',
-                            item.comingSoon && 'cursor-not-allowed opacity-50'
+                            'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-zinc-900'
                           )}
                         >
                           <item.icon
@@ -158,7 +166,16 @@ export default function MainLayout({ children }: React.PropsWithChildren) {
                   </ul>
                 </li>
 
-                <li className="mt-auto border-t border-zinc-200 px-6">
+                {sidebarFooterChildren ? (
+                  <li className="mt-auto px-6">{sidebarFooterChildren}</li>
+                ) : null}
+
+                <li
+                  className={clsx(
+                    'border-t border-zinc-200 px-6',
+                    !sidebarFooterChildren && 'mt-auto'
+                  )}
+                >
                   <AccountDropdown />
                 </li>
               </ul>
@@ -200,3 +217,5 @@ export default function MainLayout({ children }: React.PropsWithChildren) {
     </>
   )
 }
+
+export default SharedLayout

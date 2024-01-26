@@ -32,6 +32,6 @@ export default class GithubController {
     }
     await auth.use('web').login(user)
 
-    return response.redirect().toPath('/settings')
+    return response.redirect().toPath('/projects')
   }
 }

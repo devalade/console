@@ -13,7 +13,7 @@ export default class SignInController {
       const user = await User.verifyCredentials(email, password)
       await auth.use('web').login(user)
 
-      return response.redirect().toPath('/settings')
+      return response.redirect().toPath('/projects')
     } catch {
       session.flash('errors.auth', 'Invalid credentials')
       return response.redirect().back()

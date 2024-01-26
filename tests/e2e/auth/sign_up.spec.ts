@@ -42,7 +42,7 @@ test.group('Auth / Sign up', () => {
     assert.isTrue(await page.isVisible('#email-error'))
   })
 
-  test('should return to /settings if the sign up process is successful', async ({ visit }) => {
+  test('should return to /projects if the sign up process is successful', async ({ visit }) => {
     await visit('/auth/sign_up')
 
     const page = await visit('/auth/sign_up')
@@ -52,6 +52,6 @@ test.group('Auth / Sign up', () => {
 
     await page.locator('button[type=submit]').click()
 
-    await page.waitForURL('/settings')
+    await page.waitForURL('/projects')
   })
 })

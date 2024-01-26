@@ -72,6 +72,6 @@ test.group('Auth / Reset password', () => {
     await page.locator('#password').fill(newPassword)
     await page.locator('button[type=submit]').click()
 
-    await page.waitForURL('/settings')
+    await page.waitForURL('/projects')
   })
 })

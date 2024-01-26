@@ -1,4 +1,4 @@
-import MainLayout from '@/main_layout'
+import MainLayout from '@/layouts/main_layout'
 import * as React from 'react'
 import MyAccountCard from '../components/my_account_card'
 import DeleteAccountCard from '../components/delete_account_card'

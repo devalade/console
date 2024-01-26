@@ -27,7 +27,7 @@ test.group('Auth / Sign in', () => {
     assert.isTrue(await page.isVisible('#auth-error'))
   })
 
-  test('should redirect to /settings if the sign in process is successful', async ({ visit }) => {
+  test('should redirect to /projects if the sign in process is successful', async ({ visit }) => {
     const password = faker.internet.password()
     const user = await UserFactory.merge({ password }).create()
     const page = await visit('/auth/sign_in')
@@ -35,6 +35,6 @@ test.group('Auth / Sign in', () => {
     await page.locator('#password').fill(password)
 
     await page.locator('button[type=submit]').click()
-    await page.waitForURL('/settings')
+    await page.waitForURL('/projects')
   })
 })

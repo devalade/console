@@ -36,7 +36,8 @@ router.use([
   () => import('@adonisjs/session/session_middleware'),
   () => import('@adonisjs/shield/shield_middleware'),
   () => import('@adonisjs/auth/initialize_auth_middleware'),
-  () => import('@adonisjs/inertia/inertia_middleware')
+  () => import('@adonisjs/inertia/inertia_middleware'),
+  () => import('#middleware/initialize_bouncer_middleware')
 ])
 
 /**
@@ -44,6 +45,7 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  loadProjects: () => import('#middleware/load_projects_middleware'),
   guest: () => import('#middleware/guest_middleware'),
   auth: () => import('#middleware/auth_middleware')
 })
