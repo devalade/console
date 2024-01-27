@@ -24,7 +24,7 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.post(`/projects/${project.id}/applications`, {
+    form.post(`/projects/${project.slug}/applications`, {
       onSuccess: () => {
         setOpen(false)
       },

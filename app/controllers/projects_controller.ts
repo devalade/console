@@ -10,13 +10,13 @@ export default class ProjectsController {
 
   async store({ auth, request, response }: HttpContext) {
     const payload = await request.validateUsing(projectValidator)
-    await auth.user!.related('projects').create(payload)
-    return response.redirect().back()
+    const project = await auth.user!.related('projects').create(payload)
+    return response.redirect().toPath(`/projects/${project.slug}/applications`)
   }
 
   async edit({ bouncer, params, inertia, response }: HttpContext) {
     try {
-      const project = await Project.query().where('id', params.id).firstOrFail()
+      const project = await Project.query().where('slug', params.slug).firstOrFail()
 
       await bouncer.authorize('accessToProject', project)
 
@@ -30,7 +30,7 @@ export default class ProjectsController {
     const payload = await request.validateUsing(projectValidator)
 
     try {
-      const project = await Project.query().where('id', params.id).firstOrFail()
+      const project = await Project.query().where('slug', params.slug).firstOrFail()
 
       await bouncer.authorize('accessToProject', project)
 
@@ -44,7 +44,7 @@ export default class ProjectsController {
 
   async destroy({ bouncer, params, response }: HttpContext) {
     try {
-      const project = await Project.query().where('id', params.id).firstOrFail()
+      const project = await Project.query().where('slug', params.slug).firstOrFail()
 
       await bouncer.authorize('accessToProject', project)
 

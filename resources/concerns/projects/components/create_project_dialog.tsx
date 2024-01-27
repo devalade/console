@@ -37,14 +37,10 @@ export default function CreateProjectDialog({ open, setOpen }: CreateProjectDial
       <DialogContent className="sm:max-w-[425px] gap-0">
         <DialogHeader>
           <DialogTitle>New Project</DialogTitle>
-
-          <DialogDescription>
-            A project contains one or more applications that can communicate with each other.
-          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4 px-6">
+          <div className="grid gap-4 py-4 px-6 pt-0">
             <div className="grid gap-1">
               <Label>Project Name</Label>
 

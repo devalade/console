@@ -12,7 +12,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Link
       className="hover:opacity-75 transition-opacity"
-      href={`/projects/${project.id}/applications`}
+      href={`/projects/${project.slug}/applications`}
     >
       <Card>
         <CardContent>

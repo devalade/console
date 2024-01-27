@@ -21,7 +21,7 @@ export default function DeleteProjectCard({ project }: DeleteProjectCardProps) {
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    handleDelete(`/projects/${project.id}`)
+    handleDelete(`/projects/${project.slug}`)
   }
 
   return (

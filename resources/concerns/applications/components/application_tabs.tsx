@@ -12,15 +12,16 @@ export default function ApplicationTabs({ project, application }: ApplicationTab
   const applicationTabs = [
     {
       label: 'Overview',
-      href: `/projects/${project.id}/applications/${application.id}`,
+      href: `/projects/${project.slug}/applications/${application.slug}`,
       isActive:
-        window.location.pathname === `/projects/${project.id}/applications/${application.id}`,
+        window.location.pathname === `/projects/${project.slug}/applications/${application.slug}`,
     },
     {
       label: 'Settings',
-      href: `/projects/${project.id}/applications/${application.id}/edit`,
+      href: `/projects/${project.slug}/applications/${application.slug}/edit`,
       isActive:
-        window.location.pathname === `/projects/${project.id}/applications/${application.id}/edit`,
+        window.location.pathname ===
+        `/projects/${project.slug}/applications/${application.slug}/edit`,
     },
   ]
 

@@ -25,7 +25,7 @@ const DeleteApplicationCard: React.FunctionComponent<DeleteApplicationCardProps>
   const form = useForm()
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.delete(`/projects/${project.id}/applications/${application.id}`)
+    form.delete(`/projects/${project.slug}/applications/${application.slug}`)
   }
 
   return (

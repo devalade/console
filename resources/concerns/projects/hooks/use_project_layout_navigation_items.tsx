@@ -1,10 +1,8 @@
 import { usePage } from '@inertiajs/react'
 import { IconLayoutGrid, IconSettings, type TablerIconsProps } from '@tabler/icons-react'
+import type { Project } from '../types/project'
 
-export default function useProjectLayoutNavigationItems(project: {
-  id: number
-  name: string
-}): Array<{
+export default function useProjectLayoutNavigationItems(project: Project): Array<{
   name: string
   href: string
   icon: (props: TablerIconsProps) => JSX.Element
@@ -14,15 +12,15 @@ export default function useProjectLayoutNavigationItems(project: {
   return [
     {
       name: 'Applications',
-      href: `/projects/${project.id}/applications`,
+      href: `/projects/${project.slug}/applications`,
       icon: IconLayoutGrid,
-      current: page.url === `/projects/${project.id}/applications`,
+      current: page.url === `/projects/${project.slug}/applications`,
     },
     {
       name: 'Project Settings',
-      href: `/projects/${project.id}/edit`,
+      href: `/projects/${project.slug}/edit`,
       icon: IconSettings,
-      current: page.url === `/projects/${project.id}/edit`,
+      current: page.url === `/projects/${project.slug}/edit`,
     },
   ]
 }

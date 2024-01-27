@@ -29,7 +29,7 @@ const Index: React.FunctionComponent<IndexProps> = ({ project, applications }) =
       </div>
       <div className="mt-4 gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {applications.map((application) => (
-          <ApplicationCard key={application.id} project={project} application={application} />
+          <ApplicationCard key={application.slug} project={project} application={application} />
         ))}
       </div>
     </ProjectLayout>

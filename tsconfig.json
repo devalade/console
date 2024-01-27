@@ -4,6 +4,7 @@
     "jsx": "react",
     "rootDir": "./",
     "outDir": "./build",
+    "target": "ES6",
     "paths": {
       "#controllers/*": ["./app/controllers/*.js"],
       "#exceptions/*": ["./app/exceptions/*.js"],

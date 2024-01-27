@@ -26,7 +26,7 @@ export default function ApplicationSettingsCard({ project, application }: AppSet
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    form.patch(`/projects/${project.id}/applications/${application.id}`, {
+    form.patch(`/projects/${project.slug}/applications/${application.slug}`, {
       onSuccess: () => {
         toast({
           title: (

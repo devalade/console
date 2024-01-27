@@ -49,11 +49,11 @@ router.delete('/settings', [SettingsController, 'destroy']).use(middleware.auth(
 
 router
   .resource('projects', ProjectsController)
-  .params({ projects: 'id' })
+  .params({ projects: 'slug' })
   .use('*', middleware.auth())
   .use('edit', middleware.loadProjects())
 
 router
   .resource('projects.applications', ApplicationsController)
-  .params({ projects: 'projectId', applications: 'applicationId' })
+  .params({ projects: 'projectSlug', applications: 'applicationSlug' })
   .use('*', [middleware.auth(), middleware.loadProjects()])

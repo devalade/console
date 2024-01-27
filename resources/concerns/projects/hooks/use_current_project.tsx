@@ -1,12 +1,10 @@
 import usePageProps from '@/hooks/use_page_props'
 import type { Project } from '../types/project'
 
-export default function useProjects() {
+export default function useCurrentProject() {
   const props = usePageProps<{
-    user: {
-      projects: Array<Project>
-    }
+    project: Project
   }>()
 
-  return props.user.projects
+  return props.project
 }

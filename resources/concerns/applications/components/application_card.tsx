@@ -17,7 +17,7 @@ const ApplicationCard: React.FunctionComponent<ApplicationCardProps> = ({
   return (
     <Link
       className="hover:opacity-75 transition-opacity"
-      href={`/projects/${project.id}/applications/${application.id}`}
+      href={`/projects/${project.slug}/applications/${application.slug}`}
     >
       <Card>
         <CardContent>

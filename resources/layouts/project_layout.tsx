@@ -5,6 +5,7 @@ import useProjects from '@/concerns/projects/hooks/use_projects'
 import { Link } from '@inertiajs/react'
 import { IconArrowBackUp } from '@tabler/icons-react'
 import useProjectLayoutNavigationItems from '@/concerns/projects/hooks/use_project_layout_navigation_items'
+import useCurrentProject from '@/concerns/projects/hooks/use_current_project'
 
 interface ProjectLayoutProps extends React.PropsWithChildren {
   className?: string
@@ -12,8 +13,8 @@ interface ProjectLayoutProps extends React.PropsWithChildren {
 
 const ProjectLayout: React.FunctionComponent<ProjectLayoutProps> = ({ children, className }) => {
   const projects = useProjects()
-  const currentProjectId = window.location.pathname.split('/')[2]
-  const currentProject = projects.find((project) => project.id === parseInt(currentProjectId))
+  const currentProjectSlug = window.location.pathname.split('/')[2]
+  const currentProject = useCurrentProject()
   const navigationItems = useProjectLayoutNavigationItems(currentProject)
 
   return (
@@ -21,7 +22,7 @@ const ProjectLayout: React.FunctionComponent<ProjectLayoutProps> = ({ children, 
       children={children}
       className={className}
       sidebarHeaderChildren={
-        <ProjectSelector projects={projects} currentProjectId={currentProjectId} />
+        <ProjectSelector projects={projects} currentProjectSlug={currentProjectSlug} />
       }
       sidebarFooterChildren={
         <Link

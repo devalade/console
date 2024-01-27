@@ -3,19 +3,19 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import type { Project } from '../types/project'
 
 interface ProjectSelectorProps {
-  currentProjectId: string
+  currentProjectSlug: string
   projects: Array<Project>
 }
 
 const ProjectSelector: React.FunctionComponent<ProjectSelectorProps> = ({
-  currentProjectId,
+  currentProjectSlug,
   projects,
 }) => {
   return (
     <Select
-      defaultValue={currentProjectId}
-      onValueChange={(projectId) => {
-        window.location.href = '/projects/' + projectId + '/edit'
+      defaultValue={currentProjectSlug}
+      onValueChange={(projectSlug) => {
+        window.location.href = '/projects/' + projectSlug + '/edit'
       }}
     >
       <SelectTrigger>
@@ -23,14 +23,10 @@ const ProjectSelector: React.FunctionComponent<ProjectSelectorProps> = ({
       </SelectTrigger>
       <SelectContent>
         {projects?.map((project) => (
-          <SelectItem
-            value={project.id.toString()}
-            key={project.id.toString()}
-            className="cursor-pointer"
-          >
+          <SelectItem value={project.slug} key={project.slug} className="cursor-pointer">
             <span>{project.name}</span>
-            {project.name !== project.id.toString() && (
-              <span className="text-zinc-400">({project.id.toString()})</span>
+            {project.name !== project.slug && (
+              <span className="text-zinc-400">({project.slug})</span>
             )}
           </SelectItem>
         ))}
