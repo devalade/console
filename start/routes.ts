@@ -18,6 +18,7 @@ import { middleware } from './kernel.js'
 import SignOutController from '#controllers/auth/sign_out_controller'
 import ProjectsController from '#controllers/projects_controller'
 import ApplicationsController from '#controllers/applications_controller'
+import DatabasesController from '#controllers/databases_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -57,3 +58,10 @@ router
   .resource('projects.applications', ApplicationsController)
   .params({ projects: 'projectSlug', applications: 'applicationSlug' })
   .use('*', [middleware.auth(), middleware.loadProjects()])
+  .except(['create'])
+
+router
+  .resource('projects.databases', DatabasesController)
+  .params({ projects: 'projectSlug', databases: 'databaseSlug' })
+  .use('*', [middleware.auth(), middleware.loadProjects()])
+  .except(['create', 'edit', 'update'])

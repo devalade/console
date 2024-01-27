@@ -5,6 +5,7 @@ import User from './user.js'
 import Application from './application.js'
 import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
+import Database from './database.js'
 
 export default class Project extends BaseModel {
   /**
@@ -22,14 +23,18 @@ export default class Project extends BaseModel {
   /**
    * Relationships.
    */
-  @hasMany(() => Application)
-  declare applications: HasMany<typeof Application>
 
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
   @column()
   declare userId: number
+
+  @hasMany(() => Application)
+  declare applications: HasMany<typeof Application>
+
+  @hasMany(() => Database)
+  declare databases: HasMany<typeof Database>
 
   /**
    * Hooks.

@@ -22,6 +22,7 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   DRIVER: Env.schema.enum(['swarm'] as const),
   DOCKER_SOCKET_PATH: Env.schema.string.optional(),
+  TRAEFIK_WILDCARD_DOMAIN: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------
