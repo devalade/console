@@ -6,9 +6,11 @@ import { Link } from '@inertiajs/react'
 import { IconArrowBackUp } from '@tabler/icons-react'
 import useProjectLayoutNavigationItems from '@/concerns/projects/hooks/use_project_layout_navigation_items'
 
-interface ProjectLayoutProps extends React.PropsWithChildren {}
+interface ProjectLayoutProps extends React.PropsWithChildren {
+  className?: string
+}
 
-const ProjectLayout: React.FunctionComponent<ProjectLayoutProps> = ({ children }) => {
+const ProjectLayout: React.FunctionComponent<ProjectLayoutProps> = ({ children, className }) => {
   const projects = useProjects()
   const currentProjectId = window.location.pathname.split('/')[2]
   const currentProject = projects.find((project) => project.id === parseInt(currentProjectId))
@@ -17,6 +19,7 @@ const ProjectLayout: React.FunctionComponent<ProjectLayoutProps> = ({ children }
   return (
     <SharedLayout
       children={children}
+      className={className}
       sidebarHeaderChildren={
         <ProjectSelector projects={projects} currentProjectId={currentProjectId} />
       }

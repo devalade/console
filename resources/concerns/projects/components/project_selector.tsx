@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/select'
+import type { Project } from '../types/project'
 
 interface ProjectSelectorProps {
   currentProjectId: string

@@ -3,6 +3,7 @@ import MainLayout from '@/layouts/main_layout'
 import * as React from 'react'
 import ProjectCard from '../components/project_card'
 import CreateProjectDialog from '../components/create_project_dialog'
+import type { Project } from '../types/project'
 
 interface IndexProps {
   projects: Array<Project>

@@ -20,6 +20,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   LOG_LEVEL: Env.schema.string(),
   CACHE_VIEWS: Env.schema.boolean(),
 
+  DRIVER: Env.schema.enum(['swarm'] as const),
+  DOCKER_SOCKET_PATH: Env.schema.string.optional(),
+
   /*
   |----------------------------------------------------------
   | Variables for configuring session package

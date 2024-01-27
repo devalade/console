@@ -53,3 +53,4 @@ jobs:
           DB_PASSWORD: citadel
           DB_DATABASE: citadel
           RESEND_API_KEY: bipboop
+          DRIVER: swarm

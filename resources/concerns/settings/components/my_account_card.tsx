@@ -28,7 +28,7 @@ export default function MyAccountCard() {
           title: (
             <div className="flex items-center space-x-2">
               <IconCircleCheck className="text-blue-600 h-5 w-5" />
-              <p>Saved Successfully</p>
+              <p>Saved Successfully !</p>
             </div>
           ),
         })

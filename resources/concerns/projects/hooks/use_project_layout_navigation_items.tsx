@@ -19,7 +19,7 @@ export default function useProjectLayoutNavigationItems(project: {
       current: page.url === `/projects/${project.id}/applications`,
     },
     {
-      name: 'Projects Settings',
+      name: 'Project Settings',
       href: `/projects/${project.id}/edit`,
       icon: IconSettings,
       current: page.url === `/projects/${project.id}/edit`,

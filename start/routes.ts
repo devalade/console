@@ -17,6 +17,7 @@ import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 import SignOutController from '#controllers/auth/sign_out_controller'
 import ProjectsController from '#controllers/projects_controller'
+import ApplicationsController from '#controllers/applications_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -51,3 +52,8 @@ router
   .params({ projects: 'id' })
   .use('*', middleware.auth())
   .use('edit', middleware.loadProjects())
+
+router
+  .resource('projects.applications', ApplicationsController)
+  .params({ projects: 'projectId', applications: 'applicationId' })
+  .use('*', [middleware.auth(), middleware.loadProjects()])

@@ -9,6 +9,7 @@ import AccountDropdown from '@/components/account_dropdown'
 import clsx from 'clsx'
 
 interface SharedLayoutProps extends React.PropsWithChildren {
+  className?: string
   navigationItems: Array<{
     name: string
     href: string
@@ -20,6 +21,7 @@ interface SharedLayoutProps extends React.PropsWithChildren {
 }
 
 const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
+  className,
   children,
   navigationItems,
   sidebarHeaderChildren,
@@ -211,7 +213,9 @@ const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
             </div>
           </div>
 
-          <main className="py-8 px-12 bg-zinc-50 min-h-[calc(100vh-64px)]">{children}</main>
+          <main className={clsx('py-8 px-12 bg-zinc-50 min-h-[calc(100vh-64px)]', className)}>
+            {children}
+          </main>
         </div>
       </div>
     </>
