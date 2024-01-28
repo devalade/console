@@ -33,7 +33,7 @@ export default class Application extends BaseModel {
    */
   @beforeCreate()
   static async assignSlug(application: Application) {
-    let slug = slugify(application.name, { lower: true })
+    let slug = slugify(application.name, { lower: true, replacement: '-' })
     while (await Application.findBy('slug', slug)) {
       slug += '-' + generateRandomWord({ exactly: 1 })
     }

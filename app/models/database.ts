@@ -50,7 +50,7 @@ export default class Database extends BaseModel {
    */
   @beforeCreate()
   static async assignSlug(database: Database) {
-    let slug = slugify(database.name, { lower: true })
+    let slug = slugify(database.name, { lower: true, replacement: '-' })
     while (await Database.findBy('slug', slug)) {
       slug += '-' + generateRandomWord({ exactly: 1 })
     }

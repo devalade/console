@@ -41,7 +41,7 @@ export default class Project extends BaseModel {
    */
   @beforeCreate()
   static async assignSlug(project: Project) {
-    let slug = slugify(project.name, { lower: true })
+    let slug = slugify(project.name, { lower: true, replacement: '-' })
     while (await Project.findBy('slug', slug)) {
       slug += '-' + generateRandomWord({ exactly: 1 })
     }

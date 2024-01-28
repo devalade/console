@@ -1,3 +1,4 @@
+import bindProject from '#decorators/bind_project'
 import Project from '#models/project'
 import { projectValidator } from '#validators/project_validator'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -14,45 +15,24 @@ export default class ProjectsController {
     return response.redirect().toPath(`/projects/${project.slug}/applications`)
   }
 
-  async edit({ bouncer, params, inertia, response }: HttpContext) {
-    try {
-      const project = await Project.query().where('slug', params.slug).firstOrFail()
-
-      await bouncer.authorize('accessToProject', project)
-
-      return inertia.render('projects/edit', { project })
-    } catch {
-      return response.notFound()
-    }
+  @bindProject
+  async edit({ inertia }: HttpContext, project: Project) {
+    return inertia.render('projects/edit', { project })
   }
 
-  async update({ bouncer, params, request, response }: HttpContext) {
+  @bindProject
+  async update({ request, response }: HttpContext, project: Project) {
     const payload = await request.validateUsing(projectValidator)
 
-    try {
-      const project = await Project.query().where('slug', params.slug).firstOrFail()
+    await project.merge(payload).save()
 
-      await bouncer.authorize('accessToProject', project)
-
-      await project.merge(payload).save()
-
-      return response.redirect().back()
-    } catch {
-      return response.notFound()
-    }
+    return response.redirect().back()
   }
 
-  async destroy({ bouncer, params, response }: HttpContext) {
-    try {
-      const project = await Project.query().where('slug', params.slug).firstOrFail()
+  @bindProject
+  async destroy({ response }: HttpContext, project: Project) {
+    await project.delete()
 
-      await bouncer.authorize('accessToProject', project)
-
-      await project.delete()
-
-      return response.redirect().toPath('/projects')
-    } catch {
-      return response.notFound()
-    }
+    return response.redirect().toPath('/projects')
   }
 }

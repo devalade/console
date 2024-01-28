@@ -50,7 +50,7 @@ router.delete('/settings', [SettingsController, 'destroy']).use(middleware.auth(
 
 router
   .resource('projects', ProjectsController)
-  .params({ projects: 'slug' })
+  .params({ projects: 'projectSlug' })
   .use('*', middleware.auth())
   .use('edit', middleware.loadProjects())
 
