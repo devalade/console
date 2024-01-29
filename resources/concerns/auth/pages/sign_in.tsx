@@ -19,7 +19,11 @@ const SignIn: React.FunctionComponent<SignInProps> = () => {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.post('/auth/sign_in')
+    let path = `/auth/sign_in`
+    if (window.location.search.includes('next=')) {
+      path += window.location.search
+    }
+    form.post(path)
   }
 
   return (

@@ -19,6 +19,7 @@ import SignOutController from '#controllers/auth/sign_out_controller'
 import ProjectsController from '#controllers/projects_controller'
 import ApplicationsController from '#controllers/applications_controller'
 import DatabasesController from '#controllers/databases_controller'
+import CliController from '#controllers/auth/cli_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -43,6 +44,16 @@ router.post('/auth/sign_out', [SignOutController, 'handle'])
 
 router.get('/auth/github/redirect', [GithubController, 'redirect'])
 router.get('/auth/github/callback', [GithubController, 'callback'])
+
+router.get('/auth/cli/session', [CliController, 'getSession'])
+router.get('/auth/cli/check', [CliController, 'check'])
+router.get('/auth/cli/:sessionId/wait', [CliController, 'wait'])
+router
+  .group(() => {
+    router.get('/auth/cli/:sessionId', [CliController, 'show'])
+    router.post('/auth/cli/:sessionId', [CliController, 'handle'])
+  })
+  .use(middleware.auth())
 
 router.get('/settings', [SettingsController, 'edit']).use(middleware.auth())
 router.patch('/settings', [SettingsController, 'update']).use(middleware.auth())

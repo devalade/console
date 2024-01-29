@@ -68,6 +68,7 @@
     "@adonisjs/inertia": "^1.0.0-7",
     "@adonisjs/lucid": "^19.0.0",
     "@adonisjs/mail": "^9.1.0",
+    "@adonisjs/redis": "^8.0.1",
     "@adonisjs/session": "^7.1.1",
     "@adonisjs/shield": "^8.1.0",
     "@adonisjs/static": "^1.1.1",

@@ -9,14 +9,23 @@ export default class SignInController {
 
   async handle({ auth, request, response, session }: HttpContext) {
     const { email, password } = await request.validateUsing(signInValidator)
+    const nextPath = request.input('next')
     try {
       const user = await User.verifyCredentials(email, password)
       await auth.use('web').login(user)
 
+      if (nextPath) {
+        return response.redirect().toPath(nextPath)
+      }
+
       return response.redirect().toPath('/projects')
     } catch {
       session.flash('errors.auth', 'Invalid credentials')
-      return response.redirect().back()
+      let backPath = `/auth/sign_in`
+      if (nextPath) {
+        backPath += `?next=${nextPath}`
+      }
+      return response.redirect().toPath(backPath)
     }
   }
 }
