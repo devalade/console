@@ -1,11 +1,19 @@
 import { Docker } from 'node-docker-api'
 import env from '#start/env'
-import IDriver from '../idriver.js'
+import IDriver from '#drivers/idriver'
+import SwarmDatabasesService from './swarm_databases_service.js'
 
 export default class SwarmDriver implements IDriver {
-  private readonly docker: Docker = new Docker({
-    socketPath: env.get('DOCKER_SOCKET_PATH', '/var/run/docker.sock'),
-  })
+  private readonly docker: Docker
+
+  public databases: SwarmDatabasesService
+
+  constructor() {
+    this.docker = new Docker({
+      socketPath: env.get('DOCKER_SOCKET_PATH', '/var/run/docker.sock'),
+    })
+    this.databases = new SwarmDatabasesService(this.docker)
+  }
 
   private async initializeSwarmIfNotInitialized() {
     try {

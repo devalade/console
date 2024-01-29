@@ -26,7 +26,7 @@ const DatabaseCard = ({ project, database }: DatabaseCardProps) => {
   let iconSrc: string
   switch (database.dbms) {
     case 'postgres':
-      iconSrc = '/icons/postgresql.svg'
+      iconSrc = '/icons/postgres.svg'
       break
     case 'mysql':
       iconSrc = '/icons/mysql.svg'

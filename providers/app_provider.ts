@@ -1,15 +1,11 @@
-import env from '#start/env'
-import IDriver from '../app/drivers/idriver.js'
+import { ApplicationService } from '@adonisjs/core/types'
+import Driver from '#drivers/driver'
 
 export default class AppProvider {
+  constructor(protected app: ApplicationService) {}
+
   async boot() {
-    let driver: IDriver
-    switch (env.get('DRIVER')) {
-      case 'swarm':
-        const SwarmDriver = (await import('../app/drivers/swarm/swarm_driver.js')).default
-        driver = new SwarmDriver()
-        break
-    }
+    const driver = await Driver.getInstance()
     await driver.initializeDriver()
   }
 }

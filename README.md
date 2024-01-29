@@ -11,6 +11,7 @@ Software Citadel Console is a PaaS (Platform as a Service) built on top of Docke
 - [AdonisJS](https://adonisjs.com/) - A fully-featured Node.js framework
 - [React](https://react.dev/) - The library for web and native user interfaces
 - [TailwindCSS](https://tailwindcss.com/) - A utility-first CSS framework
+- [ShadCN UI](https://ui.shadcn.com/) - A collection of TailwindCSS components
 - [Inertia.js](https://inertiajs.com/) - A glue that connects AdonisJS and React
 - [Docker](https://www.docker.com/) - A containerization platform
 - [Docker Swarm](https://docs.docker.com/engine/swarm/) - A container orchestration tool
