@@ -1,15 +1,13 @@
 import React from 'react'
-
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/card'
-import { useToast } from '@/hooks/use_toast'
 import slugify from '@/lib/slugify'
-import { IconCircleCheck } from '@tabler/icons-react'
 import { useForm } from '@inertiajs/react'
 import type { Project } from '@/concerns/projects/types/project'
 import type { Application } from '../types/application'
 import Label from '@/components/label'
 import Input from '@/components/input'
 import Button from '@/components/button'
+import useSuccessToast from '@/hooks/use_success_toast'
 
 export type AppSettingsCardProps = {
   project: Project
@@ -17,7 +15,7 @@ export type AppSettingsCardProps = {
 }
 
 export default function ApplicationSettingsCard({ project, application }: AppSettingsCardProps) {
-  const { toast } = useToast()
+  const successToast = useSuccessToast()
 
   const form = useForm({
     name: application.name,
@@ -27,16 +25,7 @@ export default function ApplicationSettingsCard({ project, application }: AppSet
     e.preventDefault()
 
     form.patch(`/projects/${project.slug}/applications/${application.slug}`, {
-      onSuccess: () => {
-        toast({
-          title: (
-            <div className="flex items-center space-x-2">
-              <IconCircleCheck className="text-blue-600 h-5 w-5" />
-              <p>Saved Successfully !</p>
-            </div>
-          ),
-        })
-      },
+      onSuccess: () => successToast(),
     })
   }
 

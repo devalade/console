@@ -34,8 +34,7 @@ export default class CliController {
       await redis.set(params.sessionId, token.value!.release())
 
       return response.redirect().back()
-    } catch (error) {
-      console.log(error)
+    } catch {
       return response.badRequest('Bad request')
     }
   }

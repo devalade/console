@@ -20,6 +20,7 @@ import ProjectsController from '#controllers/projects_controller'
 import ApplicationsController from '#controllers/applications_controller'
 import DatabasesController from '#controllers/databases_controller'
 import CliController from '#controllers/auth/cli_controller'
+import EnvironmentVariablesController from '#controllers/environment_variables_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -28,6 +29,9 @@ router.get('/', async ({ auth, response }) => {
   return response.redirect().toPath('/auth/sign_in')
 })
 
+/**
+ * Authentication routes.
+ */
 router.get('/auth/sign_up', [SignUpController, 'show'])
 router.post('/auth/sign_up', [SignUpController, 'handle'])
 
@@ -42,9 +46,15 @@ router.post('/auth/reset_password/:email', [ResetPasswordController, 'handle'])
 
 router.post('/auth/sign_out', [SignOutController, 'handle'])
 
+/**
+ * Github authentication.
+ */
 router.get('/auth/github/redirect', [GithubController, 'redirect'])
 router.get('/auth/github/callback', [GithubController, 'callback'])
 
+/**
+ * CLI authentication.
+ */
 router.get('/auth/cli/session', [CliController, 'getSession'])
 router.get('/auth/cli/check', [CliController, 'check'])
 router.get('/auth/cli/:sessionId/wait', [CliController, 'wait'])
@@ -55,22 +65,50 @@ router
   })
   .use(middleware.auth())
 
+/**
+ * User settings.
+ */
 router.get('/settings', [SettingsController, 'edit']).use(middleware.auth())
 router.patch('/settings', [SettingsController, 'update']).use(middleware.auth())
 router.delete('/settings', [SettingsController, 'destroy']).use(middleware.auth())
 
+/**
+ * Projects CRUD.
+ */
 router
   .resource('projects', ProjectsController)
   .params({ projects: 'projectSlug' })
   .use('*', middleware.auth())
   .use('edit', middleware.loadProjects())
 
+/**
+ * Applications CRUD.
+ */
 router
   .resource('projects.applications', ApplicationsController)
   .params({ projects: 'projectSlug', applications: 'applicationSlug' })
   .use('*', [middleware.auth(), middleware.loadProjects()])
   .except(['create'])
 
+/**
+ * Environment variables.
+ */
+router
+  .get('/projects/:projectSlug/applications/:applicationSlug/env', [
+    EnvironmentVariablesController,
+    'edit',
+  ])
+  .use([middleware.auth(), middleware.loadProjects()])
+router
+  .patch('/projects/:projectSlug/applications/:applicationSlug/env', [
+    EnvironmentVariablesController,
+    'update',
+  ])
+  .use([middleware.auth(), middleware.loadProjects()])
+
+/**
+ * Databases.
+ */
 router
   .resource('projects.databases', DatabasesController)
   .params({ projects: 'projectSlug', databases: 'databaseSlug' })

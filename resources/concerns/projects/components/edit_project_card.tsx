@@ -1,20 +1,19 @@
 import React from 'react'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/card'
 import { useForm } from '@inertiajs/react'
-import { useToast } from '@/hooks/use_toast'
 import slugify from '@/lib/slugify'
-import { IconCircleCheck } from '@tabler/icons-react'
 import type { Project } from '../types/project'
 import Label from '@/components/label'
 import Input from '@/components/input'
 import Button from '@/components/button'
+import useSuccessToast from '@/hooks/use_success_toast'
 
 export type EditProjectCardProps = {
   project: Project
 }
 
 export default function EditProjectCard({ project }: EditProjectCardProps) {
-  const { toast } = useToast()
+  const successToast = useSuccessToast()
   const form = useForm({
     name: project.name,
   })
@@ -22,16 +21,7 @@ export default function EditProjectCard({ project }: EditProjectCardProps) {
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     form.patch(`/projects/${project.slug}`, {
-      onSuccess: () => {
-        toast({
-          title: (
-            <div className="flex items-center space-x-2">
-              <IconCircleCheck className="text-blue-600 h-5 w-5" />
-              <p>Saved Successfully !</p>
-            </div>
-          ),
-        })
-      },
+      onSuccess: () => successToast(),
     })
   }
 

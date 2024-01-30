@@ -1,16 +1,15 @@
 import React from 'react'
 import useUser from '@/hooks/use_user'
-import { useToast } from '@/hooks/use_toast'
-import { IconCircleCheck } from '@tabler/icons-react'
 import { useForm } from '@inertiajs/react'
 import Input from '@/components/input'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/card'
 import Button from '@/components/button'
 import Label from '@/components/label'
+import useSuccessToast from '@/hooks/use_success_toast'
 
 export default function MyAccountCard() {
   const user = useUser()
-  const { toast } = useToast()
+  const successToast = useSuccessToast()
 
   const form = useForm({
     email: user.email,
@@ -23,16 +22,7 @@ export default function MyAccountCard() {
     e.preventDefault()
 
     form.patch('/settings', {
-      onSuccess: () => {
-        toast({
-          title: (
-            <div className="flex items-center space-x-2">
-              <IconCircleCheck className="text-blue-600 h-5 w-5" />
-              <p>Saved Successfully !</p>
-            </div>
-          ),
-        })
-      },
+      onSuccess: () => successToast(),
     })
   }
 

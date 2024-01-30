@@ -9,6 +9,7 @@ export default class extends BaseSchema {
       table.string('name').notNullable()
       table.integer('project_id').unsigned().references('projects.id').onDelete('CASCADE')
       table.string('slug').notNullable().unique()
+      table.json('environment_variables').notNullable().defaultTo('{}')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

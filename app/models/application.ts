@@ -1,9 +1,10 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, belongsTo, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import Project from './project.js'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
+import Deployment from './deployment.js'
 
 export default class Application extends BaseModel {
   /**
@@ -18,6 +19,9 @@ export default class Application extends BaseModel {
   @column()
   declare slug: string
 
+  @column()
+  declare environmentVariables: Record<string, string>
+
   /**
    * Relationships.
    */
@@ -27,6 +31,9 @@ export default class Application extends BaseModel {
 
   @column()
   declare projectId: number
+
+  @hasMany(() => Deployment)
+  declare deployments: HasMany<typeof Deployment>
 
   /**
    * Hooks.

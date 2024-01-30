@@ -17,6 +17,13 @@ export default function ApplicationTabs({ project, application }: ApplicationTab
         window.location.pathname === `/projects/${project.slug}/applications/${application.slug}`,
     },
     {
+      label: 'Environment variables',
+      href: `/projects/${project.slug}/applications/${application.slug}/env`,
+      isActive:
+        window.location.pathname ===
+        `/projects/${project.slug}/applications/${application.slug}/env`,
+    },
+    {
       label: 'Settings',
       href: `/projects/${project.slug}/applications/${application.slug}/edit`,
       isActive:

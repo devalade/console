@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import Spinner from './spinner'
+import clsx from 'clsx'
 
 export const buttonVariants = cva(
   'h-10 px-3 py-1.5 text-sm inline-flex items-center justify-center space-x-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
@@ -24,6 +25,7 @@ interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   loading?: boolean
+  className?: string
 }
 
 const Button: React.FunctionComponent<React.PropsWithChildren<ButtonProps>> = ({
@@ -31,10 +33,15 @@ const Button: React.FunctionComponent<React.PropsWithChildren<ButtonProps>> = ({
   disabled,
   loading,
   variant,
+  className,
   ...props
 }) => {
   return (
-    <button disabled={loading || disabled} {...props} className={buttonVariants({ variant })}>
+    <button
+      disabled={loading || disabled}
+      {...props}
+      className={clsx(buttonVariants({ variant }), className)}
+    >
       {loading && <Spinner className="mr-2 h-4 w-4 animate-spin" />}
       {children}
     </button>
