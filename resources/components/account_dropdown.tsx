@@ -16,7 +16,7 @@ interface AccountDropdownProps {}
 
 const AccountDropdown: React.FunctionComponent<AccountDropdownProps> = () => {
   const user = useUser()
-  const splittedFullName: string[] = user.full_name.split(' ')
+  const splittedFullName: string[] = user.fullName.split(' ')
   const initials: string =
     splittedFullName[0].charAt(0).toUpperCase() +
     (splittedFullName.length > 1 ? splittedFullName[1].charAt(0).toUpperCase() : '')

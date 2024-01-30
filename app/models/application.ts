@@ -5,6 +5,7 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
 import Deployment from './deployment.js'
+import Certificate from './certificate.js'
 
 export default class Application extends BaseModel {
   /**
@@ -34,6 +35,9 @@ export default class Application extends BaseModel {
 
   @hasMany(() => Deployment)
   declare deployments: HasMany<typeof Deployment>
+
+  @hasMany(() => Certificate)
+  declare certificates: HasMany<typeof Certificate>
 
   /**
    * Hooks.

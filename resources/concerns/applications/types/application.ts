@@ -1,6 +1,9 @@
+import type { Certificate } from './certificates'
+
 export type Application = {
   id: number
   name: string
   slug: string
-  environment_variables: Record<string, string>
+  environmentVariables: Record<string, string>
+  certificates?: Array<Certificate>
 }

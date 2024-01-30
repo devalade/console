@@ -25,7 +25,7 @@ export default function ApplicationSettingsCard({ project, application }: AppSet
     e.preventDefault()
 
     form.patch(`/projects/${project.slug}/applications/${application.slug}`, {
-      onSuccess: () => successToast(),
+      onSuccess: successToast,
     })
   }
 

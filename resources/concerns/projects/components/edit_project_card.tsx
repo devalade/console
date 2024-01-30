@@ -21,7 +21,7 @@ export default function EditProjectCard({ project }: EditProjectCardProps) {
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     form.patch(`/projects/${project.slug}`, {
-      onSuccess: () => successToast(),
+      onSuccess: successToast,
     })
   }
 

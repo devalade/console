@@ -1,5 +1,5 @@
-import type { Project } from '@/concerns/projects/types/project'
 import * as React from 'react'
+import type { Project } from '@/concerns/projects/types/project'
 import type { Application } from '../types/application'
 import { useForm } from '@inertiajs/react'
 import {

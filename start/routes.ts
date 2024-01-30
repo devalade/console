@@ -21,6 +21,7 @@ import ApplicationsController from '#controllers/applications_controller'
 import DatabasesController from '#controllers/databases_controller'
 import CliController from '#controllers/auth/cli_controller'
 import EnvironmentVariablesController from '#controllers/environment_variables_controller'
+import CertificatesController from '#controllers/certificates_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -114,3 +115,37 @@ router
   .params({ projects: 'projectSlug', databases: 'databaseSlug' })
   .use('*', [middleware.auth(), middleware.loadProjects()])
   .except(['create', 'edit', 'update'])
+
+/**
+ * Certificates.
+ */
+router
+  .get('/projects/:projectSlug/applications/:applicationSlug/certificates', [
+    CertificatesController,
+    'index',
+  ])
+  .use([middleware.auth(), middleware.loadProjects()])
+router
+  .post('/projects/:projectSlug/applications/:applicationSlug/certificates', [
+    CertificatesController,
+    'store',
+  ])
+  .use(middleware.auth())
+router
+  .post('/projects/:projectSlug/applications/:applicationSlug/certificates/:domain/check', [
+    CertificatesController,
+    'check',
+  ])
+  .use(middleware.auth())
+router
+  .post('/projects/:projectSlug/applications/:applicationSlug/certificates/:id/check', [
+    CertificatesController,
+    'check',
+  ])
+  .use(middleware.auth())
+router
+  .delete('/projects/:projectSlug/applications/:applicationSlug/certificates/:id', [
+    CertificatesController,
+    'destroy',
+  ])
+  .use(middleware.auth())

@@ -36,7 +36,7 @@ const EnvironmentVariables: React.FunctionComponent<EnvironmentVariablesProps> =
   }
 
   const form = useForm({
-    environmentVariables: formatEnvironmentVariables(application.environment_variables),
+    environmentVariables: formatEnvironmentVariables(application.environmentVariables),
   })
 
   function addEnvironmentVariable() {
@@ -53,7 +53,7 @@ const EnvironmentVariables: React.FunctionComponent<EnvironmentVariablesProps> =
 
   function saveEnvironmentVariables() {
     form.patch(`/projects/${project.slug}/applications/${application.slug}/env`, {
-      onSuccess: () => successToast(),
+      onSuccess: successToast,
     })
   }
 
