@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node bin/server.js",
     "build": "node ace build",
-    "dev": "docker compose -f docker-compose.dev.yml up -d && node ace serve --watch",
+    "dev": "docker compose -f zarf/docker/dev/docker-compose.yml up -d && node ace serve --watch",
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@adonisjs/ally": "^5.0.2",
-    "@adonisjs/auth": "^9.0.2",
+    "@adonisjs/auth": "^9.0.3",
     "@adonisjs/bouncer": "^3.1.1",
     "@adonisjs/core": "^6.2.1",
     "@adonisjs/inertia": "^1.0.0-7",
@@ -73,6 +73,7 @@
     "@adonisjs/shield": "^8.1.0",
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^2.0.2",
+    "@aws-sdk/client-s3": "^3.503.1",
     "@headlessui/react": "^1.7.18",
     "@inertiajs/react": "^1.0.14",
     "@radix-ui/react-dialog": "^1.0.5",

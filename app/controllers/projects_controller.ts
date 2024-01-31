@@ -4,14 +4,20 @@ import { projectValidator } from '#validators/project_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class ProjectsController {
-  async index({ auth, inertia }: HttpContext) {
+  async index({ auth, request, inertia }: HttpContext) {
     const projects = await auth.user!.related('projects').query()
+    if (request.wantsJSON()) {
+      return projects
+    }
     return inertia.render('projects/index', { projects })
   }
 
   async store({ auth, request, response }: HttpContext) {
     const payload = await request.validateUsing(projectValidator)
     const project = await auth.user!.related('projects').create(payload)
+    if (request.wantsJSON()) {
+      return project
+    }
     return response.redirect().toPath(`/projects/${project.slug}/applications`)
   }
 

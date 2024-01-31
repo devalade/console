@@ -29,7 +29,7 @@ const Cli = () => {
         ) : (
           <form className="max-w-xl mx-auto" onSubmit={continueAs}>
             <Button type="submit" value="Submit" loading={form.processing} className="w-full">
-              Continue as {user.full_name}
+              Continue as {user.fullName}
             </Button>
 
             <a

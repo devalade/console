@@ -23,6 +23,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   DRIVER: Env.schema.enum(['swarm'] as const),
   DOCKER_SOCKET_PATH: Env.schema.string.optional(),
   TRAEFIK_WILDCARD_DOMAIN: Env.schema.string.optional(),
+  REGISTRY_HOST: Env.schema.string(),
+  REGISTRY_TOKEN: Env.schema.string.optional(),
+  BUILDER_IMAGE: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
@@ -57,6 +60,22 @@ export default await Env.create(new URL('../', import.meta.url), {
   */
   RESEND_API_KEY: Env.schema.string(),
 
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring Redis connection
+  |----------------------------------------------------------
+  */
   REDIS_HOST: Env.schema.string({ format: 'host' }),
-  REDIS_PORT: Env.schema.number()
+  REDIS_PORT: Env.schema.number(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for Minio connection
+  |----------------------------------------------------------
+  */
+  S3_ENDPOINT: Env.schema.string(),
+  S3_BUCKET: Env.schema.string(),
+  S3_REGION: Env.schema.string(),
+  S3_ACCESS_KEY: Env.schema.string(),
+  S3_SECRET_KEY: Env.schema.string(),
 })

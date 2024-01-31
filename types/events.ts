@@ -1,8 +1,12 @@
+import Application from '#models/application'
 import Database from '#models/database'
+import Deployment from '#models/deployment'
 
 declare module '@adonisjs/core/types' {
   interface EventsList {
     'databases:created': Database
     'databases:deleted': Database
+
+    'deployments:created': [Application, Deployment]
   }
 }

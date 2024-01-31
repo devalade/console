@@ -6,7 +6,7 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('application_id').unsigned().references('applications.id').onDelete('CASCADE')
+      table.string('application_id').references('applications.id').onDelete('CASCADE')
       table
         .enum('status', [
           'building',
@@ -17,6 +17,8 @@ export default class extends BaseSchema {
           'success',
         ])
         .notNullable()
+        .defaultTo('building')
+      table.enum('origin', ['cli', 'github']).notNullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

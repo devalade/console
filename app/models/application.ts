@@ -6,13 +6,14 @@ import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
 import Deployment from './deployment.js'
 import Certificate from './certificate.js'
+import { cuid } from '@adonisjs/core/helpers'
 
 export default class Application extends BaseModel {
   /**
    * Regular columns.
    */
   @column({ isPrimary: true })
-  declare id: number
+  declare id: string
 
   @column()
   declare name: string
@@ -49,6 +50,11 @@ export default class Application extends BaseModel {
       slug += '-' + generateRandomWord({ exactly: 1 })
     }
     application.slug = slug
+  }
+
+  @beforeCreate()
+  static async assignId(application: Application) {
+    application.id = cuid()
   }
 
   /**

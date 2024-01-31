@@ -21,6 +21,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
     tokenSecretLength: 40,
   })
 
+  /**
+   * Regular columns.
+   */
   @column({ isPrimary: true })
   declare id: number
 
@@ -36,9 +39,15 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare githubId: string | null
 
+  /**
+   * Relationships.
+   */
   @hasMany(() => Project)
   declare projects: HasMany<typeof Project>
 
+  /**
+   * Timestamps.
+   */
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

@@ -7,6 +7,7 @@ import useError from '@/hooks/use_error'
 import Input from '@/components/input'
 import Label from '@/components/label'
 import SignUpWithGitHub from '@/concerns/auth/components/sign_in_with_github'
+import PasswordField from '@/components/password_field'
 
 interface SignUpProps {}
 
@@ -73,20 +74,15 @@ const SignUp: React.FunctionComponent<SignUpProps> = () => {
                     onChange={(e) => form.setData('email', e.target.value)}
                   />
                 </div>
-                <div className="grid gap-1">
-                  <Label>Password</Label>
-                  <Input
-                    id="password"
-                    placeholder="••••••••••••"
-                    type="password"
-                    autoCapitalize="none"
-                    autoComplete="password"
-                    autoCorrect="off"
-                    disabled={form.processing}
-                    value={form.data.password}
-                    onChange={(e) => form.setData('password', e.target.value)}
-                  />
-                </div>
+                <PasswordField
+                  divClassName="grid gap-1"
+                  id="password"
+                  name="password"
+                  label="Password"
+                  disabled={form.processing}
+                  value={form.data.password}
+                  onChange={(e) => form.setData('password', e.target.value)}
+                />
 
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button loading={form.processing} type="submit">

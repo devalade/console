@@ -57,3 +57,10 @@ jobs:
           REDIS_HOST: 127.0.0.1
           REDIS_PORT: 6379
           REDIS_PASSWORD: citadel
+          BUILDER_IMAGE: softwarecitadel/citadel-builder:latest
+          S3_ENDPOINT: http://127.0.0.1:9000/
+          S3_BUCKET: images
+          S3_REGION: us-east-1
+          S3_ACCESS_KEY: <ACCESS_KEY>
+          S3_SECRET_KEY: <SECRET_KEY>
+          REGISTRY_HOST: localhost:5000

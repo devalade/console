@@ -8,7 +8,13 @@ export default class Deployment extends BaseModel {
   declare id: number
 
   @column()
+  declare origin: 'cli' | 'github'
+
+  @column()
   declare status: DeploymentStatus
+
+  @column()
+  declare archiveName: string
 
   /**
    * Relationships.

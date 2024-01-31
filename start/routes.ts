@@ -22,6 +22,8 @@ import DatabasesController from '#controllers/databases_controller'
 import CliController from '#controllers/auth/cli_controller'
 import EnvironmentVariablesController from '#controllers/environment_variables_controller'
 import CertificatesController from '#controllers/certificates_controller'
+import LogsController from '#controllers/logs_controller'
+import DeploymentsController from '#controllers/deployments_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -79,7 +81,7 @@ router.delete('/settings', [SettingsController, 'destroy']).use(middleware.auth(
 router
   .resource('projects', ProjectsController)
   .params({ projects: 'projectSlug' })
-  .use('*', middleware.auth())
+  .use('*', middleware.auth({ guards: ['web', 'api'] }))
   .use('edit', middleware.loadProjects())
 
 /**
@@ -88,7 +90,7 @@ router
 router
   .resource('projects.applications', ApplicationsController)
   .params({ projects: 'projectSlug', applications: 'applicationSlug' })
-  .use('*', [middleware.auth(), middleware.loadProjects()])
+  .use('*', [middleware.auth({ guards: ['web', 'api'] }), middleware.loadProjects()])
   .except(['create'])
 
 /**
@@ -149,3 +151,26 @@ router
     'destroy',
   ])
   .use(middleware.auth())
+
+/**
+ * Logs.
+ */
+router
+  .get('/projects/:projectSlug/applications/:applicationSlug/logs', [LogsController, 'show'])
+  .use([middleware.auth(), middleware.loadProjects()])
+
+/**
+ * Deployments.
+ */
+router
+  .get('/projects/:projectSlug/applications/:applicationSlug/deployments', [
+    DeploymentsController,
+    'index',
+  ])
+  .use([middleware.auth(), middleware.loadProjects()])
+router
+  .post('/projects/:projectSlug/applications/:applicationSlug/deployments', [
+    DeploymentsController,
+    'store',
+  ])
+  .use([middleware.auth({ guards: ['api'] })])

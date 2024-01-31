@@ -23,13 +23,7 @@ const AccountDropdown: React.FunctionComponent<AccountDropdownProps> = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          aria-controls="cmeb6WWNmE"
-          aria-expanded="true"
-          data-state="open"
-          id="06JpI0JKCK"
-          className="flex items-center gap-x-4 py-3 text-sm leading-6 font-normal text-zinc-900 hover:opacity-75 transition"
-        >
+        <button className="flex items-center gap-x-4 py-3 text-sm leading-6 font-normal text-zinc-900 hover:opacity-75 transition">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 border-zinc-700 border text-zinc-200">
             <span className="font-medium">{initials}</span>
           </div>{' '}

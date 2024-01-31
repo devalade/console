@@ -12,7 +12,7 @@ export default class extends BaseSchema {
       table.string('host').nullable()
       table.string('username').nullable()
       table.string('password').nullable()
-      table.integer('project_id').unsigned().references('projects.id').onDelete('CASCADE')
+      table.string('project_id').references('projects.id').onDelete('CASCADE')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

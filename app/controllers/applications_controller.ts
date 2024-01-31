@@ -5,8 +5,11 @@ import bindProject from '#decorators/bind_project'
 
 export default class ApplicationsController {
   @bindProject
-  async index({ inertia }: HttpContext, project: Project) {
+  async index({ request, inertia }: HttpContext, project: Project) {
     const applications = await project.related('applications').query()
+    if (request.wantsJSON()) {
+      return applications
+    }
     return inertia.render('applications/index', { project, applications })
   }
 
@@ -15,6 +18,10 @@ export default class ApplicationsController {
     const payload = await request.validateUsing(applicationValidator)
 
     const application = await project.related('applications').create(payload)
+
+    if (request.wantsJSON()) {
+      return application
+    }
 
     return response.redirect().toPath(`/projects/${project.slug}/applications/${application.slug}`)
   }

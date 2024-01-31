@@ -7,6 +7,7 @@ import useError from '@/hooks/use_error'
 import Input from '@/components/input'
 import Label from '@/components/label'
 import SignInWithGitHub from '@/concerns/auth/components/sign_in_with_github'
+import PasswordField from '@/components/password_field'
 
 interface SignInProps {}
 
@@ -65,20 +66,15 @@ const SignIn: React.FunctionComponent<SignInProps> = () => {
                     onChange={(e) => form.setData('email', e.target.value)}
                   />
                 </div>
-                <div className="grid gap-1">
-                  <Label>Password</Label>
-                  <Input
-                    id="password"
-                    placeholder="••••••••••••"
-                    type="password"
-                    autoCapitalize="none"
-                    autoComplete="password"
-                    autoCorrect="off"
-                    disabled={form.processing}
-                    value={form.data.password}
-                    onChange={(e) => form.setData('password', e.target.value)}
-                  />
-                </div>
+                <PasswordField
+                  id="password"
+                  name="password"
+                  divClassName="grid gap-1"
+                  label="Password"
+                  disabled={form.processing}
+                  value={form.data.password}
+                  onChange={(e) => form.setData('password', e.target.value)}
+                />
                 <div className="flex justify-end text-sm">
                   <Link className="link" href="/auth/forgot_password">
                     Forgot your password?

@@ -1,6 +1,5 @@
 services:
   postgres:
-    container_name: citadel_postgres
     image: 'postgres:13'
     ports:
       - '5432:5432'
@@ -33,21 +32,27 @@ services:
     networks:
       - traefik
 
-  whoami:
-    image: traefik/whoami
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.whoami.rule=Host(`whoami.softwarecitadel.app`)'
-      - 'traefik.http.routers.whoami.entrypoints=websecure'
-      - 'traefik.http.routers.whoami.tls.certresolver=myresolver'
-    networks:
-      - traefik
+  # whoami:
+  #   image: traefik/whoami
+  #   labels:
+  #     - 'traefik.enable=true'
+  #     - 'traefik.http.routers.whoami.rule=Host(`whoami.softwarecitadel.app`)'
+  #     - 'traefik.http.routers.whoami.entrypoints=websecure'
+  #     - 'traefik.http.routers.whoami.tls.certresolver=myresolver'
+  #   networks:
+  #     - traefik
 
   redis:
     image: redis:6.2
-    container_name: citadel_redis
     ports:
       - '6379:6379'
+
+  registry:
+    image: registry:2
+    ports:
+      - '5000:5000'
+    volumes:
+      - './registry:/var/lib/registry'
 
 volumes:
   citadel_postgres:
