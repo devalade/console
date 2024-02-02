@@ -4,7 +4,7 @@
 
 ## About
 
-Software Citadel Console is a PaaS (Platform as a Service) built on top of Docker Swarm.
+Software Citadel Console consists in a PaaS (Platform as a Service) that allows developers to deploy their applications and databases in a cloud environment, supporting multiple drivers, such as Docker and Fly.io.
 
 ## Stack
 
@@ -14,7 +14,6 @@ Software Citadel Console is a PaaS (Platform as a Service) built on top of Docke
 - [ShadCN UI](https://ui.shadcn.com/) - A collection of TailwindCSS components
 - [Inertia.js](https://inertiajs.com/) - A glue that connects AdonisJS and React
 - [Docker](https://www.docker.com/) - A containerization platform
-- [Docker Swarm](https://docs.docker.com/engine/swarm/) - A container orchestration tool
 - [Traefik](https://traefik.io/) - A reverse proxy and load balancer
 - [PostgreSQL](https://www.postgresql.org/) - A relational database management system
 - [Redis](https://redis.io/) - An in-memory data structure store

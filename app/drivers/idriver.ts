@@ -1,3 +1,4 @@
+import type { Response } from '@adonisjs/core/http'
 import Application from '#models/application'
 import Database from '#models/database'
 import Deployment from '#models/deployment'
@@ -13,6 +14,11 @@ export default interface IDriver {
 export interface IDriverApplicationsService {
   createApplication(application: Application): void | Promise<void>
   deleteApplication(application: Application): void | Promise<void>
+  streamLogs(
+    application: Application,
+    response: Response,
+    scope: 'application' | 'builder'
+  ): void | Promise<void>
 }
 
 export interface IDriverDatabasesService {

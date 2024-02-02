@@ -1,11 +1,12 @@
-import bindProjectAndApplication from '#decorators/bind_project_and_application'
 import type { HttpContext } from '@adonisjs/core/http'
-import Application from '#models/application'
-import Project from '#models/project'
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
-import env from '#start/env'
-import { readFile } from 'fs/promises'
 import emitter from '@adonisjs/core/services/emitter'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { readFile } from 'fs/promises'
+import bindProjectAndApplication from '#decorators/bind_project_and_application'
+import Application from '#models/application'
+import Deployment, { DeploymentStatus } from '#models/deployment'
+import Project from '#models/project'
+import env from '#start/env'
 
 export default class DeploymentsController {
   @bindProjectAndApplication
@@ -47,15 +48,29 @@ export default class DeploymentsController {
       })
     )
 
-    const deployment = await application.related('deployments').create({
-      origin: 'cli',
-    })
-
-    emitter.emit('deployments:created', [application, deployment])
+    await application
+      .related('deployments')
+      .create({ origin: 'cli', status: DeploymentStatus.Building })
 
     return {
       message: 'Igniting deployment...',
       healthcheck: !!application.environmentVariables.PORT,
     }
+  }
+
+  @bindProjectAndApplication
+  async streamUpdates({ response }: HttpContext, _project: Project, application: Application) {
+    response.useServerSentEvents()
+
+    emitter.on(`deployments:updated:${application.slug}`, (deployment: Deployment) => {
+      response.response.write(`data: ${JSON.stringify({ deployment })}\n\n`)
+      response.response.flushHeaders()
+    })
+
+    response.response.on('close', () => {
+      response.response.end()
+    })
+
+    return response.noContent()
   }
 }

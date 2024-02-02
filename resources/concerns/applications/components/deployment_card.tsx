@@ -83,11 +83,11 @@ const DeploymentCard: React.FunctionComponent<DeploymentCardProps> = ({
           </h2>
           <div
             className={clsx(
-              'rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-yellow-600 bg-zinc-50 ring-zinc-50',
-              getStatusTextColorClass(deployment.status)
+              getStatusTextColorClass(deployment.status),
+              'rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset ring-zinc-50'
             )}
           >
-            {capitalize(deployment.status)}
+            {capitalize(deployment.status.replace('-', ' '))}
           </div>
         </div>
         <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-zinc-500">

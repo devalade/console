@@ -1,14 +1,14 @@
 import { IDriverDatabasesService } from '#drivers/idriver'
 import Database from '#models/database'
 import { Docker } from 'node-docker-api'
-import SwarmDatabasesConfigurationBuilder from './swarm_databases_configuration_builder.js'
+import DockerDatabasesConfigurationBuilder from './docker_databases_configuration_builder.js'
 
-export default class SwarmDatabasesService implements IDriverDatabasesService {
-  private readonly swarmDatabasesConfigurationBuilder = new SwarmDatabasesConfigurationBuilder()
+export default class DockerDatabasesService implements IDriverDatabasesService {
+  private readonly dockerDatabasesConfigurationBuilder = new DockerDatabasesConfigurationBuilder()
   constructor(private readonly docker: Docker) {}
 
   async createDatabase(database: Database) {
-    const serviceConfiguration = this.swarmDatabasesConfigurationBuilder.build(database)
+    const serviceConfiguration = this.dockerDatabasesConfigurationBuilder.build(database)
     await this.docker.service.create(serviceConfiguration)
   }
 

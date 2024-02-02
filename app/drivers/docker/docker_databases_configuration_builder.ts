@@ -1,6 +1,6 @@
 import Database from '#models/database'
 
-export default class SwarmDatabasesConfigurationBuilder {
+export default class DockerDatabasesConfigurationBuilder {
   build(database: Database) {
     return {
       name: `citadel-${database.slug}`,

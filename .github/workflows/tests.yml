@@ -53,11 +53,11 @@ jobs:
           DB_PASSWORD: citadel
           DB_DATABASE: citadel
           RESEND_API_KEY: bipboop
-          DRIVER: swarm
+          DRIVER: docker
           REDIS_HOST: 127.0.0.1
           REDIS_PORT: 6379
           REDIS_PASSWORD: citadel
-          BUILDER_IMAGE: softwarecitadel/citadel-builder:latest
+          BUILDER_IMAGE: softwarecitadel/builder:latest
           S3_ENDPOINT: http://127.0.0.1:9000/
           S3_BUCKET: images
           S3_REGION: us-east-1

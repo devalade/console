@@ -3,13 +3,15 @@ import ApplicationLayout from '../application_layout'
 import type { Project } from '@/concerns/projects/types/project'
 import type { Application } from '../types/application'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/card'
+import { usePage } from '@inertiajs/react'
 
 interface ShowProps {
   project: Project
   application: Application
+  wildcardDomain: string
 }
 
-const Show: React.FunctionComponent<ShowProps> = ({ project, application }) => {
+const Show: React.FunctionComponent<ShowProps> = ({ project, application, wildcardDomain }) => {
   return (
     <ApplicationLayout project={project} application={application}>
       <Card className="mx-10">
@@ -23,10 +25,10 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, application }) => {
               <dd className="mt-1 text-sm text-blue-100">
                 <a
                   className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
-                  href={`https://${application.slug}.softwarecitadel.app`}
+                  href={`https://${application.slug}.${wildcardDomain}`}
                   target="_blank"
                 >
-                  {application.slug}.softwarecitadel.app
+                  {application.slug}.{wildcardDomain}
                 </a>
               </dd>
             </div>

@@ -1,3 +1,4 @@
+import env from '#start/env'
 import { defineConfig } from '@adonisjs/inertia'
 
 export default defineConfig({
@@ -13,5 +14,9 @@ export default defineConfig({
     errors: (ctx) => ctx.session.flashMessages.get('errors'),
     qs: (ctx) => ctx.request.qs(),
     user: (ctx) => ctx.auth.user,
+    wildcardDomain: () =>
+      env.get('DRIVER') === 'docker'
+        ? env.get('TRAEFIK_WILDCARD_DOMAIN', 'softwarecitadel.app')
+        : 'fly.dev',
   },
 })

@@ -1,9 +1,13 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import { BaseModel, afterCreate, afterSave, belongsTo, column } from '@adonisjs/lucid/orm'
 import Application from './application.js'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import emitter from '@adonisjs/core/services/emitter'
 
 export default class Deployment extends BaseModel {
+  /**
+   * Regular columns.
+   */
   @column({ isPrimary: true })
   declare id: number
 
@@ -24,6 +28,21 @@ export default class Deployment extends BaseModel {
 
   @column()
   declare applicationId: number
+
+  /**
+   * Hooks.
+   */
+  @afterCreate()
+  static async emitCreatedEvent(deployment: Deployment) {
+    await deployment.load('application')
+    emitter.emit('deployments:created', [deployment.application, deployment])
+  }
+
+  @afterSave()
+  static async emitUpdatedEvent(deployment: Deployment) {
+    await deployment.load('application')
+    emitter.emit(`deployments:updated:${deployment.application.slug}`, deployment)
+  }
 
   /**
    * Timestamps.

@@ -107,7 +107,7 @@ router
     EnvironmentVariablesController,
     'update',
   ])
-  .use([middleware.auth(), middleware.loadProjects()])
+  .use([middleware.auth({ guards: ['web', 'api'] })])
 
 /**
  * Databases.
@@ -158,6 +158,12 @@ router
 router
   .get('/projects/:projectSlug/applications/:applicationSlug/logs', [LogsController, 'show'])
   .use([middleware.auth(), middleware.loadProjects()])
+router
+  .get('/projects/:projectSlug/applications/:applicationSlug/logs/stream', [
+    LogsController,
+    'stream',
+  ])
+  .use([middleware.auth({ guards: ['web', 'api'] })])
 
 /**
  * Deployments.
@@ -174,3 +180,9 @@ router
     'store',
   ])
   .use([middleware.auth({ guards: ['api'] })])
+router
+  .get('/projects/:projectSlug/applications/:applicationSlug/deployments/updates', [
+    DeploymentsController,
+    'streamUpdates',
+  ])
+  .use([middleware.auth({ guards: ['web', 'api'] })])

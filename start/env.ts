@@ -20,7 +20,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   LOG_LEVEL: Env.schema.string(),
   CACHE_VIEWS: Env.schema.boolean(),
 
-  DRIVER: Env.schema.enum(['swarm'] as const),
+  DRIVER: Env.schema.enum(['docker', 'fly'] as const),
+
+  FLY_ORG: Env.schema.string.optional(),
+  FLY_TOKEN: Env.schema.string.optional(),
+
   DOCKER_SOCKET_PATH: Env.schema.string.optional(),
   TRAEFIK_WILDCARD_DOMAIN: Env.schema.string.optional(),
   REGISTRY_HOST: Env.schema.string(),

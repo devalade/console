@@ -2,6 +2,8 @@ import Project from '#models/project'
 import { applicationValidator } from '#validators/application_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 import bindProject from '#decorators/bind_project'
+import bindProjectAndApplication from '#decorators/bind_project_and_application'
+import Application from '#models/application'
 
 export default class ApplicationsController {
   @bindProject
@@ -26,28 +28,13 @@ export default class ApplicationsController {
     return response.redirect().toPath(`/projects/${project.slug}/applications/${application.slug}`)
   }
 
-  @bindProject
-  async show({ params, inertia }: HttpContext, project: Project) {
-    const application = await project
-      .related('applications')
-      .query()
-      .where('slug', params.applicationSlug)
-      .firstOrFail()
-
+  @bindProjectAndApplication
+  async show({ inertia }: HttpContext, project: Project, application: Application) {
     return inertia.render('applications/show', { project, application })
   }
 
-  @bindProject
-  async edit({ params, response, inertia }: HttpContext, project: Project) {
-    const application = await project
-      .related('applications')
-      .query()
-      .where('slug', params.applicationSlug)
-      .first()
-    if (!application) {
-      return response.notFound()
-    }
-
+  @bindProjectAndApplication
+  async edit({ inertia }: HttpContext, project: Project, application: Application) {
     return inertia.render('applications/edit', { project, application })
   }
 
@@ -69,14 +56,8 @@ export default class ApplicationsController {
     return response.redirect().back()
   }
 
-  @bindProject
-  async destroy({ params, response }: HttpContext, project: Project) {
-    const application = await project
-      .related('applications')
-      .query()
-      .where('slug', params.applicationSlug)
-      .firstOrFail()
-
+  @bindProjectAndApplication
+  async destroy({ response }: HttpContext, project: Project, application: Application) {
     await application.delete()
 
     return response.redirect().toPath(`/projects/${project.slug}/applications`)

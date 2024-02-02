@@ -15,8 +15,44 @@ interface DeploymentsProps {
 const Deployments: React.FunctionComponent<DeploymentsProps> = ({
   project,
   application,
-  deployments,
+  deployments: initialDeployments,
 }) => {
+  const [deployments, setDeployments] = React.useState<Deployment[]>(initialDeployments)
+
+  React.useEffect(() => {
+    let eventSource: EventSource
+
+    const initializeEventSource = () => {
+      const url = `/projects/${project.slug}/applications/${application.slug}/deployments/updates`
+
+      eventSource = new EventSource(url)
+
+      eventSource.onmessage = (event) => {
+        try {
+          const { deployment } = JSON.parse(event.data) as { deployment: Deployment }
+          setDeployments((prevDeployments) => {
+            const deploymentAlreadyExists = prevDeployments.find((d) => d.id === deployment.id)
+            if (deploymentAlreadyExists) {
+              return prevDeployments.map((d) => (d.id === deployment.id ? deployment : d))
+            } else {
+              return [deployment, ...prevDeployments]
+            }
+          })
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
+
+    initializeEventSource()
+
+    return () => {
+      if (eventSource) {
+        eventSource.close()
+      }
+    }
+  }, [])
+
   return (
     <ApplicationLayout project={project} application={application}>
       <Card className="mx-10">
