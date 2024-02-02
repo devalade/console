@@ -44,13 +44,11 @@ const RedeployDialog: React.FunctionComponent<RedeployDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter>
-          <form onSubmit={handleSubmit}>
-            <Button type="submit" loading={form.processing}>
-              <span>Redeploy</span>
-            </Button>
-          </form>
-        </DialogFooter>
+        <form className="px-6" onSubmit={handleSubmit}>
+          <Button type="submit" loading={form.processing}>
+            <span>Redeploy</span>
+          </Button>
+        </form>
       </DialogContent>
     </Dialog>
   )

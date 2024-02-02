@@ -1,9 +1,18 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, belongsTo, column, computed } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  afterCreate,
+  beforeCreate,
+  beforeDelete,
+  belongsTo,
+  column,
+  computed,
+} from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
 import Project from './project.js'
+import emitter from '@adonisjs/core/services/emitter'
 
 export default class Database extends BaseModel {
   /**
@@ -55,6 +64,16 @@ export default class Database extends BaseModel {
       slug += '-' + generateRandomWord({ exactly: 1 })
     }
     database.slug = slug
+  }
+
+  @afterCreate()
+  static async emitCreatedEvent(database: Database) {
+    emitter.emit('databases:created', database)
+  }
+
+  @beforeDelete()
+  static async emitDeletedEvent(database: Database) {
+    emitter.emit('databases:deleted', database)
   }
 
   /**

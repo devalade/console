@@ -3,7 +3,6 @@ import Project from '#models/project'
 import env from '#start/env'
 import { createDatabaseValidator } from '#validators/create_database_validator'
 import type { HttpContext } from '@adonisjs/core/http'
-import emitter from '@adonisjs/core/services/emitter'
 
 export default class DatabasesController {
   @bindProject
@@ -19,15 +18,13 @@ export default class DatabasesController {
 
     const wildcardDomain = env.get('TRAEFIK_WILDCARD_DOMAIN', 'softwarecitadel.app')
 
-    const database = await project.related('databases').create({
+    await project.related('databases').create({
       name: payload.name,
       dbms: payload.dbms,
       username: payload.username,
       password: payload.password,
       host: `${project.slug}.${wildcardDomain}`,
     })
-
-    emitter.emit('databases:created', database)
 
     return response.redirect().back()
   }
@@ -40,8 +37,6 @@ export default class DatabasesController {
       .where('slug', params.databaseSlug)
       .firstOrFail()
     await database.delete()
-
-    emitter.emit('databases:deleted', database)
 
     return response.redirect().back()
   }

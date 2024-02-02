@@ -18,3 +18,28 @@ Software Citadel Console consists in a PaaS (Platform as a Service) that allows 
 - [PostgreSQL](https://www.postgresql.org/) - A relational database management system
 - [Redis](https://redis.io/) - An in-memory data structure store
 - [Resend](https://resend.com) - A transactional email service
+
+## Development Setup
+
+### Requirements
+
+- [Node.js](https://nodejs.org/) - JavaScript runtime
+- [npm](https://www.npmjs.com/) - Node.js package manager
+- [Docker](https://www.docker.com/) - A containerization platform
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/software-citadel/console.git
+cd console
+
+# Install dependencies
+npm install
+
+# Create a .env file
+node ace install
+
+# Start the development server
+npm run dev
+```
