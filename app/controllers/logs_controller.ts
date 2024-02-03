@@ -16,7 +16,7 @@ export default class LogsController {
 
     const scope = ctx.request.qs().scope === 'builder' ? 'builder' : 'application'
 
-    const driver = await Driver.getDriver()
+    const driver = Driver.getDriver()
     await driver.applications.streamLogs(application, ctx.response, scope)
 
     ctx.response.response.on('close', () => {

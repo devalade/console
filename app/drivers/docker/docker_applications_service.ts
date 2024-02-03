@@ -2,6 +2,7 @@ import { IDriverApplicationsService } from '#drivers/idriver'
 import Application from '#models/application'
 import { Docker } from 'node-docker-api'
 import type { Response } from '@adonisjs/core/http'
+import { CertificateStatus } from '#models/certificate'
 
 export default class DockerApplicationsService implements IDriverApplicationsService {
   constructor(private readonly docker: Docker) {}
@@ -51,4 +52,12 @@ export default class DockerApplicationsService implements IDriverApplicationsSer
       response.response.flushHeaders()
     })
   }
+
+  createCertificate(application: Application, hostname: string): void | Promise<void> {}
+
+  checkDnsConfiguration(application: Application, hostname: string): CertificateStatus {
+    return 'unconfigured'
+  }
+
+  deleteCertificate(application: Application, hostname: string): void | Promise<void> {}
 }

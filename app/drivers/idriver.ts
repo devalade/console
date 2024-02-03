@@ -19,6 +19,12 @@ export interface IDriverApplicationsService {
     response: Response,
     scope: 'application' | 'builder'
   ): void | Promise<void>
+  createCertificate(application: Application, hostname: string): void | Promise<void>
+  checkDnsConfiguration(
+    application: Application,
+    hostname: string
+  ): 'unconfigured' | 'pending' | 'configured' | Promise<'unconfigured' | 'pending' | 'configured'>
+  deleteCertificate(application: Application, hostname: string): void | Promise<void>
 }
 
 export interface IDriverDatabasesService {

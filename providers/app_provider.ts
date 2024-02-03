@@ -7,7 +7,7 @@ export default class AppProvider {
   async boot() {
     await import('../src/extensions.js')
 
-    const driver = await Driver.getDriver()
+    const driver = Driver.getDriver()
     await driver.initializeDriver()
   }
 }

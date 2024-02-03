@@ -11,7 +11,7 @@ export default class DockerEventsHandler {
       .where('status', 'building')
       .orderBy('created_at', 'desc')
       .firstOrFail()
-    const driver = await Driver.getDriver()
+    const driver = Driver.getDriver()
     await driver.deployments.igniteApplication(application, latestDeploymentWithBuildingStatus)
   }
 

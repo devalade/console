@@ -1,16 +1,16 @@
 import env from '#start/env'
 import IDriver from './idriver.js'
+import DockerDriver from './docker/docker_driver.js'
+import FlyDriver from '../drivers/fly/fly_driver.js'
 
 export default class Driver {
-  static async getDriver(): Promise<IDriver> {
+  static getDriver(): IDriver {
     let driver: IDriver
     switch (env.get('DRIVER')) {
       case 'docker':
-        const DockerDriver = (await import('./docker/docker_driver.js')).default
         driver = new DockerDriver()
         break
       case 'fly':
-        const FlyDriver = (await import('../drivers/fly/fly_driver.js')).default
         driver = new FlyDriver()
         break
     }

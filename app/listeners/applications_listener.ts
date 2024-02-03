@@ -3,12 +3,12 @@ import Application from '#models/application'
 
 export default class ApplicationsListener {
   async onCreated(application: Application) {
-    const driver = await Driver.getDriver()
+    const driver = Driver.getDriver()
     await driver.applications.createApplication(application)
   }
 
   async onDeleted(application: Application) {
-    const driver = await Driver.getDriver()
+    const driver = Driver.getDriver()
     await driver.applications.deleteApplication(application)
   }
 }

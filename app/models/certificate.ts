@@ -37,3 +37,5 @@ export default class Certificate extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 }
+
+export type CertificateStatus = 'unconfigured' | 'pending' | 'configured'
