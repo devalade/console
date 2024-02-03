@@ -6,6 +6,7 @@ import React from 'react'
 import slugify from '@/lib/slugify'
 import type { Project } from '@/concerns/projects/types/project'
 import { useForm } from '@inertiajs/react'
+import PasswordField from '@/components/password_field'
 
 export type CreateDatabaseDialogProps = {
   project: Project
@@ -101,17 +102,16 @@ export default function CreateDatabaseDialog({
                     />
                   </div>
                 )}
-                <div className="grid gap-1">
-                  <Label>Database Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Database Password"
-                    value={form.data.password}
-                    onChange={(e) => form.setData('password', e.target.value)}
-                    required
-                  />
-                </div>
+                <PasswordField
+                  label="Database Password"
+                  divClassName="grid gap-1"
+                  id="password"
+                  placeholder="Database Password"
+                  value={form.data.password}
+                  onChange={(e) => form.setData('password', e.target.value)}
+                  required
+                  autogenerate
+                />
               </div>
             )}
           </main>
