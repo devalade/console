@@ -48,7 +48,7 @@ export default class DockerApplicationsService implements IDriverApplicationsSer
       const firstSpaceIdx = data.indexOf(' ')
       const timestamp = data.substring(firstNumberIdx, firstSpaceIdx)
       const message = data.substring(firstSpaceIdx + 1)
-      response.response.write(`data: ${timestamp} ${message}\n\n`)
+      response.response.write(`data: ${timestamp} | ${message}\n\n`)
       response.response.flushHeaders()
     })
   }
