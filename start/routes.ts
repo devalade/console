@@ -8,7 +8,7 @@
 */
 
 import ForgotPasswordController from '#controllers/auth/forgot_password_controller'
-import GithubController from '#controllers/auth/github_controller'
+import AuthGithubController from '#controllers/auth/github_controller'
 import ResetPasswordController from '#controllers/auth/reset_password_controller'
 import SignInController from '#controllers/auth/sign_in_controller'
 import SignUpController from '#controllers/auth/sign_up_controller'
@@ -24,6 +24,9 @@ import EnvironmentVariablesController from '#controllers/environment_variables_c
 import CertificatesController from '#controllers/certificates_controller'
 import LogsController from '#controllers/logs_controller'
 import DeploymentsController from '#controllers/deployments_controller'
+import GitHubDeploymentsController from '#controllers/github_deployments_controller'
+import GitHubController from '#controllers/github_controller'
+import FlyWebhooksController from '#drivers/fly/fly_logs_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -52,8 +55,8 @@ router.post('/auth/sign_out', [SignOutController, 'handle'])
 /**
  * Github authentication.
  */
-router.get('/auth/github/redirect', [GithubController, 'redirect'])
-router.get('/auth/github/callback', [GithubController, 'callback'])
+router.get('/auth/github/redirect', [AuthGithubController, 'redirect'])
+router.get('/auth/github/callback', [AuthGithubController, 'callback'])
 
 /**
  * CLI authentication.
@@ -140,12 +143,6 @@ router
   ])
   .use(middleware.auth())
 router
-  .post('/projects/:projectSlug/applications/:applicationSlug/certificates/:id/check', [
-    CertificatesController,
-    'check',
-  ])
-  .use(middleware.auth())
-router
   .delete('/projects/:projectSlug/applications/:applicationSlug/certificates/:id', [
     CertificatesController,
     'destroy',
@@ -186,3 +183,22 @@ router
     'streamUpdates',
   ])
   .use([middleware.auth({ guards: ['web', 'api'] })])
+
+/**
+ * GitHub-related routes.
+ */
+router
+  .group(() => {
+    router.get('/repositories', [GitHubController, 'listRepositories'])
+    router.get('/repositories/stream', [GitHubController, 'streamRepositoriesListUpdate'])
+    router.get('/:applicationSlug/branches', [GitHubController, 'listBranches'])
+
+    router.post('/webhooks', [GitHubDeploymentsController, 'handleWebhooks'])
+  })
+  .prefix('/api/github')
+  .use(middleware.auth({ guards: ['api', 'web'] }))
+
+/**
+ * Fly webhooks (in order to retrieve logs)
+ */
+router.post('/fly/webhooks/logs', [FlyWebhooksController, 'handleIncomingLogs'])

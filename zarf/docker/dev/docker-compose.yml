@@ -28,19 +28,31 @@ services:
       - '8080:8080'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - './letsencrypt:/letsencrypt'
+      - 'citadel_traefik:/letsencrypt'
     networks:
       - traefik
 
-  # whoami:
-  #   image: traefik/whoami
-  #   labels:
-  #     - 'traefik.enable=true'
-  #     - 'traefik.http.routers.whoami.rule=Host(`whoami.softwarecitadel.app`)'
-  #     - 'traefik.http.routers.whoami.entrypoints=websecure'
-  #     - 'traefik.http.routers.whoami.tls.certresolver=myresolver'
-  #   networks:
-  #     - traefik
+  whoami:
+    image: traefik/whoami
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.whoami.rule=Host(`whoami.softwarecitadel.app`)'
+      - 'traefik.http.routers.whoami.entrypoints=websecure'
+      - 'traefik.http.routers.whoami.tls.certresolver=myresolver'
+    networks:
+      - traefik
+   
+  minio:
+    image: 'minio/minio:latest'
+    ports:
+      - '${MINIO_PORT:-9000}:9000'
+      - '${MINIO_CONSOLE_PORT:-8900}:8900'
+    environment:
+      MINIO_ROOT_USER: 'console'
+      MINIO_ROOT_PASSWORD: 'consoleconsole'
+    volumes:
+      - 'citadel_minio:/data/minio'
+    command: minio server /data/minio --console-address ":8900"
 
   redis:
     image: redis:6.2
@@ -52,10 +64,14 @@ services:
     ports:
       - '5000:5000'
     volumes:
-      - './registry:/var/lib/registry'
+      - 'citadel_registry:/var/lib/registry'
 
 volumes:
   citadel_postgres:
+  citadel_traefik:
+  citadel_registry:
+  citadel_minio:
 
 networks:
   traefik:
+    name: traefik

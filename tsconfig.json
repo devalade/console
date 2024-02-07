@@ -9,6 +9,7 @@
       "#controllers/*": ["./app/controllers/*.js"],
       "#exceptions/*": ["./app/exceptions/*.js"],
       "#models/*": ["./app/models/*.js"],
+      "#types/*": ["./types/*.js"],
       "#drivers/*": ["./app/drivers/*.js"],
       "#decorators/*": ["./app/decorators/*.js"],
       "#mails/*": ["./app/mails/*.js"],
@@ -23,9 +24,9 @@
       "#database/*": ["./database/*.js"],
       "#tests/*": ["./tests/*.js"],
       "#start/*": ["./start/*.js"],
-      "#config/*": ["./config/*.js"],
-    },
+      "#config/*": ["./config/*.js"]
+    }
   },
   "include": ["./**/*"],
-  "exclude": ["./resources/**/*", "!**/*_email.tsx"],
+  "exclude": ["./resources/**/*", "!**/*_email.tsx"]
 }

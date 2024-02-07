@@ -40,9 +40,20 @@ export default class Application extends BaseModel {
   declare ipv6: string | null
 
   /**
+   * GitHub-related columns.
+   */
+  @column()
+  declare githubRepository: string | null
+
+  @column()
+  declare githubBranch: string | null
+
+  @column()
+  declare githubInstallationId: number | null
+
+  /**
    * Relationships.
    */
-
   @belongsTo(() => Project)
   declare project: BelongsTo<typeof Project>
 

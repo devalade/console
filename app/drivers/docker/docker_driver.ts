@@ -5,6 +5,7 @@ import DockerDatabasesService from './docker_databases_service.js'
 import DockerApplicationsService from './docker_applications_service.js'
 import DockerDeploymentsService from './docker_deployments_service.js'
 import DockerEventsWatcher from './docker_events_watcher.js'
+import { publicIpv4 } from 'public-ip'
 
 export default class DockerDriver implements IDriver {
   private readonly docker: Docker
@@ -12,6 +13,8 @@ export default class DockerDriver implements IDriver {
   public applications: DockerApplicationsService
   public databases: DockerDatabasesService
   public deployments: DockerDeploymentsService
+
+  public ipv4: string = '0.0.0.0'
 
   constructor() {
     this.docker = new Docker({
@@ -40,8 +43,26 @@ export default class DockerDriver implements IDriver {
     }
   }
 
+  private async prepareBuilderImage() {
+    const image = env.get('BUILDER_IMAGE', 'softwarecitadel/builder')
+
+    const images = await this.docker.image.list({
+      all: true,
+      filters: {
+        reference: [image],
+      },
+    })
+    if (images.length === 0) {
+      await this.docker.image.create({}, { fromImage: image })
+    }
+  }
+
   async initializeDriver() {
     await this.initializeSwarmIfNotInitialized()
+
+    await this.prepareBuilderImage()
+
+    this.ipv4 = env.get('IPV4', await publicIpv4())
 
     const dockerEventsWatcher = new DockerEventsWatcher(this.docker)
     dockerEventsWatcher.watchEvents()

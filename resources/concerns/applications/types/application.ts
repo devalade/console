@@ -6,4 +6,6 @@ export type Application = {
   slug: string
   environmentVariables: Record<string, string>
   certificates?: Array<Certificate>
+  githubBranch?: string
+  githubRepository?: string
 }

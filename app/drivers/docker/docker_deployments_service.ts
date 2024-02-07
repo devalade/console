@@ -33,10 +33,24 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
     deployment.status = DeploymentStatus.Deploying
     await deployment.save()
 
+    await this.igniteContainerForApplication(application)
+
+    deployment.status = DeploymentStatus.Success
+    await deployment.save()
+  }
+
+  async igniteContainerForApplication(application: Application) {
+    await application.load('certificates')
     const configuration =
       this.dockerDeploymentsConfigurationBuilder.prepareContainerConfiguration(application)
-
-    await this.docker.image.create({}, { fromImage: configuration.Image })
+    const promisifyStream = (stream: any) =>
+      new Promise((resolve, reject) => {
+        stream.on('end', resolve)
+        stream.on('error', reject)
+      })
+    await this.docker.image
+      .create({}, { fromImage: configuration.Image })
+      .then((stream) => promisifyStream(stream))
 
     const containerAlreadyExists = await this.docker.container.list({
       all: true,
@@ -51,8 +65,9 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
     const container = await this.docker.container.create(configuration)
 
     await container.start()
+  }
 
-    deployment.status = DeploymentStatus.Success
-    await deployment.save()
+  shouldMonitorHealthcheck(_application: Application, _deployment: Deployment) {
+    return false
   }
 }

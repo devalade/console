@@ -17,8 +17,29 @@ export default class Deployment extends BaseModel {
   @column()
   declare status: DeploymentStatus
 
+  /**
+   * GitHub-related fields.
+   */
   @column()
-  declare archiveName: string
+  declare githubCheckId: number | null
+
+  @column()
+  declare commitSha: string | null
+
+  @column()
+  declare commitMessage: string | null
+
+  /**
+   * Fly.io-related fields.
+   */
+  @column()
+  declare currentFlyMachineId: string | null
+
+  @column()
+  declare currentFlyMachineBuilderId: string | null
+
+  @column()
+  declare previousFlyMachineId: string | null
 
   /**
    * Relationships.

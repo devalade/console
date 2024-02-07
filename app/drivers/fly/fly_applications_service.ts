@@ -4,7 +4,8 @@ import type { IDriverApplicationsService } from '#drivers/idriver'
 import env from '#start/env'
 import FlyApi from './api/fly_api.js'
 import { AddressType } from './api/fly_networks_api.js'
-import { CertificateStatus } from '#models/certificate'
+import Certificate, { CertificateStatus } from '#models/certificate'
+import { DnsEntries } from '#types/dns'
 
 export default class FlyApplicationsService implements IDriverApplicationsService {
   private readonly flyApi: FlyApi = new FlyApi()
@@ -43,13 +44,17 @@ export default class FlyApplicationsService implements IDriverApplicationsServic
 
   streamLogs(_application: Application, _response: Response, _scope: 'application' | 'builder') {}
 
-  async createCertificate(application: Application, hostname: string) {
+  async createCertificate(application: Application, hostname: string): Promise<DnsEntries> {
     const appId = this.flyApi.getFlyApplicationName(application.slug)
     await this.flyApi.certificates.addCertificate(appId, hostname)
+    return []
   }
 
-  checkDnsConfiguration(application: Application, hostname: string): Promise<CertificateStatus> {
-    return this.flyApi.certificates.checkCertificate(application, hostname)
+  checkDnsConfiguration(
+    application: Application,
+    certificate: Certificate
+  ): Promise<CertificateStatus> {
+    return this.flyApi.certificates.checkCertificate(application, certificate.domain)
   }
 
   async deleteCertificate(application: Application, hostname: string) {

@@ -57,13 +57,20 @@ export default class DockerDeploymentsConfigurationBuilder {
       return {}
     }
 
+    let host = `Host(\`${application.slug}.${env.get('TRAEFIK_WILDCARD_DOMAIN', 'softwarecitadel.app')}\``
+    for (const certificate of application.certificates) {
+      host += `,\`${certificate.domain}\``
+    }
+    host += ')'
+
     return {
       'traefik.enable': 'true',
-      [`traefik.http.routers.${application.slug}.rule`]: `Host(\`${application.slug}.${env.get('TRAEFIK_WILDCARD_DOMAIN')}\`)`,
+      [`traefik.http.routers.${application.slug}.rule`]: host,
       [`traefik.http.routers.${application.slug}.entrypoints`]: 'websecure',
       [`traefik.http.routers.${application.slug}.tls.certresolver`]: 'myresolver',
       [`traefik.http.services.${application.slug}.loadbalancer.server.port`]:
         application.environmentVariables.PORT,
+      [`traefik.http.routers.${application.slug}.tls`]: 'true',
     }
   }
 }

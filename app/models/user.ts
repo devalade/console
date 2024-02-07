@@ -36,8 +36,14 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare password: string | null
 
+  /**
+   * Github-related fields.
+   */
   @column()
   declare githubId: string | null
+
+  @column({ prepare: (value: any) => (value ? JSON.stringify(value) : []) })
+  declare githubInstallationIds: number[]
 
   /**
    * Relationships.

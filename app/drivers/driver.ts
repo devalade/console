@@ -4,16 +4,21 @@ import DockerDriver from './docker/docker_driver.js'
 import FlyDriver from '../drivers/fly/fly_driver.js'
 
 export default class Driver {
+  static driver: IDriver
+
   static getDriver(): IDriver {
-    let driver: IDriver
+    if (this.driver) {
+      return this.driver
+    }
+
     switch (env.get('DRIVER')) {
       case 'docker':
-        driver = new DockerDriver()
+        this.driver = new DockerDriver()
         break
       case 'fly':
-        driver = new FlyDriver()
+        this.driver = new FlyDriver()
         break
     }
-    return driver
+    return this.driver
   }
 }

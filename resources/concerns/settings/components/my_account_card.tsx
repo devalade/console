@@ -13,7 +13,7 @@ export default function MyAccountCard() {
 
   const form = useForm({
     email: user.email,
-    fullName: user.full_name,
+    fullName: user.fullName,
     newPassword: '',
     confirmPassword: '',
   })

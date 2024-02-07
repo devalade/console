@@ -20,6 +20,9 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
 }) => {
   const form = useForm({
     name: '',
+    githubRepository: '',
+    githubBranch: '',
+    githubInstallationId: 0,
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

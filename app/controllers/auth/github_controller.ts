@@ -1,7 +1,7 @@
 import User from '#models/user'
 import type { HttpContext } from '@adonisjs/core/http'
 
-export default class GithubController {
+export default class AuthGithubController {
   async redirect({ ally }: HttpContext) {
     return ally.use('github').redirect()
   }

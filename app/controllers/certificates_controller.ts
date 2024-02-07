@@ -38,11 +38,11 @@ export default class CertificatesController {
         applicationId: application.id,
       },
     })
-
-    const certificate = await application.related('certificates').create({ domain })
+    const certificate = await application.related('certificates').create({ domain, dnsEntries: [] })
     await certificate.save()
 
-    await this.driver.applications.createCertificate(application, domain)
+    certificate.dnsEntries = await this.driver.applications.createCertificate(application, domain)
+    await certificate.save()
 
     if (request.wantsJSON()) {
       return { domain }
@@ -62,13 +62,10 @@ export default class CertificatesController {
     const certificate = await application
       .related('certificates')
       .query()
-      .where('id', params.id)
+      .where('domain', params.domain)
       .firstOrFail()
 
-    const status = await this.driver.applications.checkDnsConfiguration(
-      application,
-      certificate.domain
-    )
+    const status = await this.driver.applications.checkDnsConfiguration(application, certificate)
 
     if (status !== certificate.status) {
       certificate.status = status
@@ -92,6 +89,8 @@ export default class CertificatesController {
       .where('id', params.id)
       .firstOrFail()
     await certificate.delete()
+
+    await application.load('certificates')
 
     await this.driver.applications.deleteCertificate(application, certificate.domain)
 

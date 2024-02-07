@@ -11,6 +11,7 @@ export default class DockerDatabasesConfigurationBuilder {
         },
       },
       EndpointSpec: this.prepareEndpointSpec(database),
+      Labels: this.prepareLabels(database),
     }
   }
 
@@ -55,7 +56,7 @@ export default class DockerDatabasesConfigurationBuilder {
     switch (database.dbms) {
       case 'postgres':
         return {
-          Ports: [
+          ExposedPorts: [
             {
               Protocol: 'tcp',
               TargetPort: 5432,
@@ -65,7 +66,7 @@ export default class DockerDatabasesConfigurationBuilder {
         }
       case 'mysql':
         return {
-          Ports: [
+          ExposedPorts: [
             {
               Protocol: 'tcp',
               TargetPort: 3306,
@@ -75,7 +76,7 @@ export default class DockerDatabasesConfigurationBuilder {
         }
       case 'redis':
         return {
-          Ports: [
+          ExposedPorts: [
             {
               Protocol: 'tcp',
               TargetPort: 6379,
@@ -84,5 +85,9 @@ export default class DockerDatabasesConfigurationBuilder {
           ],
         }
     }
+  }
+
+  private prepareLabels(database: Database) {
+    return {}
   }
 }

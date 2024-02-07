@@ -22,8 +22,14 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   DRIVER: Env.schema.enum(['docker', 'fly'] as const),
 
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring the Fly.io driver
+  |----------------------------------------------------------
+  */
   FLY_ORG: Env.schema.string.optional(),
   FLY_TOKEN: Env.schema.string.optional(),
+  FLY_WEBHOOK_SECRET: Env.schema.string.optional(),
 
   DOCKER_SOCKET_PATH: Env.schema.string.optional(),
   TRAEFIK_WILDCARD_DOMAIN: Env.schema.string.optional(),
@@ -82,4 +88,13 @@ export default await Env.create(new URL('../', import.meta.url), {
   S3_REGION: Env.schema.string(),
   S3_ACCESS_KEY: Env.schema.string(),
   S3_SECRET_KEY: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for GitHub-based deployments
+  |----------------------------------------------------------
+  */
+  GITHUB_APP_ID: Env.schema.number.optional(),
+  GITHUB_APP_PRIVATE_KEY: Env.schema.string.optional(),
+  GITHUB_APP_WEBHOOK_SECRET: Env.schema.string.optional(),
 })

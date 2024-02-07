@@ -43,3 +43,34 @@ node ace install
 # Start the development server
 npm run dev
 ```
+
+### Fly.io Setup
+
+### Requirements
+
+- [Fly.io](https://fly.io/) - A Fly.io account with a registered billing card
+- [Flyctl](https://fly.io/docs/getting-started/installing-flyctl/) - The Fly.io CLI
+
+### Set up the database
+
+TO BE WRITTEN
+
+### Deploy the application
+
+TO BE WRITTEN
+
+### Set up the logs shipper
+
+```bash
+# Create a new directory for the logs shipper
+mkdir logshippper
+cd logshippper
+
+# Don't deploy just yet. We need to set up the secrets first.
+fly launch --image ghcr.io/superfly/fly-log-shipper:latest
+
+# Let's set up the secrets
+fly secrets set ORG=personal # Replace with something else if you're using some organization
+fly secrets set HTTP_URL=<your_hostname>/fly/webhooks/logs
+fly secrets set HTTP_TOKEN=<replace_this_with_your_http_bearer>
+```

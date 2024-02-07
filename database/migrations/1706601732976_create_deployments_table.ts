@@ -18,7 +18,17 @@ export default class extends BaseSchema {
         ])
         .notNullable()
         .defaultTo('building')
-      table.enum('origin', ['cli', 'github']).notNullable()
+      table.enum('origin', ['cli', 'github', 'redeploy']).notNullable()
+
+      // GitHub-related fields.
+      table.integer('github_check_id').nullable()
+      table.string('commit_sha').nullable()
+      table.string('commit_message').nullable()
+
+      // Fly.io-related fields.
+      table.string('current_fly_machine_id').nullable()
+      table.string('current_fly_machine_builder_id').nullable()
+      table.string('previous_fly_machine_id').nullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

@@ -10,8 +10,15 @@ export default class extends BaseSchema {
       table.string('project_id').references('projects.id').onDelete('CASCADE')
       table.string('slug').notNullable().unique()
       table.json('environment_variables').notNullable().defaultTo('{}')
+
+      // Fly-related fields.
       table.string('shared_ipv4').nullable()
       table.string('ipv6').nullable()
+
+      // GitHub-related columns.
+      table.string('github_repository').nullable()
+      table.string('github_branch').nullable()
+      table.integer('github_installation_id').nullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

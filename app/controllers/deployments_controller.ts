@@ -1,14 +1,18 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import emitter from '@adonisjs/core/services/emitter'
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { readFile } from 'fs/promises'
 import bindProjectAndApplication from '#decorators/bind_project_and_application'
 import Application from '#models/application'
 import Deployment, { DeploymentStatus } from '#models/deployment'
 import Project from '#models/project'
-import env from '#start/env'
+import Driver from '#drivers/driver'
+import { inject } from '@adonisjs/core'
+import CodeArchiveUploaderService from '#services/code_archive_uploader_service'
 
+@inject()
 export default class DeploymentsController {
+  constructor(private codeArchiveUploaderService: CodeArchiveUploaderService) {}
+
   @bindProjectAndApplication
   async index({ inertia }: HttpContext, project: Project, application: Application) {
     const deployments = await application
@@ -29,32 +33,22 @@ export default class DeploymentsController {
       return response.badRequest('No file uploaded.')
     }
 
-    const s3Client = new S3Client({
-      endpoint: env.get('S3_ENDPOINT'),
-      region: env.get('S3_REGION'),
-      credentials: {
-        accessKeyId: env.get('S3_ACCESS_KEY'),
-        secretAccessKey: env.get('S3_SECRET_KEY'),
-      },
-    })
-
     const fileToUploadToS3 = await readFile(tarball.tmpPath!)
+    await this.codeArchiveUploaderService.upload(application, fileToUploadToS3)
 
-    await s3Client.send(
-      new PutObjectCommand({
-        Bucket: env.get('S3_BUCKET'),
-        Key: `${application.slug}.tar.gz`,
-        Body: fileToUploadToS3,
-      })
-    )
-
-    await application
+    const deployment = await application
       .related('deployments')
       .create({ origin: 'cli', status: DeploymentStatus.Building })
 
+    const driver = Driver.getDriver()
+    const shouldMonitorHealthcheck = driver.deployments.shouldMonitorHealthcheck(
+      application,
+      deployment
+    )
+
     return {
       message: 'Igniting deployment...',
-      healthcheck: !!application.environmentVariables.PORT,
+      healthcheck: shouldMonitorHealthcheck,
     }
   }
 

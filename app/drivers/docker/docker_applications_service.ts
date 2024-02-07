@@ -2,15 +2,33 @@ import { IDriverApplicationsService } from '#drivers/idriver'
 import Application from '#models/application'
 import { Docker } from 'node-docker-api'
 import type { Response } from '@adonisjs/core/http'
-import { CertificateStatus } from '#models/certificate'
+import Certificate, { CertificateStatus } from '#models/certificate'
+import emitter from '@adonisjs/core/services/emitter'
+import Deployment, { DeploymentStatus } from '#models/deployment'
+import { DnsEntries } from '#types/dns'
+import Driver from '#drivers/driver'
+import DockerDriver from './docker_driver.js'
+import dns from 'dns/promises'
 
 export default class DockerApplicationsService implements IDriverApplicationsService {
   constructor(private readonly docker: Docker) {}
 
   createApplication(_application: Application): void | Promise<void> {}
 
-  deleteApplication(_application: Application): void | Promise<void> {
-    // TODO: Delete all containers related to this application
+  async deleteApplication(application: Application) {
+    try {
+      const container = this.docker.container.get(application.slug)
+      await container.delete({ force: true })
+    } catch (error) {
+      console.error(`[DockerApplicationsService] Error deleting container: ${error.message}`)
+    }
+
+    try {
+      const container = this.docker.container.get(application.slug + '-builder')
+      await container.delete({ force: true })
+    } catch (error) {
+      console.error(`[DockerApplicationsService] Error deleting container: ${error.message}`)
+    }
   }
 
   async streamLogs(application: Application, response: Response, scope: 'application' | 'builder') {
@@ -48,16 +66,70 @@ export default class DockerApplicationsService implements IDriverApplicationsSer
       const firstSpaceIdx = data.indexOf(' ')
       const timestamp = data.substring(firstNumberIdx, firstSpaceIdx)
       const message = data.substring(firstSpaceIdx + 1)
+      if (!timestamp.trim() || !message.trim()) {
+        return
+      }
       response.response.write(`data: ${timestamp} | ${message}\n\n`)
+      response.response.flushHeaders()
+    })
+
+    emitter.on(`deployments:updated:${application.slug}`, (deployment: Deployment) => {
+      if (
+        deployment.status !== DeploymentStatus.Deploying &&
+        deployment.status !== DeploymentStatus.BuildFailed
+      ) {
+        return
+      }
+      const timestamp = deployment.updatedAt.toISO()
+      const message = `${timestamp} | ${deployment.status === DeploymentStatus.Deploying ? 'Deployment successful' : 'Deployment failed'}`
+      response.response.write(`data: ${message}\n\n`)
       response.response.flushHeaders()
     })
   }
 
-  createCertificate(application: Application, hostname: string): void | Promise<void> {}
-
-  checkDnsConfiguration(application: Application, hostname: string): CertificateStatus {
-    return 'unconfigured'
+  private async updateContainerForCertificateUpdate(application: Application) {
+    /*
+     * Docker does not allow to update labels to a running container.
+     * We need to stop the container, update the labels and start it again.
+     * Without this trick, Traefik will not be able to pick up the new certificate.
+     */
+    const driver = Driver.getDriver() as DockerDriver
+    await driver.deployments.igniteContainerForApplication(application)
   }
 
-  deleteCertificate(application: Application, hostname: string): void | Promise<void> {}
+  async createCertificate(application: Application, hostname: string): Promise<DnsEntries> {
+    await this.updateContainerForCertificateUpdate(application)
+
+    const driver = Driver.getDriver() as DockerDriver
+
+    return [
+      {
+        type: 'A',
+        name: hostname,
+        value: driver.ipv4,
+      },
+    ]
+  }
+
+  async checkDnsConfiguration(
+    _application: Application,
+    certificate: Certificate
+  ): Promise<CertificateStatus> {
+    try {
+      const dnsRecords = await dns.resolve4(certificate.domain)
+      for (const dnsRecord of dnsRecords) {
+        if (dnsRecord === (Driver.getDriver() as DockerDriver).ipv4) {
+          return 'configured'
+        }
+      }
+
+      return 'unconfigured'
+    } catch (error) {
+      return 'unconfigured'
+    }
+  }
+
+  async deleteCertificate(application: Application, _hostname: string) {
+    await this.updateContainerForCertificateUpdate(application)
+  }
 }

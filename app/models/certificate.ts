@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import Application from './application.js'
 import { type BelongsTo } from '@adonisjs/lucid/types/relations'
+import type { DnsEntries } from '#types/dns'
 
 export default class Certificate extends BaseModel {
   /**
@@ -16,8 +17,10 @@ export default class Certificate extends BaseModel {
   @column()
   declare status: 'unconfigured' | 'pending' | 'configured'
 
-  @column()
-  declare dnsEntries: Array<{ type: string; name: string; value: string }>
+  @column({
+    prepare: (value: DnsEntries) => JSON.stringify(value),
+  })
+  declare dnsEntries: DnsEntries
 
   /**
    * Relationships.
