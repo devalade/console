@@ -7,6 +7,7 @@ import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
 import Database from './database.js'
 import { cuid } from '@adonisjs/core/helpers'
+import KanbanBoard from './kanban_board.js'
 
 export default class Project extends BaseModel {
   /**
@@ -36,6 +37,9 @@ export default class Project extends BaseModel {
 
   @hasMany(() => Database)
   declare databases: HasMany<typeof Database>
+
+  @hasMany(() => KanbanBoard)
+  declare kanbanBoards: HasMany<typeof KanbanBoard>
 
   /**
    * Hooks.

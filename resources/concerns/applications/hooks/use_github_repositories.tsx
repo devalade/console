@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { stardust } from '@eidellev/adonis-stardust/client'
-import {
+import type {
+  GithubRepositoryOwnersRecord,
+  GithubRepositoryOwner,
   GithubRepositoriesRecord,
   GithubRepository,
-  GithubRepositoryOwner,
-  GithubRepositoryOwnersRecord,
-} from 'App/Types/GithubRepository'
+} from '~/types/github_repository'
 
 export default function useGitHubRepositories() {
   const [owners, setOwners] = useState<GithubRepositoryOwnersRecord | null>(null)
@@ -17,8 +16,7 @@ export default function useGitHubRepositories() {
   useEffect(() => {
     async function loadRepositories() {
       setGithubLoading(true)
-      const url = stardust.route('application.github.listRepositories')
-      const response = await fetch(url)
+      const response = await fetch('/api/github/repositories')
       const data = await response.json()
       const ownersList = Object.values(data.owners).sort((a: any, b: any) =>
         a.name.localeCompare(b.name)
@@ -35,8 +33,7 @@ export default function useGitHubRepositories() {
     }
 
     function listenForUpdates() {
-      const url = stardust.route('github.streamRepositoriesListUpdate')
-      const eventSource = new EventSource(url)
+      const eventSource = new EventSource('/api/github/repositories/stream')
       eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data)

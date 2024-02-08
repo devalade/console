@@ -28,7 +28,10 @@ export default class AuthGithubController {
       user = await User.create({
         email: githubUser.email,
         fullName: githubUser.name,
+        githubId: githubUser.id,
       })
+    } else {
+      user.githubId = githubUser.id
     }
     await auth.use('web').login(user)
 

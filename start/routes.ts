@@ -27,6 +27,9 @@ import DeploymentsController from '#controllers/deployments_controller'
 import GitHubDeploymentsController from '#controllers/github_deployments_controller'
 import GitHubController from '#controllers/github_controller'
 import FlyWebhooksController from '#drivers/fly/fly_logs_controller'
+import KanbanBoardsController from '#controllers/kanban/kanban_boards_controller'
+import KanbanColumnsController from '#controllers/kanban/kanban_columns_controller'
+import KanbanTasksController from '#controllers/kanban/kanban_tasks_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -189,16 +192,47 @@ router
  */
 router
   .group(() => {
-    router.get('/repositories', [GitHubController, 'listRepositories'])
-    router.get('/repositories/stream', [GitHubController, 'streamRepositoriesListUpdate'])
-    router.get('/:applicationSlug/branches', [GitHubController, 'listBranches'])
+    router
+      .get('/repositories', [GitHubController, 'listRepositories'])
+      .use(middleware.auth({ guards: ['api', 'web'] }))
+    router
+      .get('/repositories/stream', [GitHubController, 'streamRepositoriesListUpdate'])
+      .use(middleware.auth({ guards: ['api', 'web'] }))
+    router
+      .get('/:applicationSlug/branches', [GitHubController, 'listBranches'])
+      .use(middleware.auth({ guards: ['api', 'web'] }))
 
     router.post('/webhooks', [GitHubDeploymentsController, 'handleWebhooks'])
   })
   .prefix('/api/github')
-  .use(middleware.auth({ guards: ['api', 'web'] }))
 
 /**
  * Fly webhooks (in order to retrieve logs)
  */
 router.post('/fly/webhooks/logs', [FlyWebhooksController, 'handleIncomingLogs'])
+
+/**
+ * Kanban routes.
+ */
+router
+  .resource('projects.kanban', KanbanBoardsController)
+  .params({ projects: 'projectSlug', kanban: 'kanbanBoardSlug' })
+  .use('*', middleware.auth())
+  .use(['index', 'show', 'edit'], middleware.loadProjects())
+
+router
+  .resource('projects.kanban.columns', KanbanColumnsController)
+  .except(['index', 'show', 'edit'])
+  .params({ projects: 'projectSlug', kanban: 'kanbanBoardSlug', columns: 'kanbanColumnId' })
+  .use('*', middleware.auth())
+
+router
+  .resource('projects.kanban.columns.tasks', KanbanTasksController)
+  .except(['index', 'show', 'edit'])
+  .params({
+    projects: 'projectSlug',
+    kanban: 'kanbanBoardSlug',
+    columns: 'kanbanColumnId',
+    tasks: 'kanbanTaskId',
+  })
+  .use('*', middleware.auth())

@@ -9,7 +9,6 @@ import { IconBrandGithub, IconGitBranch, IconLock } from '@tabler/icons-react'
 interface CreateApplicationDialogGithubStepProps {
   form: ReturnType<
     typeof useForm<{
-      name: string
       githubRepository: string
       githubBranch: string
       githubInstallationId: number
@@ -24,7 +23,7 @@ const CreateApplicationDialogGithubStep: React.FunctionComponent<
     useGitHubRepositories()
   return (
     <div>
-      <div className="border-b border-accent px-6 py-4">
+      <div className="border-b border-accent px-6 pb-4">
         <a
           className="text-blue-700 hover:text-blue-500 transition-colors text-sm cursor-pointer"
           onClick={() => {

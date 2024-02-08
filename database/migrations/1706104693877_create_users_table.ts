@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table.string('email', 254).notNullable().unique()
       table.string('password').nullable()
       table.string('github_id').nullable()
-      table.json('github_installation_ids').nullable()
+      table.json('github_installation_ids').defaultTo('[]')
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()

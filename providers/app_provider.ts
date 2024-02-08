@@ -1,13 +1,16 @@
 import { ApplicationService } from '@adonisjs/core/types'
 import Driver from '#drivers/driver'
+import env from '#start/env'
 
 export default class AppProvider {
   constructor(protected app: ApplicationService) {}
 
   async boot() {
-    await import('../src/extensions.js')
+    await import('../src/macros.js')
 
-    const driver = Driver.getDriver()
-    await driver.initializeDriver()
+    if (env.get('NODE_ENV') !== 'test') {
+      const driver = Driver.getDriver()
+      await driver.initializeDriver()
+    }
   }
 }

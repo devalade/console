@@ -11,15 +11,15 @@ import Label from '@/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select'
 import ConnectGithubRepository from './connect_github_repository'
 
-export type ConnectGitRepositoryCardProps = {
+export type ConnectGitHubRepositoryCardProps = {
   project: Project
   application: Application
 }
 
-export default function ConnectGitRepositoryCard({
+export default function ConnectGitHubRepositoryCard({
   project,
   application,
-}: ConnectGitRepositoryCardProps) {
+}: ConnectGitHubRepositoryCardProps) {
   const form = useForm({ action: 'DISCONNECT_GITHUB' })
   const {
     data,
@@ -27,8 +27,10 @@ export default function ConnectGitRepositoryCard({
     put: sendGithubBranchUpdate,
     processing,
   } = useForm({ action: 'UPDATE', githubBranch: application.githubBranch })
+
   const successToast = useSuccessToast()
   const { branches } = useGitHubBranches(application)
+
   const disconnectGithubRepository = () => {
     form.put(`/projects/${project.slug}/applications/${application.slug}`, {
       onSuccess: successToast,

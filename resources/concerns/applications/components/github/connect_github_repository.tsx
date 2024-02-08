@@ -42,7 +42,7 @@ export default function ConnectGithubRepository({
         </DialogHeader>
 
         <div>
-          <div className={clsx('px-6 py-4', selectedOwner && 'border-b border-accent')}>
+          <div className={clsx('px-6 pb-4', selectedOwner && 'border-b border-accent')}>
             <a
               className="text-blue-700 hover:text-blue-500 transition-colors text-sm cursor-pointer"
               onClick={() => {

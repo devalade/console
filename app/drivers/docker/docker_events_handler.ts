@@ -1,9 +1,8 @@
-import Driver from '#drivers/driver'
 import Application from '#models/application'
-import { DeploymentStatus } from '#models/deployment'
+import emitter from '@adonisjs/core/services/emitter'
 
 export default class DockerEventsHandler {
-  async handleSuccessfulBuild(applicationSlug: string) {
+  async handleSuccessfulBuildEvent(applicationSlug: string) {
     const application = await Application.findByOrFail('slug', applicationSlug)
     const latestDeploymentWithBuildingStatus = await application
       .related('deployments')
@@ -11,11 +10,11 @@ export default class DockerEventsHandler {
       .where('status', 'building')
       .orderBy('created_at', 'desc')
       .firstOrFail()
-    const driver = Driver.getDriver()
-    await driver.deployments.igniteApplication(application, latestDeploymentWithBuildingStatus)
+
+    emitter.emit('builds:success', [application, latestDeploymentWithBuildingStatus])
   }
 
-  async handleFailedBuild(applicationSlug: string) {
+  async handleFailedBuildEvent(applicationSlug: string) {
     const application = await Application.findByOrFail('slug', applicationSlug)
     const latestDeploymentWithBuildingStatus = await application
       .related('deployments')
@@ -23,7 +22,25 @@ export default class DockerEventsHandler {
       .where('status', 'building')
       .orderBy('created_at', 'desc')
       .firstOrFail()
-    latestDeploymentWithBuildingStatus.status = DeploymentStatus.BuildFailed
-    await latestDeploymentWithBuildingStatus.save()
+
+    emitter.emit('builds:failure', [application, latestDeploymentWithBuildingStatus])
+  }
+
+  async handleContainerStartEvent(applicationSlug: string) {
+    /**
+     * We try to find the latest deployment with the "deploying" status.
+     */
+    const application = await Application.findByOrFail('slug', applicationSlug)
+    const latestDeploymentWithStartingStatus = await application
+      .related('deployments')
+      .query()
+      .where('status', 'deploying')
+      .firstOrFail()
+
+    /**
+     * Since there is no healthcheck for the Docker driver (yet),
+     * we consider the deployment as successful as soon as the container starts.
+     */
+    emitter.emit('deployments:success', [application, latestDeploymentWithStartingStatus])
   }
 }

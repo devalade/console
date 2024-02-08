@@ -1,7 +1,7 @@
 import { Docker } from 'node-docker-api'
 import { IDriverDeploymentsService } from '#drivers/idriver'
 import Application from '#models/application'
-import Deployment, { DeploymentStatus } from '#models/deployment'
+import Deployment from '#models/deployment'
 import DockerDeploymentsConfigurationBuilder from './docker_deployments_configuration_builder.js'
 
 export default class DockerDeploymentsService implements IDriverDeploymentsService {
@@ -29,29 +29,41 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
     await container.start()
   }
 
-  async igniteApplication(application: Application, deployment: Deployment) {
-    deployment.status = DeploymentStatus.Deploying
-    await deployment.save()
-
+  async igniteApplication(application: Application, _deployment: Deployment) {
+    console.log('Igniting application...')
     await this.igniteContainerForApplication(application)
-
-    deployment.status = DeploymentStatus.Success
-    await deployment.save()
   }
 
   async igniteContainerForApplication(application: Application) {
+    /**
+     * Loading certificates before building the container
+     * to make sure they are available for the configuration builder.
+     * It allows to prepare labels with the correct host (for Traefik).
+     */
     await application.load('certificates')
+
     const configuration =
       this.dockerDeploymentsConfigurationBuilder.prepareContainerConfiguration(application)
+
+    /**
+     * We pull the image from the registry before creating the container.
+     */
+    console.log('Pulling image...')
     const promisifyStream = (stream: any) =>
       new Promise((resolve, reject) => {
+        stream.on('data', (data: any) => console.log(data.toString()))
         stream.on('end', resolve)
         stream.on('error', reject)
       })
     await this.docker.image
       .create({}, { fromImage: configuration.Image })
       .then((stream) => promisifyStream(stream))
+    console.log('Image pulled')
 
+    /**
+     * We check if the container already exists and delete it if it does.
+     */
+    console.log('Checking if container already exists...')
     const containerAlreadyExists = await this.docker.container.list({
       all: true,
       filters: {
@@ -59,15 +71,24 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
       },
     })
     if (containerAlreadyExists.length > 0) {
+      console.log('Container already exists, deleting it...')
       const container = this.docker.container.get(containerAlreadyExists[0].id)
       await container.delete({ force: true })
     }
-    const container = await this.docker.container.create(configuration)
 
+    /**
+     * Then we create and start the container.
+     */
+    console.log('Creating and starting container...')
+    const container = await this.docker.container.create(configuration)
     await container.start()
+    console.log('Container created and started')
   }
 
   shouldMonitorHealthcheck(_application: Application, _deployment: Deployment) {
+    /**
+     * Docker driver does not support healthchecks (yet).
+     */
     return false
   }
 }

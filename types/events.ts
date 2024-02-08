@@ -12,7 +12,12 @@ declare module '@adonisjs/core/types' {
     'databases:deleted': Database
 
     'deployments:created': [Application, Deployment]
+    'deployments:success': [Application, Deployment]
+    'deployments:failure': [Application, Deployment]
     [key: `deployments:updated:${string}`]: Deployment
+
+    'builds:success': [Application, Deployment]
+    'builds:failure': [Application, Deployment]
 
     [key: `github:installation:${number}`]: User
 

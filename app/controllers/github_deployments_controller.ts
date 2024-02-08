@@ -17,12 +17,13 @@ export default class GitHubDeploymentsController {
   ) {}
 
   async handleWebhooks(ctx: HttpContext) {
-    const isValidEvent = await this.octokitService.checkOctokitEventIsValid(ctx.request)
-    if (!isValidEvent) {
-      return ctx.response.badRequest('Invalid event.')
-    }
+    // const isValidEvent = await this.octokitService.checkOctokitEventIsValid(ctx.request)
+    // if (!isValidEvent) {
+    //   return ctx.response.badRequest('Invalid event.')
+    // }
 
     const webhookType = ctx.request.header('X-GitHub-Event')
+    console.log('webhookType', webhookType)
     switch (webhookType) {
       case 'push':
         return this.handleGithubPushWebhook(ctx)
@@ -81,6 +82,7 @@ export default class GitHubDeploymentsController {
     const githubId = installationEventPayload.sender.id
     const user = await User.findBy('githubId', githubId)
     if (user === null) {
+      console.log('USER NOT FOUND')
       return response.ok('Not handling this event')
     }
 
@@ -94,10 +96,11 @@ export default class GitHubDeploymentsController {
       emitter.emit(`github:installation:${user.id}`, user)
       return response.ok('Not handling this event')
     }
-
+    console.log('INSTALLATION EVENT', installationEventPayload)
+    console.log('ADDING INSTALLATION ID', installationEventPayload.installation.id)
     user.githubInstallationIds.push(installationEventPayload.installation.id)
     emitter.emit(`github:installation:${user.id}`, user)
-
+    console.log('USER', user)
     await user.save()
 
     return response.ok('Github installation handled')

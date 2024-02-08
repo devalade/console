@@ -1,9 +1,10 @@
 import Project from '#models/project'
-import { applicationValidator } from '#validators/application_validator'
+import { createApplicationValidator } from '#validators/create_application_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 import bindProject from '#decorators/bind_project'
 import bindProjectAndApplication from '#decorators/bind_project_and_application'
 import Application from '#models/application'
+import { updateApplicationValidator } from '#validators/update_application_validator'
 
 export default class ApplicationsController {
   @bindProject
@@ -17,7 +18,7 @@ export default class ApplicationsController {
 
   @bindProject
   async store({ request, response }: HttpContext, project: Project) {
-    const payload = await request.validateUsing(applicationValidator)
+    const payload = await request.validateUsing(createApplicationValidator)
 
     const application = await project.related('applications').create(payload)
 
@@ -38,20 +39,19 @@ export default class ApplicationsController {
     return inertia.render('applications/edit', { project, application })
   }
 
-  @bindProject
-  async update({ params, request, response }: HttpContext, project: Project) {
-    const payload = await request.validateUsing(applicationValidator)
+  @bindProjectAndApplication
+  async update({ request, response }: HttpContext, _project: Project, application: Application) {
+    const { action, ...payload } = await request.validateUsing(updateApplicationValidator)
 
-    const application = await project
-      .related('applications')
-      .query()
-      .where('slug', params.applicationSlug)
-      .first()
-    if (!application) {
-      return response.notFound()
+    if (action === 'DISCONNECT_GITHUB') {
+      application.githubRepository = null
+
+      await application.save()
+
+      return response.redirect().back()
+    } else {
+      await application.merge(payload).save()
     }
-
-    await application.merge(payload).save()
 
     return response.redirect().back()
   }

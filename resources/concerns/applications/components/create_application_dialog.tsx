@@ -6,6 +6,8 @@ import type { Project } from '@/concerns/projects/types/project'
 import slugify from '@/lib/slugify'
 import { useForm } from '@inertiajs/react'
 import * as React from 'react'
+import CreateApplicationDialogGithubStep from './create_application_dialog_github_step'
+import CreateApplicationDialogNamingStep from './create_application_naming_step'
 
 interface CreateApplicationDialogProps {
   project: Project
@@ -24,6 +26,7 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
     githubBranch: '',
     githubInstallationId: 0,
   })
+  const [currentStep, setCurrentStep] = React.useState(1)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -42,24 +45,34 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4 px-6 pt-0">
-            <div className="grid gap-1">
-              <Label>Application Name</Label>
+          {currentStep === 1 && <CreateApplicationDialogNamingStep form={form} />}
+          {currentStep === 2 && <CreateApplicationDialogGithubStep form={form} />}
 
-              <Input
-                id="name"
-                className="!col-span-3 w-full"
-                value={form.data.name}
-                placeholder="webapp"
-                onChange={(e) => form.setData('name', slugify(e.target.value))}
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button type="submit" loading={form.processing}>
-              <span>Create new application</span>
-            </Button>
+          <DialogFooter className="justify-between space-x-2">
+            {currentStep === 1 && (
+              <Button
+                className="!ml-auto"
+                variant="outline"
+                type="button"
+                onClick={() => setCurrentStep(2)}
+              >
+                <span>Next</span>
+              </Button>
+            )}
+            {currentStep === 2 && (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setCurrentStep(currentStep - 1)}
+                >
+                  <span>Previous</span>
+                </Button>
+                <Button type="submit" loading={form.processing}>
+                  <span>Create new application</span>
+                </Button>
+              </>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>
