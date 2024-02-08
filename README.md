@@ -1,10 +1,13 @@
 # [WIP] Software Citadel - Console
 
-> An open-source cloud platform for developers.
+> An open-source platform for development teams.
 
 ## About
 
-Software Citadel Console consists in a PaaS (Platform as a Service) that allows developers to deploy their applications and databases in a cloud environment, supporting multiple drivers, such as Docker and Fly.io.
+Software Citadel Console consists in :
+
+- a PaaS (Platform as a Service) that allows developers to deploy their applications and databases in a cloud environment, supporting multiple drivers, such as Docker and Fly.io ;
+- a development teams platform, that allows developers to plan tasks, chat, and share code.
 
 ## Stack
 
