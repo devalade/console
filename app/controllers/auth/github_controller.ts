@@ -35,6 +35,6 @@ export default class AuthGithubController {
     }
     await auth.use('web').login(user)
 
-    return response.redirect().toPath('/projects')
+    return response.redirect().toPath(`/projects`)
   }
 }

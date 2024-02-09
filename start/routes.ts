@@ -30,13 +30,26 @@ import FlyWebhooksController from '#drivers/fly/fly_logs_controller'
 import KanbanBoardsController from '#controllers/kanban/kanban_boards_controller'
 import KanbanColumnsController from '#controllers/kanban/kanban_columns_controller'
 import KanbanTasksController from '#controllers/kanban/kanban_tasks_controller'
+import Organization from '#models/organization'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
-    return response.redirect().toPath('/dashboard')
+    const organization = await Organization.query()
+      .where('id', auth.user!.defaultOrganizationId)
+      .firstOrFail()
+    return response.redirect().toPath(`/organizations/${organization.slug}/projects`)
   }
   return response.redirect().toPath('/auth/sign_in')
 })
+
+router
+  .get('/projects', async ({ auth, response }) => {
+    const organization = await Organization.query()
+      .where('id', auth.user!.defaultOrganizationId)
+      .firstOrFail()
+    return response.redirect().toPath(`/organizations/${organization.slug}/projects`)
+  })
+  .use(middleware.auth())
 
 /**
  * Authentication routes.
@@ -85,8 +98,8 @@ router.delete('/settings', [SettingsController, 'destroy']).use(middleware.auth(
  * Projects CRUD.
  */
 router
-  .resource('projects', ProjectsController)
-  .params({ projects: 'projectSlug' })
+  .resource('organizations.projects', ProjectsController)
+  .params({ organizations: 'organizationSlug', projects: 'projectSlug' })
   .use('*', middleware.auth({ guards: ['web', 'api'] }))
   .use('edit', middleware.loadProjects())
 
@@ -94,8 +107,12 @@ router
  * Applications CRUD.
  */
 router
-  .resource('projects.applications', ApplicationsController)
-  .params({ projects: 'projectSlug', applications: 'applicationSlug' })
+  .resource('organizations.projects.applications', ApplicationsController)
+  .params({
+    organizations: 'organizationSlug',
+    projects: 'projectSlug',
+    applications: 'applicationSlug',
+  })
   .use('*', [middleware.auth({ guards: ['web', 'api'] }), middleware.loadProjects()])
   .except(['create'])
 
@@ -119,8 +136,8 @@ router
  * Databases.
  */
 router
-  .resource('projects.databases', DatabasesController)
-  .params({ projects: 'projectSlug', databases: 'databaseSlug' })
+  .resource('organizations.projects.databases', DatabasesController)
+  .params({ organizations: 'organizationSlug', projects: 'projectSlug', databases: 'databaseSlug' })
   .use('*', [middleware.auth(), middleware.loadProjects()])
   .except(['create', 'edit', 'update'])
 
@@ -215,21 +232,27 @@ router.post('/fly/webhooks/logs', [FlyWebhooksController, 'handleIncomingLogs'])
  * Kanban routes.
  */
 router
-  .resource('projects.kanban', KanbanBoardsController)
-  .params({ projects: 'projectSlug', kanban: 'kanbanBoardSlug' })
+  .resource('organizations.projects.kanban', KanbanBoardsController)
+  .params({ organizations: 'organizationSlug', projects: 'projectSlug', kanban: 'kanbanBoardSlug' })
   .use('*', middleware.auth())
   .use(['index', 'show', 'edit'], middleware.loadProjects())
 
 router
-  .resource('projects.kanban.columns', KanbanColumnsController)
+  .resource('organizations.projects.kanban.columns', KanbanColumnsController)
   .except(['index', 'show', 'edit'])
-  .params({ projects: 'projectSlug', kanban: 'kanbanBoardSlug', columns: 'kanbanColumnId' })
+  .params({
+    organizations: 'organizationSlug',
+    projects: 'projectSlug',
+    kanban: 'kanbanBoardSlug',
+    columns: 'kanbanColumnId',
+  })
   .use('*', middleware.auth())
 
 router
-  .resource('projects.kanban.columns.tasks', KanbanTasksController)
+  .resource('organizations.projects.kanban.columns.tasks', KanbanTasksController)
   .except(['index', 'show', 'edit'])
   .params({
+    organizations: 'organizationSlug',
     projects: 'projectSlug',
     kanban: 'kanbanBoardSlug',
     columns: 'kanbanColumnId',

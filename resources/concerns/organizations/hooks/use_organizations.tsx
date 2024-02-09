@@ -4,22 +4,15 @@ export default function useOrganizations() {
   const props = usePageProps<{
     user: { defaultOrganizationId: number }
     organizations: { name: string; slug: string; id: number }[]
-    params: { organizationSlug?: string }
+    params: { organizationSlug: string }
   }>()
 
   /**
-   * Get the current organization, based on the URL or the user's default organization.
+   * Get the current organization, based on the URL's organization slug.
    */
-  let currentOrganization: { name: string; slug: string; id: number }
-  if (props.params.organizationSlug) {
-    currentOrganization = props.organizations.find(
-      (organization) => organization.slug === props.params.organizationSlug
-    )
-  } else {
-    currentOrganization = props.organizations.find(
-      (organization) => organization.id === props.user.defaultOrganizationId
-    )
-  }
+  const currentOrganization: { name: string; slug: string; id: number } = props.organizations.find(
+    (organization) => organization.slug === props.params.organizationSlug
+  )
 
   return { organizations: props.organizations, currentOrganization }
 }
