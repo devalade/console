@@ -1,13 +1,13 @@
 import { DateTime } from 'luxon'
 import { BaseModel, beforeCreate, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
-import User from './user.js'
 import Application from './application.js'
 import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
 import Database from './database.js'
 import { cuid } from '@adonisjs/core/helpers'
 import KanbanBoard from './kanban_board.js'
+import Organization from './organization.js'
 
 export default class Project extends BaseModel {
   /**
@@ -25,12 +25,11 @@ export default class Project extends BaseModel {
   /**
    * Relationships.
    */
-
-  @belongsTo(() => User)
-  declare user: BelongsTo<typeof User>
+  @belongsTo(() => Organization)
+  declare organization: BelongsTo<typeof Organization>
 
   @column()
-  declare userId: number
+  declare organizationId: number
 
   @hasMany(() => Application)
   declare applications: HasMany<typeof Application>

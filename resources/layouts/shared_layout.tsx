@@ -7,6 +7,7 @@ import Logo from '@/components/logo'
 import { Toaster } from '@/components/toaster'
 import AccountDropdown from '@/components/account_dropdown'
 import clsx from 'clsx'
+import useOrganizations from '@/concerns/organizations/hooks/use_organizations'
 
 interface SharedLayoutProps extends React.PropsWithChildren {
   className?: string
@@ -28,6 +29,7 @@ const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
   sidebarFooterChildren,
 }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false)
+  useOrganizations()
 
   return (
     <>

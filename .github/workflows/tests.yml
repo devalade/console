@@ -67,3 +67,4 @@ jobs:
           GITHUB_APP_ID: 123456
           GITHUB_APP_PRIVATE_KEY: -----BEGIN RSA PRIVATE KEY-----\npouetpouet\n-----END RSA PRIVATE KEY-----
           GITHUB_APP_WEBHOOK_SECRET: thisismysecret
+          ALLOW_PUBLIC_SIGNUP: true

@@ -42,7 +42,7 @@ router.get('/', async ({ auth, response }) => {
  * Authentication routes.
  */
 router.get('/auth/sign_up', [SignUpController, 'show'])
-router.post('/auth/sign_up', [SignUpController, 'handle'])
+router.post('/auth/sign_up', [SignUpController, 'handle']).use(middleware.drapeau('sign_up'))
 
 router.get('/auth/sign_in', [SignInController, 'show'])
 router.post('/auth/sign_in', [SignInController, 'handle'])

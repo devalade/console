@@ -7,6 +7,7 @@ export default class AppProvider {
 
   async boot() {
     await import('../src/macros.js')
+    await import('../src/features.js')
 
     if (env.get('NODE_ENV') !== 'test') {
       const driver = Driver.getDriver()

@@ -13,10 +13,18 @@ export default defineConfig({
   sharedData: {
     errors: (ctx) => ctx.session.flashMessages.get('errors'),
     qs: (ctx) => ctx.request.qs(),
+    params: (ctx) => ctx.request.params(),
     user: (ctx) => ctx.auth.user,
     wildcardDomain: () =>
       env.get('DRIVER') === 'docker'
         ? env.get('TRAEFIK_WILDCARD_DOMAIN', 'softwarecitadel.app')
         : 'fly.dev',
+    organizations: async (ctx) => {
+      if (!ctx.auth.user) {
+        return []
+      }
+      await ctx.auth.user.load('organizations')
+      return ctx.auth.user.organizations
+    },
   },
 })

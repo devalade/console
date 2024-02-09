@@ -2,10 +2,11 @@ import { DateTime } from 'luxon'
 import { withAuthFinder } from '@adonisjs/auth'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
-import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
-import Project from './project.js'
+import { BaseModel, afterCreate, column, hasManyThrough } from '@adonisjs/lucid/orm'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
+import Organization from './organization.js'
+import OrganizationMember from './organization_member.js'
+import type { HasManyThrough } from '@adonisjs/lucid/types/relations'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -48,8 +49,33 @@ export default class User extends compose(BaseModel, AuthFinder) {
   /**
    * Relationships.
    */
-  @hasMany(() => Project)
-  declare projects: HasMany<typeof Project>
+  @column()
+  declare defaultOrganizationId: number
+
+  @hasManyThrough([() => Organization, () => OrganizationMember], {
+    foreignKey: 'userId',
+    throughForeignKey: 'id',
+  })
+  declare organizations: HasManyThrough<typeof Organization>
+
+  /**
+   * Hooks.
+   */
+  @afterCreate()
+  static async createDefaultOrganization(user: User) {
+    const organization = new Organization()
+    organization.name = user.fullName
+    await organization.save()
+
+    const member = new OrganizationMember()
+    member.organizationId = organization.id
+    member.userId = user.id
+    member.role = 'owner'
+    await member.save()
+
+    user.defaultOrganizationId = organization.id
+    await user.save()
+  }
 
   /**
    * Timestamps.

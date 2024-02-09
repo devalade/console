@@ -24,6 +24,13 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
+  | Variables for configuring feature flags
+  |----------------------------------------------------------
+  */
+  ALLOW_PUBLIC_SIGNUP: Env.schema.boolean(),
+
+  /*
+  |----------------------------------------------------------
   | Variables for configuring the builder image
   |----------------------------------------------------------
   */

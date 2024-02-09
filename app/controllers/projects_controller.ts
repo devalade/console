@@ -1,20 +1,24 @@
+import bindOrganization from '#decorators/bind_organization'
 import bindProject from '#decorators/bind_project'
+import Organization from '#models/organization'
 import Project from '#models/project'
 import { projectValidator } from '#validators/project_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class ProjectsController {
-  async index({ auth, request, inertia }: HttpContext) {
-    const projects = await auth.user!.related('projects').query()
+  @bindOrganization
+  async index({ request, inertia }: HttpContext, organization: Organization) {
+    const projects = await organization.related('projects').query()
     if (request.wantsJSON()) {
       return projects
     }
     return inertia.render('projects/index', { projects })
   }
 
-  async store({ auth, request, response }: HttpContext) {
+  @bindOrganization
+  async store({ request, response }: HttpContext, organization: Organization) {
     const payload = await request.validateUsing(projectValidator)
-    const project = await auth.user!.related('projects').create(payload)
+    const project = await organization.related('projects').create(payload)
     if (request.wantsJSON()) {
       return project
     }

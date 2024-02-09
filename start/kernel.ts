@@ -48,4 +48,5 @@ export const middleware = router.named({
   loadProjects: () => import('#middleware/load_projects_middleware'),
   guest: () => import('#middleware/guest_middleware'),
   auth: () => import('#middleware/auth_middleware'),
+  drapeau: () => import('#middleware/drapeau_middleware'),
 })
