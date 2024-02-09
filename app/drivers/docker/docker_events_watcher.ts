@@ -24,7 +24,9 @@ export default class DockerEventsWatcher {
     const action = eventObject!.Action
     const image = eventObject!.Actor!.Attributes!.image
     const containerName: string = eventObject!.Actor!.Attributes!.name
-    const applicationSlug = containerName.replace('-builder', '')
+    const applicationSlug = containerName
+      .replace(env.get('DOCKER_APPLICATION_NAME_PREFIX', 'citadel-app'), '')
+      .replace(env.get('DOCKER_BUILDER_NAME_PREFIX', 'citadel-builder'), '')
 
     if (action === 'die' && image === env.get('BUILDER_IMAGE', 'softwarecitadel/builder:latest')) {
       const exitCode = eventObject!.Actor!.Attributes!.exitCode
@@ -37,7 +39,10 @@ export default class DockerEventsWatcher {
       return
     }
 
-    if (action === 'start') {
+    if (
+      action === 'start' &&
+      containerName.startsWith(env.get('DOCKER_APPLICATION_NAME_PREFIX', 'citadel-app'))
+    ) {
       this.dockerEventsHandler.handleContainerStartEvent(applicationSlug)
     }
   }

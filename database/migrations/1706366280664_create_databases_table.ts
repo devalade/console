@@ -9,7 +9,6 @@ export default class extends BaseSchema {
       table.string('slug').notNullable().unique()
       table.string('name').notNullable()
       table.enum('dbms', ['postgres', 'mysql', 'redis']).nullable()
-      table.string('host').nullable()
       table.string('username').nullable()
       table.string('password').nullable()
       table.string('project_id').references('projects.id').onDelete('CASCADE')

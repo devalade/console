@@ -16,6 +16,7 @@ import Deployment from './deployment.js'
 import Certificate from './certificate.js'
 import { cuid } from '@adonisjs/core/helpers'
 import emitter from '@adonisjs/core/services/emitter'
+import env from '#start/env'
 
 export default class Application extends BaseModel {
   /**
@@ -91,6 +92,23 @@ export default class Application extends BaseModel {
   @beforeDelete()
   static async emitDeletedEvent(application: Application) {
     emitter.emit('applications:deleted', application)
+  }
+
+  /**
+   * Custom getters.
+   */
+  get hostname(): string {
+    switch (env.get('DRIVER')) {
+      case 'docker':
+        return `${env.get('DOCKER_APPLICATION_NAME_PREFIX', 'citadel-app')}-${this.slug}.${env.get(
+          'TRAEFIK_WILDCARD_DOMAIN',
+          'softwarecitadel.app'
+        )}`
+      case 'fly':
+        return `${env.get('FLY_APPLICATION_NAME_PREFIX', 'citadel-app')}-${this.slug}.fly.dev`
+      default:
+        return ''
+    }
   }
 
   /**

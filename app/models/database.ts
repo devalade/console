@@ -13,6 +13,7 @@ import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
 import Project from './project.js'
 import emitter from '@adonisjs/core/services/emitter'
+import env from '#start/env'
 
 export default class Database extends BaseModel {
   /**
@@ -28,9 +29,6 @@ export default class Database extends BaseModel {
   declare slug: string
 
   @column()
-  declare host: string
-
-  @column()
   declare username: string
 
   @column()
@@ -42,15 +40,29 @@ export default class Database extends BaseModel {
   /**
    * Custom getters.
    */
+  get hostname(): string {
+    switch (env.get('DRIVER')) {
+      case 'docker':
+        return `${env.get('DOCKER_DATABASE_NAME_PREFIX', 'citadel-database')}-${this.slug}.${env.get(
+          'TRAEFIK_WILDCARD_DOMAIN',
+          'softwarecitadel.app'
+        )}`
+      case 'fly':
+        return `${env.get('FLY_DATABASE_NAME_PREFIX', 'citadel-database')}-${this.slug}.fly.dev`
+      default:
+        return ''
+    }
+  }
+
   @computed()
   public get uri(): string {
     switch (this.dbms) {
       case 'mysql':
-        return `mysql://${this.username}:${this.password}@${this.host}/${this.name}`
+        return `mysql://${this.username}:${this.password}@${this.hostname}/${this.name}`
       case 'postgres':
-        return `postgres://${this.username}:${this.password}@${this.host}/${this.name}`
+        return `postgres://${this.username}:${this.password}@${this.hostname}/${this.name}`
       case 'redis':
-        return `redis://default:${this.password}@${this.host}`
+        return `redis://default:${this.password}@${this.hostname}`
     }
   }
 

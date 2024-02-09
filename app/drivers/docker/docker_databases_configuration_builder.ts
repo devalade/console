@@ -1,16 +1,20 @@
 import Database from '#models/database'
+import env from '#start/env'
 
 export default class DockerDatabasesConfigurationBuilder {
   build(database: Database) {
     return {
       name: `citadel-${database.slug}`,
-      TaskTemplate: {
-        ContainerSpec: {
-          Image: this.prepareImage(database),
-          Env: this.prepareEnvironmentVariables(database),
+      Image: this.prepareImage(database),
+      Env: this.prepareEnvironmentVariables(database),
+      EndpointSpec: this.prepareEndpointSpec(database),
+      NetworkingConfig: {
+        EndpointsConfig: {
+          traefik: {
+            NetworkID: 'traefik',
+          },
         },
       },
-      EndpointSpec: this.prepareEndpointSpec(database),
       Labels: this.prepareLabels(database),
     }
   }
@@ -34,6 +38,7 @@ export default class DockerDatabasesConfigurationBuilder {
         env.POSTGRES_DB = database.name
         env.POSTGRES_USER = database.username
         env.POSTGRES_PASSWORD = database.password
+        env.PG_PASSWORD = database.password
 
         break
       case 'mysql':
@@ -59,8 +64,8 @@ export default class DockerDatabasesConfigurationBuilder {
           ExposedPorts: [
             {
               Protocol: 'tcp',
-              TargetPort: 5432,
-              PublishedPort: 5432,
+              TargetPort: this.preparePort(database),
+              PublishedPort: this.preparePort(database),
             },
           ],
         }
@@ -69,8 +74,8 @@ export default class DockerDatabasesConfigurationBuilder {
           ExposedPorts: [
             {
               Protocol: 'tcp',
-              TargetPort: 3306,
-              PublishedPort: 3306,
+              TargetPort: this.preparePort(database),
+              PublishedPort: this.preparePort(database),
             },
           ],
         }
@@ -79,15 +84,40 @@ export default class DockerDatabasesConfigurationBuilder {
           ExposedPorts: [
             {
               Protocol: 'tcp',
-              TargetPort: 6379,
-              PublishedPort: 6379,
+              TargetPort: this.preparePort(database),
+              PublishedPort: this.preparePort(database),
             },
           ],
         }
     }
   }
 
+  private preparePort(database: Database) {
+    switch (database.dbms) {
+      case 'postgres':
+        return 5432
+      case 'mysql':
+        return 3306
+      case 'redis':
+        return 6379
+    }
+  }
+
   private prepareLabels(database: Database) {
-    return {}
+    /**
+     * These labels are used to expose the database
+     * through the Traefik reverse proxy.
+     */
+    const host = `HostSNI(\`${database.hostname}\`)`
+    const routerName = env.get('DOCKER_BUILDER_NAME_PREFIX', 'citadel-builder') + database.slug
+    return {
+      'traefik.enable': 'true',
+      [`traefik.tcp.routers.${routerName}.rule`]: host,
+      [`traefik.tcp.routers.${routerName}.entrypoints`]: database.dbms,
+      [`traefik.tcp.services.${routerName}.loadbalancer.server.port`]:
+        this.preparePort(database).toString(),
+      [`traefik.tcp.routers.${routerName}.tls`]: 'true',
+      [`traefik.tcp.routers.${routerName}.tls.certresolver`]: 'letsencrypt',
+    }
   }
 }

@@ -2,7 +2,8 @@ services:
   postgres:
     image: 'postgres:13'
     ports:
-      - '5432:5432'
+      # We use the 5433 port to avoid conflicts with Traefik
+      - '5433:5432'
     environment:
       PGPASSWORD: citadel
       POSTGRES_DB: citadel
@@ -12,20 +13,27 @@ services:
       - 'citadel_postgres:/var/lib/postgresql/data'
 
   reverse-proxy:
-    image: traefik:v2.10
+    image: traefik:v3.0
     command:
       - '--api.insecure=true'
       - '--providers.docker'
+      - '--providers.docker.exposedbydefault=false'
       - '--entrypoints.web.address=:80'
       - '--entrypoints.websecure.address=:443'
       - '--certificatesresolvers.myresolver.acme.httpchallenge=true'
       - '--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web'
       - '--certificatesresolvers.myresolver.acme.email=contact@softwarecitadel.com'
       - '--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json'
+      - '--entrypoints.postgres.address=:5432'
+      - '--entrypoints.redis.address=:6379'
+      - '--entrypoints.mysql.address=:3306'
     ports:
       - '80:80'
       - '443:443'
       - '8080:8080'
+      - '5432:5432'
+      - '6379:6379'
+      - '3306:3306'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - 'citadel_traefik:/letsencrypt'
@@ -57,7 +65,8 @@ services:
   redis:
     image: redis:6.2
     ports:
-      - '6379:6379'
+      # We use the 6380 port to avoid conflicts with Traefik
+      - '6380:6379'
 
   registry:
     image: registry:2

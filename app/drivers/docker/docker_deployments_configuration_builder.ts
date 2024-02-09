@@ -57,7 +57,7 @@ export default class DockerDeploymentsConfigurationBuilder {
       return {}
     }
 
-    let host = `Host(\`${application.slug}.${env.get('TRAEFIK_WILDCARD_DOMAIN', 'softwarecitadel.app')}\``
+    let host = `Host(\`${env.get('DOCKER_APPLICATION_NAME_PREFIX', 'citadel-app-')}${application.slug}.${env.get('TRAEFIK_WILDCARD_DOMAIN', 'softwarecitadel.app')}\``
     for (const certificate of application.certificates) {
       host += `,\`${certificate.domain}\``
     }

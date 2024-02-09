@@ -9,6 +9,7 @@ import { DnsEntries } from '#types/dns'
 import Driver from '#drivers/driver'
 import DockerDriver from './docker_driver.js'
 import dns from 'dns/promises'
+import env from '#start/env'
 
 export default class DockerApplicationsService implements IDriverApplicationsService {
   constructor(private readonly docker: Docker) {}
@@ -32,9 +33,11 @@ export default class DockerApplicationsService implements IDriverApplicationsSer
   }
 
   async streamLogs(application: Application, response: Response, scope: 'application' | 'builder') {
-    let serviceName = application.slug
+    let serviceName: string
     if (scope === 'builder') {
-      serviceName = `${application.slug}-builder`
+      serviceName = `${env.get('DOCKER_BUILDER_NAME_PREFIX', 'citadel-builder')}-${application.slug}-builder`
+    } else {
+      serviceName = `${env.get('DOCKER_APPLICATION_NAME_PREFIX', 'citadel-app')}-${application.slug}`
     }
 
     for (let i = 0; i < 3; i++) {

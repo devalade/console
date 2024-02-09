@@ -9,11 +9,12 @@ export default class DockerDatabasesService implements IDriverDatabasesService {
 
   async createDatabase(database: Database) {
     const serviceConfiguration = this.dockerDatabasesConfigurationBuilder.build(database)
-    await this.docker.service.create(serviceConfiguration)
+    const container = await this.docker.container.create(serviceConfiguration)
+    await container.start()
   }
 
   async deleteDatabase(database: Database) {
-    const service = this.docker.service.get(`citadel-${database.slug}`)
-    await service.remove()
+    const container = this.docker.container.get(`citadel-${database.slug}`)
+    await container.delete({ force: true })
   }
 }

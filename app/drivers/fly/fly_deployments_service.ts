@@ -1,16 +1,16 @@
 import { IDriverDeploymentsService } from '#drivers/idriver'
 import Application from '#models/application'
 import Deployment from '#models/deployment'
-import { inject } from '@adonisjs/core'
 import FlyApi from './api/fly_api.js'
 import FlyDeploymentsConfigurationBuilder from './fly_deployments_configuration_builder.js'
 
-@inject()
 export default class FlyDeploymentsService implements IDriverDeploymentsService {
-  constructor(
-    private readonly flyApi: FlyApi,
-    private readonly flyDeploymentsConfigurationBuilder: FlyDeploymentsConfigurationBuilder
-  ) {}
+  private readonly flyDeploymentsConfigurationBuilder: FlyDeploymentsConfigurationBuilder
+  private readonly flyApi: FlyApi
+  constructor() {
+    this.flyApi = new FlyApi()
+    this.flyDeploymentsConfigurationBuilder = new FlyDeploymentsConfigurationBuilder(this.flyApi)
+  }
 
   async igniteBuilder(application: Application, deployment: Deployment) {
     const flyBuilderName = this.flyApi.getFlyApplicationName(application.slug, true)

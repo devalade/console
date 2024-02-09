@@ -24,6 +24,15 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
+  | Variables for configuring the builder image
+  |----------------------------------------------------------
+  */
+  REGISTRY_HOST: Env.schema.string(),
+  REGISTRY_TOKEN: Env.schema.string.optional(),
+  BUILDER_IMAGE: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
   | Variables for configuring the Fly.io driver
   |----------------------------------------------------------
   */
@@ -31,11 +40,16 @@ export default await Env.create(new URL('../', import.meta.url), {
   FLY_TOKEN: Env.schema.string.optional(),
   FLY_WEBHOOK_SECRET: Env.schema.string.optional(),
 
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring the Docker driver
+  |----------------------------------------------------------
+  */
   DOCKER_SOCKET_PATH: Env.schema.string.optional(),
+  DOCKER_APPLICATION_NAME_PREFIX: Env.schema.string.optional(),
+  DOCKER_BUILDER_NAME_PREFIX: Env.schema.string.optional(),
+  DOCKER_DATABASE_NAME_PREFIX: Env.schema.string.optional(),
   TRAEFIK_WILDCARD_DOMAIN: Env.schema.string.optional(),
-  REGISTRY_HOST: Env.schema.string(),
-  REGISTRY_TOKEN: Env.schema.string.optional(),
-  BUILDER_IMAGE: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
