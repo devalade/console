@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/dialog'
 import Button from '@/components/button'
+import useParams from '@/hooks/use_params'
 
 interface RedeployDialogProps {
   project: Project
@@ -26,11 +27,15 @@ const RedeployDialog: React.FunctionComponent<RedeployDialogProps> = ({
   setOpen,
 }) => {
   const form = useForm()
+  const params = useParams()
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    form.post(`/projects/${project.slug}/applications/${application.slug}/redeploy`, {
-      onSuccess: () => setOpen(false),
-    })
+    form.post(
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/redeploy`,
+      {
+        onSuccess: () => setOpen(false),
+      }
+    )
   }
 
   return (

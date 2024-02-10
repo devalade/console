@@ -10,9 +10,11 @@ export default function useOrganizations() {
   /**
    * Get the current organization, based on the URL's organization slug.
    */
-  const currentOrganization: { name: string; slug: string; id: number } = props.organizations.find(
-    (organization) => organization.slug === props.params.organizationSlug
-  )
+  const currentOrganization: { name: string; slug: string; id: number } =
+    props.organizations.find(
+      (organization) => organization.slug === props.params.organizationSlug
+    ) ||
+    props.organizations.find((organization) => organization.id === props.user.defaultOrganizationId)
 
   return { organizations: props.organizations, currentOrganization }
 }

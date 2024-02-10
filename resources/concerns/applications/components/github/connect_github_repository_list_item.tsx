@@ -5,6 +5,7 @@ import { IconGitBranch, IconLock } from '@tabler/icons-react'
 import React from 'react'
 import type { Application } from '../../types/application'
 import type { GithubRepository, GithubRepositoryOwner } from '#types/github_repository'
+import useParams from '@/hooks/use_params'
 
 export type ConnectGithubRepositoryListItemProps = {
   project: Project
@@ -19,6 +20,7 @@ export default function ConnectGithubRepositoryListItem({
   repository,
   selectedOwner,
 }: ConnectGithubRepositoryListItemProps) {
+  const params = useParams()
   const form = useForm({
     githubRepository: `${selectedOwner.name}/${repository.name}`,
     githubInstallationId: selectedOwner.installationId,
@@ -26,7 +28,9 @@ export default function ConnectGithubRepositoryListItem({
   })
   const onConnect = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.put(`/projects/${project.slug}/applications/${application.slug}`)
+    form.put(
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`
+    )
   }
   return (
     <li className="flex justify-between py-4" key={repository.name}>

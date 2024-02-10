@@ -17,6 +17,7 @@ export default function bindProjectAndKanbanBoardAndKanbanColumn(
     let kanbanColumn: KanbanColumn
     try {
       project = await Project.query().where('slug', params.projectSlug).firstOrFail()
+      await project.load('organization')
       await bouncer.authorize('accessToProject', project)
       kanbanBoard = await project
         .related('kanbanBoards')

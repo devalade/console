@@ -3,6 +3,7 @@ import * as React from 'react'
 import type { Application } from '../types/application'
 import { Icon3dCubeSphere } from '@tabler/icons-react'
 import { Link } from '@inertiajs/react'
+import useParams from '@/hooks/use_params'
 
 interface ApplicationBreadcrumbsProps {
   project: Project
@@ -13,13 +14,14 @@ const ApplicationBreadcrumbs: React.FunctionComponent<ApplicationBreadcrumbsProp
   project,
   application,
 }) => {
+  const params = useParams()
   return (
     <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 py-4 px-12 bg-white sm:flex-row sm:items-center border-b border-zinc-200">
       <div className="flex items-center gap-x-3">
         <h1 className="flex gap-x-3 text-base leading-7 items-center">
           <Link
             className="hover:opacity-75 transition"
-            href={`/projects/${project.slug}/applications`}
+            href={`/organizations/${params.organizationSlug}/projects/${project.slug}/applications`}
           >
             <Icon3dCubeSphere className="w-5 h-5" />
           </Link>

@@ -21,7 +21,11 @@ export default class KanbanBoardsController {
       { name: 'DONE', order: 3 },
     ])
 
-    return response.redirect().toPath(`/projects/${project.slug}/kanban/${kanbanBoard.slug}`)
+    return response
+      .redirect()
+      .toPath(
+        `/organizations/${project.organization.slug}/projects/${project.slug}/kanban/${kanbanBoard.slug}`
+      )
   }
 
   @bindProjectAndKanbanBoard
@@ -48,6 +52,8 @@ export default class KanbanBoardsController {
   @bindProjectAndKanbanBoard
   public async destroy({ response }: HttpContext, project: Project, board: KanbanBoard) {
     await board.delete()
-    return response.redirect().toPath(`/projects/${project.slug}/kanban`)
+    return response
+      .redirect()
+      .toPath(`/organizations/${project.organization.slug}/projects/${project.slug}/kanban`)
   }
 }

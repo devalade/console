@@ -26,7 +26,11 @@ export default class ApplicationsController {
       return application
     }
 
-    return response.redirect().toPath(`/projects/${project.slug}/applications/${application.slug}`)
+    return response
+      .redirect()
+      .toPath(
+        `/organizations/${project.organization.slug}/projects/${project.slug}/applications/${application.slug}`
+      )
   }
 
   @bindProjectAndApplication
@@ -60,6 +64,8 @@ export default class ApplicationsController {
   async destroy({ response }: HttpContext, project: Project, application: Application) {
     await application.delete()
 
-    return response.redirect().toPath(`/projects/${project.slug}/applications`)
+    return response
+      .redirect()
+      .toPath(`/organizations/${project.organization.slug}/projects/${project.slug}/applications`)
   }
 }

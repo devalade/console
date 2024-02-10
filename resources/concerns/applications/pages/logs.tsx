@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/card'
 import type { Project } from '@/concerns/projects/types/project'
 import type { Application } from '../types/application'
 import ApplicationLayout from '../application_layout'
+import useParams from '@/hooks/use_params'
 
 interface LogsProps {
   project: Project
@@ -12,13 +13,14 @@ interface LogsProps {
 
 const Logs: React.FunctionComponent<LogsProps> = ({ project, application }) => {
   const [logs, setLogs] = React.useState<{ time: string; data: string }[]>([])
+  const params = useParams()
 
   React.useEffect(() => {
     let logsEventSource: EventSource
 
     const initializeLogsEventSource = () => {
       logsEventSource = new EventSource(
-        `/projects/${project.slug}/applications/${application.slug}/logs/stream?initialLogs=true`
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/logs/stream?initialLogs=true`
       )
 
       logsEventSource.onmessage = (event) => {

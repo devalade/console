@@ -16,12 +16,12 @@ export default function bindOrganization(
         .where('slug', params.organizationSlug)
         .firstOrFail()
 
-      await OrganizationMember.query()
+      const organizationMember = await OrganizationMember.query()
         .where('userId', ctx.auth.user!.id)
         .andWhere('id', organization.id)
         .firstOrFail()
 
-      return await originalMethod.call(this, ctx, organization)
+      return await originalMethod.call(this, ctx, organization, organizationMember)
     } catch (error) {
       console.error(error)
       return response.notFound()

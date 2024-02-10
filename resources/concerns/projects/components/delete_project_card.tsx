@@ -11,6 +11,7 @@ import {
 } from '@/components/dialog'
 import type { Project } from '../types/project'
 import { useForm } from '@inertiajs/react'
+import useParams from '@/hooks/use_params'
 
 export type DeleteProjectCardProps = {
   project: Project
@@ -18,10 +19,11 @@ export type DeleteProjectCardProps = {
 
 export default function DeleteProjectCard({ project }: DeleteProjectCardProps) {
   const { processing, delete: handleDelete } = useForm()
+  const params = useParams()
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    handleDelete(`/projects/${project.slug}`)
+    handleDelete(`/organizations/${params.organizationSlug}/projects/${project.slug}`)
   }
 
   return (

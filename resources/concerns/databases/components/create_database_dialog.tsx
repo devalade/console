@@ -7,6 +7,7 @@ import slugify from '@/lib/slugify'
 import type { Project } from '@/concerns/projects/types/project'
 import { useForm } from '@inertiajs/react'
 import PasswordField from '@/components/password_field'
+import useParams from '@/hooks/use_params'
 
 export type CreateDatabaseDialogProps = {
   project: Project
@@ -26,10 +27,11 @@ export default function CreateDatabaseDialog({
     password: '',
   })
   const [step, setStep] = React.useState(1)
+  const params = useParams()
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.post(`/projects/${project.slug}/databases`, {
+    form.post(`/organizations/${params.organizationSlug}/projects/${project.slug}/databases`, {
       onSuccess: () => {
         form.reset()
         setStep(1)

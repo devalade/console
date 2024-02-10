@@ -5,6 +5,7 @@ import ApplicationLayout from '../application_layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/card'
 import type { Deployment } from '../types/deployment'
 import DeploymentCard from '../components/deployment_card'
+import useParams from '@/hooks/use_params'
 
 interface DeploymentsProps {
   project: Project
@@ -18,12 +19,13 @@ const Deployments: React.FunctionComponent<DeploymentsProps> = ({
   deployments: initialDeployments,
 }) => {
   const [deployments, setDeployments] = React.useState<Deployment[]>(initialDeployments)
+  const params = useParams()
 
   React.useEffect(() => {
     let eventSource: EventSource
 
     const initializeEventSource = () => {
-      const url = `/projects/${project.slug}/applications/${application.slug}/deployments/updates`
+      const url = `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/deployments/updates`
 
       eventSource = new EventSource(url)
 

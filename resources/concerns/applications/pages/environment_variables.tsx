@@ -11,6 +11,7 @@ import ApplicationLayout from '../application_layout'
 import type { Project } from '@/concerns/projects/types/project'
 import type { Application } from '../types/application'
 import useSuccessToast from '@/hooks/use_success_toast'
+import useParams from '@/hooks/use_params'
 
 interface EnvironmentVariablesProps {
   project: Project
@@ -24,6 +25,7 @@ const EnvironmentVariables: React.FunctionComponent<EnvironmentVariablesProps> =
   const successToast = useSuccessToast()
   const query = useQuery()
   const [showRedeployDialog, setShowRedeployDialog] = React.useState(!!query.showRedeployChoice)
+  const params = useParams()
 
   function formatEnvironmentVariables(
     variables?: Record<string, string>
@@ -52,9 +54,12 @@ const EnvironmentVariables: React.FunctionComponent<EnvironmentVariablesProps> =
   }
 
   function saveEnvironmentVariables() {
-    form.patch(`/projects/${project.slug}/applications/${application.slug}/env`, {
-      onSuccess: successToast,
-    })
+    form.patch(
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/env`,
+      {
+        onSuccess: successToast,
+      }
+    )
   }
 
   React.useEffect(() => {

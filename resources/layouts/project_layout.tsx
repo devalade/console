@@ -6,6 +6,7 @@ import { Link } from '@inertiajs/react'
 import { IconArrowBackUp } from '@tabler/icons-react'
 import useProjectLayoutNavigationItems from '@/concerns/projects/hooks/use_project_layout_navigation_items'
 import useCurrentProject from '@/concerns/projects/hooks/use_current_project'
+import useParams from '@/hooks/use_params'
 
 interface ProjectLayoutProps extends React.PropsWithChildren {
   className?: string
@@ -13,7 +14,7 @@ interface ProjectLayoutProps extends React.PropsWithChildren {
 
 const ProjectLayout: React.FunctionComponent<ProjectLayoutProps> = ({ children, className }) => {
   const projects = useProjects()
-  const currentProjectSlug = window.location.pathname.split('/')[2]
+  const params = useParams()
   const currentProject = useCurrentProject()
   const navigationItems = useProjectLayoutNavigationItems(currentProject)
 
@@ -22,7 +23,7 @@ const ProjectLayout: React.FunctionComponent<ProjectLayoutProps> = ({ children, 
       children={children}
       className={className}
       sidebarHeaderChildren={
-        <ProjectSelector projects={projects} currentProjectSlug={currentProjectSlug} />
+        <ProjectSelector projects={projects} currentProjectSlug={params.projectSlug} />
       }
       sidebarFooterChildren={
         <Link

@@ -9,6 +9,7 @@ import Button from '@/components/button'
 import { IconCircleCheck } from '@tabler/icons-react'
 import DnsEntry from './dns_entry'
 import DeleteCertificateDialog from './delete_certificate_dialog'
+import useParams from '@/hooks/use_params'
 
 export type CertificateCardProps = {
   project: Project
@@ -23,9 +24,10 @@ export default function CertificateCard({
 }: CertificateCardProps) {
   const [deleteCertificateDialogOpen, setDeleteCertificateDialogOpen] = React.useState(false)
   const checkForm = useForm()
+  const params = useParams()
 
   const checkCertificate = () => {
-    const url = `/projects/${project.slug}/applications/${application.slug}/certificates/${certificate.domain}/check`
+    const url = `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/certificates/${certificate.domain}/check`
     checkForm.post(url)
   }
 

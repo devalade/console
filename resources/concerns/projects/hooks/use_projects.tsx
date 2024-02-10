@@ -3,10 +3,8 @@ import type { Project } from '../types/project'
 
 export default function useProjects() {
   const props = usePageProps<{
-    user: {
-      projects: Array<Project>
-    }
+    projects: Array<Project>
   }>()
 
-  return props.user.projects
+  return props.projects
 }

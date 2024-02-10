@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/react'
 import React from 'react'
 import type { Application } from '../types/application'
 import ApplicationTab from './application_tab'
+import useParams from '@/hooks/use_params'
 
 export type ApplicationTabsProps = {
   project: Project
@@ -10,30 +11,33 @@ export type ApplicationTabsProps = {
 }
 
 export default function ApplicationTabs({ project, application }: ApplicationTabsProps) {
+  const params = useParams()
+  const tabHrefPrefix = `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`
+
   const applicationTabs = [
     {
       label: 'Overview',
-      href: `/projects/${project.slug}/applications/${application.slug}`,
+      href: tabHrefPrefix,
     },
     {
       label: 'Logs',
-      href: `/projects/${project.slug}/applications/${application.slug}/logs`,
+      href: `${tabHrefPrefix}/logs`,
     },
     {
       label: 'Deployments',
-      href: `/projects/${project.slug}/applications/${application.slug}/deployments`,
+      href: `${tabHrefPrefix}/deployments`,
     },
     {
       label: 'Environment variables',
-      href: `/projects/${project.slug}/applications/${application.slug}/env`,
+      href: `${tabHrefPrefix}/env`,
     },
     {
       label: 'Certificates',
-      href: `/projects/${project.slug}/applications/${application.slug}/certificates`,
+      href: `${tabHrefPrefix}/certificates`,
     },
     {
       label: 'Settings',
-      href: `/projects/${project.slug}/applications/${application.slug}/edit`,
+      href: `${tabHrefPrefix}/edit`,
     },
   ]
 

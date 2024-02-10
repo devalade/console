@@ -6,6 +6,7 @@ import {
   type TablerIconsProps,
 } from '@tabler/icons-react'
 import type { Project } from '../types/project'
+import useParams from '@/hooks/use_params'
 
 export default function useProjectLayoutNavigationItems(project: Project): Array<{
   name: string
@@ -14,24 +15,29 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
   current: boolean
 }> {
   const page = usePage()
+  const params = useParams()
   return [
     {
       name: 'Applications',
-      href: `/projects/${project.slug}/applications`,
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/applications`,
       icon: Icon3dCubeSphere,
-      current: page.url === `/projects/${project.slug}/applications`,
+      current:
+        page.url ===
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/applications`,
     },
     {
       name: 'Databases',
-      href: `/projects/${project.slug}/databases`,
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/databases`,
       icon: IconDatabase,
-      current: page.url === `/projects/${project.slug}/databases`,
+      current:
+        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/databases`,
     },
     {
       name: 'Project Settings',
-      href: `/projects/${project.slug}/edit`,
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/edit`,
       icon: IconSettings,
-      current: page.url === `/projects/${project.slug}/edit`,
+      current:
+        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/edit`,
     },
   ]
 }

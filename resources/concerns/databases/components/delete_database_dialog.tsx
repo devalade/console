@@ -10,6 +10,7 @@ import Button from '@/components/button'
 import { useForm } from '@inertiajs/react'
 import type { Database } from '../types/database'
 import type { Project } from '@/concerns/projects/types/project'
+import useParams from '@/hooks/use_params'
 
 export type DeleteDatabaseDialogProps = {
   project: Project
@@ -21,10 +22,13 @@ export type DeleteDatabaseDialogProps = {
 
 export default function DeleteDatabaseDialog({ database, project, open, setOpen }) {
   const { delete: handleDelete, processing } = useForm()
+  const params = useParams()
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    handleDelete(`/projects/${project.slug}/databases/${database.slug}`)
+    handleDelete(
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/databases/${database.slug}`
+    )
   }
 
   return (

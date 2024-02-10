@@ -8,6 +8,7 @@ import Label from '@/components/label'
 import Input from '@/components/input'
 import Button from '@/components/button'
 import useSuccessToast from '@/hooks/use_success_toast'
+import useParams from '@/hooks/use_params'
 
 export type AppSettingsCardProps = {
   project: Project
@@ -16,6 +17,7 @@ export type AppSettingsCardProps = {
 
 export default function ApplicationSettingsCard({ project, application }: AppSettingsCardProps) {
   const successToast = useSuccessToast()
+  const params = useParams()
 
   const form = useForm({
     name: application.name,
@@ -24,9 +26,12 @@ export default function ApplicationSettingsCard({ project, application }: AppSet
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    form.patch(`/projects/${project.slug}/applications/${application.slug}`, {
-      onSuccess: successToast,
-    })
+    form.patch(
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`,
+      {
+        onSuccess: successToast,
+      }
+    )
   }
 
   return (

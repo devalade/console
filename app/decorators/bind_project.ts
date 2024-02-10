@@ -9,6 +9,7 @@ export default function bindProject(_target: any, _key: string, descriptor: Prop
     try {
       const project = await Project.query().where('slug', params.projectSlug).firstOrFail()
       await bouncer.authorize('accessToProject', project)
+      await project.load('organization')
       return await originalMethod.call(this, ctx, project)
     } catch {
       return response.notFound()

@@ -31,6 +31,7 @@ import KanbanBoardsController from '#controllers/kanban/kanban_boards_controller
 import KanbanColumnsController from '#controllers/kanban/kanban_columns_controller'
 import KanbanTasksController from '#controllers/kanban/kanban_tasks_controller'
 import Organization from '#models/organization'
+import OrganizationsController from '#controllers/organizations_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -95,6 +96,16 @@ router.patch('/settings', [SettingsController, 'update']).use(middleware.auth())
 router.delete('/settings', [SettingsController, 'destroy']).use(middleware.auth())
 
 /**
+ * Organizations.
+ */
+router
+  .resource('organizations', OrganizationsController)
+  .except(['show'])
+  .params({ organizations: 'organizationSlug' })
+  .use('*', middleware.auth({ guards: ['web', 'api'] }))
+  .use('edit', middleware.loadProjects())
+
+/**
  * Projects CRUD.
  */
 router
@@ -120,16 +131,16 @@ router
  * Environment variables.
  */
 router
-  .get('/projects/:projectSlug/applications/:applicationSlug/env', [
+  .get('/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/env', [
     EnvironmentVariablesController,
     'edit',
   ])
   .use([middleware.auth(), middleware.loadProjects()])
 router
-  .patch('/projects/:projectSlug/applications/:applicationSlug/env', [
-    EnvironmentVariablesController,
-    'update',
-  ])
+  .patch(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/env',
+    [EnvironmentVariablesController, 'update']
+  )
   .use([middleware.auth({ guards: ['web', 'api'] })])
 
 /**
@@ -145,63 +156,66 @@ router
  * Certificates.
  */
 router
-  .get('/projects/:projectSlug/applications/:applicationSlug/certificates', [
-    CertificatesController,
-    'index',
-  ])
+  .get(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/certificates',
+    [CertificatesController, 'index']
+  )
   .use([middleware.auth(), middleware.loadProjects()])
 router
-  .post('/projects/:projectSlug/applications/:applicationSlug/certificates', [
-    CertificatesController,
-    'store',
-  ])
+  .post(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/certificates',
+    [CertificatesController, 'store']
+  )
   .use(middleware.auth())
 router
-  .post('/projects/:projectSlug/applications/:applicationSlug/certificates/:domain/check', [
-    CertificatesController,
-    'check',
-  ])
+  .post(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/certificates/:domain/check',
+    [CertificatesController, 'check']
+  )
   .use(middleware.auth())
 router
-  .delete('/projects/:projectSlug/applications/:applicationSlug/certificates/:id', [
-    CertificatesController,
-    'destroy',
-  ])
+  .delete(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/certificates/:id',
+    [CertificatesController, 'destroy']
+  )
   .use(middleware.auth())
 
 /**
  * Logs.
  */
 router
-  .get('/projects/:projectSlug/applications/:applicationSlug/logs', [LogsController, 'show'])
+  .get(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/logs',
+    [LogsController, 'show']
+  )
   .use([middleware.auth(), middleware.loadProjects()])
 router
-  .get('/projects/:projectSlug/applications/:applicationSlug/logs/stream', [
-    LogsController,
-    'stream',
-  ])
+  .get(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/logs/stream',
+    [LogsController, 'stream']
+  )
   .use([middleware.auth({ guards: ['web', 'api'] })])
 
 /**
  * Deployments.
  */
 router
-  .get('/projects/:projectSlug/applications/:applicationSlug/deployments', [
-    DeploymentsController,
-    'index',
-  ])
+  .get(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/deployments',
+    [DeploymentsController, 'index']
+  )
   .use([middleware.auth(), middleware.loadProjects()])
 router
-  .post('/projects/:projectSlug/applications/:applicationSlug/deployments', [
-    DeploymentsController,
-    'store',
-  ])
+  .post(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/deployments',
+    [DeploymentsController, 'store']
+  )
   .use([middleware.auth({ guards: ['api'] })])
 router
-  .get('/projects/:projectSlug/applications/:applicationSlug/deployments/updates', [
-    DeploymentsController,
-    'streamUpdates',
-  ])
+  .get(
+    '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/deployments/updates',
+    [DeploymentsController, 'streamUpdates']
+  )
   .use([middleware.auth({ guards: ['web', 'api'] })])
 
 /**

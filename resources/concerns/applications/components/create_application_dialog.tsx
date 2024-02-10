@@ -8,6 +8,7 @@ import { useForm } from '@inertiajs/react'
 import * as React from 'react'
 import CreateApplicationDialogGithubStep from './create_application_dialog_github_step'
 import CreateApplicationDialogNamingStep from './create_application_naming_step'
+import useParams from '@/hooks/use_params'
 
 interface CreateApplicationDialogProps {
   project: Project
@@ -20,6 +21,7 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
   open,
   setOpen,
 }) => {
+  const params = useParams()
   const form = useForm({
     name: '',
     githubRepository: '',
@@ -30,7 +32,7 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.post(`/projects/${project.slug}/applications`, {
+    form.post(`/organizations/${params.organizationSlug}/projects/${project.slug}/applications`, {
       onSuccess: () => {
         setOpen(false)
       },

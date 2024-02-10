@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/dialog'
 import Button from '@/components/button'
+import useParams from '@/hooks/use_params'
 
 export type DeleteCertificateDialogProps = {
   project: Project
@@ -29,10 +30,11 @@ export default function DeleteCertificateDialog({
   setOpen,
 }) {
   const form = useForm()
+  const params = useParams()
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     form.delete(
-      `/projects/${project.slug}/applications/${application.slug}/certificates/${certificate.id}`
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/certificates/${certificate.id}`
     )
   }
 

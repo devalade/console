@@ -16,6 +16,7 @@ export default function bindProjectAndApplication(
     try {
       project = await Project.query().where('slug', params.projectSlug).firstOrFail()
       await bouncer.authorize('accessToProject', project)
+      await project.load('organization')
       application = await project
         .related('applications')
         .query()

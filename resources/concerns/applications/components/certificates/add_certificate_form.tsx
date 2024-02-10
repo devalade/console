@@ -5,6 +5,7 @@ import useSuccessToast from '@/hooks/use_success_toast'
 import { useForm } from '@inertiajs/react'
 import React from 'react'
 import type { Application } from '../../types/application'
+import useParams from '@/hooks/use_params'
 
 export type AddCertificateFormProps = {
   project: Project
@@ -16,14 +17,18 @@ export default function AddCertificateForm({ project, application }: AddCertific
   const { post, processing, data, setData } = useForm({
     domain: '',
   })
+  const params = useParams()
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    post(`/projects/${project.slug}/applications/${application.slug}/certificates`, {
-      preserveState: false,
-      onSuccess: successToast,
-    })
+    post(
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/certificates`,
+      {
+        preserveState: false,
+        onSuccess: successToast,
+      }
+    )
   }
 
   return (

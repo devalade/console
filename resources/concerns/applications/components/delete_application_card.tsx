@@ -12,6 +12,7 @@ import {
 import { useForm } from '@inertiajs/react'
 import type { Project } from '@/concerns/projects/types/project'
 import type { Application } from '../types/application'
+import useParams from '@/hooks/use_params'
 
 interface DeleteApplicationCardProps {
   project: Project
@@ -23,9 +24,12 @@ const DeleteApplicationCard: React.FunctionComponent<DeleteApplicationCardProps>
   application,
 }) => {
   const form = useForm()
+  const params = useParams()
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.delete(`/projects/${project.slug}/applications/${application.slug}`)
+    form.delete(
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`
+    )
   }
 
   return (

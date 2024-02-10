@@ -3,16 +3,18 @@ import { Card, CardContent, CardTitle } from '@/components/card'
 import { IconLayoutGrid } from '@tabler/icons-react'
 import { Link } from '@inertiajs/react'
 import type { Project } from '../types/project'
+import useParams from '@/hooks/use_params'
 
 export type ProjectCardProps = {
   project: Project
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
+  const params = useParams()
   return (
     <Link
       className="hover:opacity-75 transition-opacity"
-      href={`/projects/${project.slug}/applications`}
+      href={`/organizations/${params.organizationSlug}/projects/${project.slug}/applications`}
     >
       <Card>
         <CardContent>

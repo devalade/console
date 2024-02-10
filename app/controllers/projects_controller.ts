@@ -22,7 +22,9 @@ export default class ProjectsController {
     if (request.wantsJSON()) {
       return project
     }
-    return response.redirect().toPath(`/projects/${project.slug}/applications`)
+    return response
+      .redirect()
+      .toPath(`/organizations/${organization.slug}/projects/${project.slug}/applications`)
   }
 
   @bindProject

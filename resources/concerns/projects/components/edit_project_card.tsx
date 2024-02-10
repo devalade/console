@@ -7,6 +7,7 @@ import Label from '@/components/label'
 import Input from '@/components/input'
 import Button from '@/components/button'
 import useSuccessToast from '@/hooks/use_success_toast'
+import useParams from '@/hooks/use_params'
 
 export type EditProjectCardProps = {
   project: Project
@@ -17,10 +18,11 @@ export default function EditProjectCard({ project }: EditProjectCardProps) {
   const form = useForm({
     name: project.name,
   })
+  const params = useParams()
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    form.patch(`/projects/${project.slug}`, {
+    form.patch(`/organizations/${params.organizationSlug}/projects/${project.slug}`, {
       onSuccess: successToast,
     })
   }

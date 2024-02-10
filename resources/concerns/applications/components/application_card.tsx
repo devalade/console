@@ -4,6 +4,7 @@ import type { Application } from '../types/application'
 import { Link } from '@inertiajs/react'
 import { Card, CardContent, CardTitle } from '@/components/card'
 import { IconTerminal2 } from '@tabler/icons-react'
+import useParams from '@/hooks/use_params'
 
 interface ApplicationCardProps {
   project: Project
@@ -14,10 +15,11 @@ const ApplicationCard: React.FunctionComponent<ApplicationCardProps> = ({
   project,
   application,
 }) => {
+  const params = useParams()
   return (
     <Link
       className="hover:opacity-75 transition-opacity"
-      href={`/projects/${project.slug}/applications/${application.slug}`}
+      href={`/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`}
     >
       <Card>
         <CardContent>

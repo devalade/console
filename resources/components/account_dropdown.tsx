@@ -41,7 +41,7 @@ const AccountDropdown: React.FunctionComponent<AccountDropdownProps> = () => {
             <DropdownMenuItem className="cursor-pointer">
               <IconSettings className="mr-2 h-4 w-4" />
 
-              <span>Settings</span>
+              <span>Account Settings</span>
             </DropdownMenuItem>
           </Link>
 

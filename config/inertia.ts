@@ -24,7 +24,14 @@ export default defineConfig({
         return []
       }
       await ctx.auth.user.load('organizations')
+      console.log('ctx.auth.user.organizations', ctx.auth.user.organizations)
       return ctx.auth.user.organizations
+    },
+    projects: async (ctx: any) => {
+      if (!ctx.organization) {
+        return []
+      }
+      return ctx.organization.projects
     },
   },
 })

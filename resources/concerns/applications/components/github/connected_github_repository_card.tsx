@@ -10,6 +10,7 @@ import Button from '@/components/button'
 import Label from '@/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select'
 import ConnectGithubRepository from './connect_github_repository'
+import useParams from '@/hooks/use_params'
 
 export type ConnectGitHubRepositoryCardProps = {
   project: Project
@@ -27,23 +28,30 @@ export default function ConnectGitHubRepositoryCard({
     put: sendGithubBranchUpdate,
     processing,
   } = useForm({ action: 'UPDATE', githubBranch: application.githubBranch })
+  const params = useParams()
 
   const successToast = useSuccessToast()
   const { branches } = useGitHubBranches(application)
 
   const disconnectGithubRepository = () => {
-    form.put(`/projects/${project.slug}/applications/${application.slug}`, {
-      onSuccess: successToast,
-    })
+    form.put(
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`,
+      {
+        onSuccess: successToast,
+      }
+    )
   }
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    sendGithubBranchUpdate(`/projects/${project.slug}/applications/${application.slug}`, {
-      data,
-      onSuccess: successToast,
-    })
+    sendGithubBranchUpdate(
+      `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`,
+      {
+        data,
+        onSuccess: successToast,
+      }
+    )
   }
 
   return (

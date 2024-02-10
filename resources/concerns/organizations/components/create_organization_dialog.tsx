@@ -5,22 +5,20 @@ import slugify from '@/lib/slugify'
 import { useForm } from '@inertiajs/react'
 import Label from '@/components/label'
 import Input from '@/components/input'
-import useParams from '@/hooks/use_params'
 
-export type CreateProjectDialogProps = {
+export type CreateOrganizationDialogProps = {
   open: boolean
   setOpen: (open: boolean) => void
 }
 
-export default function CreateProjectDialog({ open, setOpen }: CreateProjectDialogProps) {
-  const params = useParams()
+export default function CreateOrganizationDialog({ open, setOpen }: CreateOrganizationDialogProps) {
   const form = useForm({
     name: '',
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.post(`/organizations/${params.organizationSlug}/projects`, {
+    form.post('/organizations', {
       onSuccess: () => {
         setOpen(false)
       },
@@ -31,13 +29,13 @@ export default function CreateProjectDialog({ open, setOpen }: CreateProjectDial
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px] gap-0">
         <DialogHeader>
-          <DialogTitle>New Project</DialogTitle>
+          <DialogTitle>New Organization</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4 px-6 pt-0">
             <div className="grid gap-1">
-              <Label>Project Name</Label>
+              <Label>Organization Name</Label>
 
               <Input
                 id="name"
@@ -51,7 +49,7 @@ export default function CreateProjectDialog({ open, setOpen }: CreateProjectDial
 
           <DialogFooter>
             <Button type="submit" loading={form.processing}>
-              <span>Create new project</span>
+              <span>Create new Organization</span>
             </Button>
           </DialogFooter>
         </form>
