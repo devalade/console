@@ -43,7 +43,7 @@ export default class OrganizationsController {
     const payload = await request.validateUsing(updateOrganizationValidator)
     organization.merge(payload)
     await organization.save()
-    return response.redirect().toPath('/organizations')
+    return response.redirect().back()
   }
 
   @bindOrganization
