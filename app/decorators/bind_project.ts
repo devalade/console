@@ -11,7 +11,8 @@ export default function bindProject(_target: any, _key: string, descriptor: Prop
       await bouncer.authorize('accessToProject', project)
       await project.load('organization')
       return await originalMethod.call(this, ctx, project)
-    } catch {
+    } catch (error) {
+      console.log('error', error)
       return response.notFound()
     }
   }

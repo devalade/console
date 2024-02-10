@@ -30,7 +30,6 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
   }
 
   async igniteApplication(application: Application, _deployment: Deployment) {
-    console.log('Igniting application...')
     await this.igniteContainerForApplication(application)
   }
 
@@ -48,7 +47,6 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
     /**
      * We pull the image from the registry before creating the container.
      */
-    console.log('Pulling image...')
     const promisifyStream = (stream: any) =>
       new Promise((resolve, reject) => {
         stream.on('data', (data: any) => console.log(data.toString()))
@@ -58,12 +56,10 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
     await this.docker.image
       .create({}, { fromImage: configuration.Image })
       .then((stream) => promisifyStream(stream))
-    console.log('Image pulled')
 
     /**
      * We check if the container already exists and delete it if it does.
      */
-    console.log('Checking if container already exists...')
     const containerAlreadyExists = await this.docker.container.list({
       all: true,
       filters: {
@@ -71,7 +67,6 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
       },
     })
     if (containerAlreadyExists.length > 0) {
-      console.log('Container already exists, deleting it...')
       const container = this.docker.container.get(containerAlreadyExists[0].id)
       await container.delete({ force: true })
     }
@@ -79,10 +74,8 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
     /**
      * Then we create and start the container.
      */
-    console.log('Creating and starting container...')
     const container = await this.docker.container.create(configuration)
     await container.start()
-    console.log('Container created and started')
   }
 
   shouldMonitorHealthcheck(_application: Application, _deployment: Deployment) {

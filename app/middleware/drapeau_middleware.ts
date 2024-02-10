@@ -8,7 +8,6 @@ export default class DrapeauMiddleware {
      * Middleware logic goes here (before the next call)
      */
     if (!DrapeauService.isFeatureEnabled(featureKey)) {
-      console.log(`Feature ${featureKey} is not enabled`)
       return ctx.response.forbidden('Feature is not enabled')
     }
 

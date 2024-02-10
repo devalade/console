@@ -1,6 +1,10 @@
 import { usePage } from '@inertiajs/react'
-import { IconLayoutGrid, IconSettings, type TablerIconsProps } from '@tabler/icons-react'
-import useParams from './use_params'
+import {
+  IconLayoutGrid,
+  IconMessageCircle,
+  IconSettings,
+  type TablerIconsProps,
+} from '@tabler/icons-react'
 import useOrganizations from '@/concerns/organizations/hooks/use_organizations'
 
 export default function useMainLayoutNavigation(): Array<{
@@ -17,6 +21,12 @@ export default function useMainLayoutNavigation(): Array<{
       href: `/organizations/${currentOrganization.slug}/projects`,
       icon: IconLayoutGrid,
       current: page.url === `/organizations/${currentOrganization.slug}/projects`,
+    },
+    {
+      name: 'Chat',
+      href: `/organizations/${currentOrganization.slug}/chat`,
+      icon: IconMessageCircle,
+      current: page.url === `/organizations/${currentOrganization.slug}/chat`,
     },
     {
       name: 'Organization Settings',

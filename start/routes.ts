@@ -246,29 +246,33 @@ router.post('/fly/webhooks/logs', [FlyWebhooksController, 'handleIncomingLogs'])
  * Kanban routes.
  */
 router
-  .resource('organizations.projects.kanban', KanbanBoardsController)
-  .params({ organizations: 'organizationSlug', projects: 'projectSlug', kanban: 'kanbanBoardSlug' })
+  .resource('organizations.projects.kanban_boards', KanbanBoardsController)
+  .params({
+    organizations: 'organizationSlug',
+    projects: 'projectSlug',
+    kanban_boards: 'kanbanBoardSlug',
+  })
   .use('*', middleware.auth())
   .use(['index', 'show', 'edit'], middleware.loadProjects())
 
 router
-  .resource('organizations.projects.kanban.columns', KanbanColumnsController)
+  .resource('organizations.projects.kanban_boards.columns', KanbanColumnsController)
   .except(['index', 'show', 'edit'])
   .params({
     organizations: 'organizationSlug',
     projects: 'projectSlug',
-    kanban: 'kanbanBoardSlug',
+    kanban_boards: 'kanbanBoardSlug',
     columns: 'kanbanColumnId',
   })
   .use('*', middleware.auth())
 
 router
-  .resource('organizations.projects.kanban.columns.tasks', KanbanTasksController)
+  .resource('organizations.projects.kanban_boards.columns.tasks', KanbanTasksController)
   .except(['index', 'show', 'edit'])
   .params({
     organizations: 'organizationSlug',
     projects: 'projectSlug',
-    kanban: 'kanbanBoardSlug',
+    kanban_boards: 'kanbanBoardSlug',
     columns: 'kanbanColumnId',
     tasks: 'kanbanTaskId',
   })

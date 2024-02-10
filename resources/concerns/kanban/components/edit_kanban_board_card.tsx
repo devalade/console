@@ -1,40 +1,42 @@
-import React from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/card'
+import * as React from 'react'
+import type { KanbanBoard } from '../types/kanban_board'
+import useParams from '@/hooks/use_params'
 import { useForm } from '@inertiajs/react'
+import useSuccessToast from '@/hooks/use_success_toast'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/card'
 import Label from '@/components/label'
 import Input from '@/components/input'
 import Button from '@/components/button'
-import useSuccessToast from '@/hooks/use_success_toast'
-import useParams from '@/hooks/use_params'
 
-export type EditOrganizationCardProps = {
-  organization: { name: string; slug: string }
+interface EditKanbanBoardCardProps {
+  board: KanbanBoard
 }
 
-export default function EditOrganizationCard({ organization }: EditOrganizationCardProps) {
+const EditKanbanBoardCard: React.FunctionComponent<EditKanbanBoardCardProps> = ({ board }) => {
   const successToast = useSuccessToast()
   const form = useForm({
-    name: organization.name,
+    name: board.name,
   })
   const params = useParams()
-
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    form.patch(`/organizations/${params.organizationSlug}`, {
-      onSuccess: successToast,
-    })
+    form.patch(
+      `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}`,
+      {
+        onSuccess: successToast,
+      }
+    )
   }
-
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleSubmit}>
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Edit organization</CardTitle>
+          <CardTitle>Edit kanban board</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="grid gap-1">
-              <Label>Organization name</Label>
+              <Label>Kanban board name</Label>
               <Input
                 id="name"
                 placeholder="acme"
@@ -53,3 +55,5 @@ export default function EditOrganizationCard({ organization }: EditOrganizationC
     </form>
   )
 }
+
+export default EditKanbanBoardCard

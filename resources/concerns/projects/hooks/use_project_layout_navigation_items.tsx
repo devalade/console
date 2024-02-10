@@ -2,6 +2,7 @@ import { usePage } from '@inertiajs/react'
 import {
   Icon3dCubeSphere,
   IconDatabase,
+  IconLayoutKanban,
   IconSettings,
   type TablerIconsProps,
 } from '@tabler/icons-react'
@@ -31,6 +32,14 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
       icon: IconDatabase,
       current:
         page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/databases`,
+    },
+    {
+      name: 'Task Boards',
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards`,
+      icon: IconLayoutKanban,
+      current:
+        page.url ===
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards`,
     },
     {
       name: 'Project Settings',

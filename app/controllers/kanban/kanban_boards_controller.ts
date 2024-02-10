@@ -14,6 +14,7 @@ export default class KanbanBoardsController {
   @bindProject
   public async store({ request, response }: HttpContext, project: Project) {
     const kanbanBoard = await project.related('kanbanBoards').create(request.only(['name']))
+
     // Create default columns
     await kanbanBoard.related('columns').createMany([
       { name: 'TODO', order: 1 },
@@ -24,7 +25,7 @@ export default class KanbanBoardsController {
     return response
       .redirect()
       .toPath(
-        `/organizations/${project.organization.slug}/projects/${project.slug}/kanban/${kanbanBoard.slug}`
+        `/organizations/${project.organization.slug}/projects/${project.slug}/kanban_boards/${kanbanBoard.slug}`
       )
   }
 
@@ -54,6 +55,6 @@ export default class KanbanBoardsController {
     await board.delete()
     return response
       .redirect()
-      .toPath(`/organizations/${project.organization.slug}/projects/${project.slug}/kanban`)
+      .toPath(`/organizations/${project.organization.slug}/projects/${project.slug}/kanban_boards`)
   }
 }
