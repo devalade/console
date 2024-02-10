@@ -1,20 +1,13 @@
 import * as React from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import {
-  IconUsers,
-  IconExternalLink,
-  IconMenu,
-  IconX,
-  type TablerIconsProps,
-} from '@tabler/icons-react'
+import { IconExternalLink, IconMenu, IconX, type TablerIconsProps } from '@tabler/icons-react'
 import { Link } from '@inertiajs/react'
 import Button from '@/components/button'
 import Logo from '@/components/logo'
 import { Toaster } from '@/components/toaster'
 import AccountDropdown from '@/components/account_dropdown'
 import clsx from 'clsx'
-import useOrganizations from '@/concerns/organizations/hooks/use_organizations'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select'
+import OrganizationsSelector from '@/concerns/organizations/components/organizations_selector'
 
 interface SharedLayoutProps extends React.PropsWithChildren {
   className?: string
@@ -36,7 +29,6 @@ const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
   sidebarFooterChildren,
 }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false)
-  const { organizations, currentOrganization } = useOrganizations()
 
   return (
     <>
@@ -209,29 +201,7 @@ const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
 
             <div className="flex flex-1 gap-x-4 self-stretch">
               <div className="flex items-center">
-                <Select
-                  defaultValue={currentOrganization.name}
-                  onValueChange={(organizationIdx) => {
-                    window.location.href = `/organizations/${organizations[organizationIdx].slug}`
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {organizations.map((organization) => (
-                      <SelectItem
-                        value={organization.name}
-                        key={organization.name}
-                        className="cursor-pointer"
-                      >
-                        <IconUsers className="h-4 w-4 rounded-full shadow-lg mr-1" />
-                        <span>{organization.name}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <OrganizationsSelector />
               </div>
               <div className="ml-auto flex items-center space-x-3">
                 <a href="https://www.softwarecitadel.com/contact">

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogHeader } from '@/components/dialog'
 import Button from '@/components/button'
-import slugify from '@/lib/slugify'
 import { useForm } from '@inertiajs/react'
 import Label from '@/components/label'
 import Input from '@/components/input'
@@ -41,8 +40,8 @@ export default function CreateOrganizationDialog({ open, setOpen }: CreateOrgani
                 id="name"
                 className="!col-span-3 w-full"
                 value={form.data.name}
-                placeholder="acme"
-                onChange={(e) => form.setData('name', slugify(e.target.value))}
+                placeholder="manhattan-project"
+                onChange={(e) => form.setData('name', e.target.value)}
               />
             </div>
           </div>

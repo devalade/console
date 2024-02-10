@@ -17,7 +17,7 @@ export default class OrganizationsController {
       userId: auth.user!.id,
       role: 'owner',
     })
-    return response.redirect().toPath('/organizations')
+    return response.redirect().toPath(`/organizations/${organization.slug}/projects`)
   }
 
   @bindOrganization
