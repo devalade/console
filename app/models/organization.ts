@@ -1,10 +1,12 @@
-import { BaseModel, beforeCreate, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, column, hasMany, hasManyThrough } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import type { HasMany, HasManyThrough } from '@adonisjs/lucid/types/relations'
 import Project from './project.js'
 import OrganizationMember from './organization_member.js'
+import User from './user.js'
+import Channel from './channel.js'
 
 export default class Organization extends BaseModel {
   /**
@@ -27,6 +29,15 @@ export default class Organization extends BaseModel {
 
   @hasMany(() => OrganizationMember)
   declare members: HasMany<typeof OrganizationMember>
+
+  @hasMany(() => Channel)
+  declare channels: HasMany<typeof Channel>
+
+  @hasManyThrough([() => User, () => OrganizationMember], {
+    foreignKey: 'organizationId',
+    throughForeignKey: 'id',
+  })
+  declare users: HasManyThrough<typeof User>
 
   /**
    * Hooks.

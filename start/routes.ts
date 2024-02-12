@@ -32,6 +32,8 @@ import KanbanColumnsController from '#controllers/kanban/kanban_columns_controll
 import KanbanTasksController from '#controllers/kanban/kanban_tasks_controller'
 import Organization from '#models/organization'
 import OrganizationsController from '#controllers/organizations_controller'
+import ChatController from '#controllers/chat_controller'
+import ChannelsController from '#controllers/channels_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -277,3 +279,13 @@ router
     tasks: 'kanbanTaskId',
   })
   .use('*', middleware.auth())
+
+router
+  .get('/organizations/:organizationSlug/chat', [ChatController, 'index'])
+  .use(middleware.auth())
+
+router
+  .resource('organizations.channels', ChannelsController)
+  .params({ organizations: 'organizationSlug' })
+  .use('*', middleware.auth())
+  .only(['store'])

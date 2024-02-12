@@ -23,7 +23,6 @@ export default function bindProjectAndKanbanBoard(
         .where('slug', params.kanbanBoardSlug)
         .firstOrFail()
     } catch (error) {
-      console.log('error: ', error)
       return response.notFound()
     }
     return await originalMethod.call(this, ctx, project, kanbanBoard)

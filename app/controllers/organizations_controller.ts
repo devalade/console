@@ -26,8 +26,14 @@ export default class OrganizationsController {
     organization: Organization,
     organizationMember: OrganizationMember
   ) {
+    await organization.load('members', (query) => {
+      query.preload('user')
+    })
     const isOwner = organizationMember.role === 'owner'
-    return inertia.render('organizations/edit', { organization, isOwner })
+    return inertia.render('organizations/edit', {
+      organization,
+      isOwner,
+    })
   }
 
   @bindOrganization

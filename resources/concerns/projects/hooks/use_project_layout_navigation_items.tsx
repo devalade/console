@@ -1,6 +1,7 @@
 import { usePage } from '@inertiajs/react'
 import {
   Icon3dCubeSphere,
+  IconArchive,
   IconDatabase,
   IconLayoutKanban,
   IconSettings,
@@ -32,6 +33,13 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
       icon: IconDatabase,
       current:
         page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/databases`,
+    },
+    {
+      name: 'Storage Buckets',
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/storage`,
+      icon: IconArchive,
+      current:
+        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/storage`,
     },
     {
       name: 'Task Boards',

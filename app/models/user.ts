@@ -67,6 +67,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
     organization.name = user.fullName
     await organization.save()
 
+    await organization.related('channels').create({ name: 'general', order: 0 })
+
     const member = new OrganizationMember()
     member.organizationId = organization.id
     member.userId = user.id

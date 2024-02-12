@@ -11,22 +11,20 @@ import {
 import { Link } from '@inertiajs/react'
 import useUser from '@/hooks/use_user'
 import { IconLogout, IconSettings } from '@tabler/icons-react'
+import getInitials from '@/lib/initials'
 
 interface AccountDropdownProps {}
 
 const AccountDropdown: React.FunctionComponent<AccountDropdownProps> = () => {
   const user = useUser()
-  const splittedFullName: string[] = user.fullName.split(' ')
-  const initials: string =
-    splittedFullName[0].charAt(0).toUpperCase() +
-    (splittedFullName.length > 1 ? splittedFullName[1].charAt(0).toUpperCase() : '')
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex items-center gap-x-4 py-3 text-sm leading-6 font-normal text-zinc-900 hover:opacity-75 transition">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 border-zinc-700 border text-zinc-200">
-            <span className="font-medium">{initials}</span>
-          </div>{' '}
+            <span className="font-medium">{getInitials(user.fullName)}</span>
+          </div>
           <span aria-hidden="true">{user.email}</span>
         </button>
       </DropdownMenuTrigger>

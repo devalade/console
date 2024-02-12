@@ -26,7 +26,7 @@ export default function useMainLayoutNavigation(): Array<{
       name: 'Chat',
       href: `/organizations/${currentOrganization.slug}/chat`,
       icon: IconMessageCircle,
-      current: page.url === `/organizations/${currentOrganization.slug}/chat`,
+      current: page.url.startsWith(`/organizations/${currentOrganization.slug}/chat`),
     },
     {
       name: 'Organization Settings',

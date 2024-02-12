@@ -22,8 +22,7 @@ export default function bindOrganization(
         .firstOrFail()
 
       return await originalMethod.call(this, ctx, organization, organizationMember)
-    } catch (error) {
-      console.error(error)
+    } catch {
       return response.notFound()
     }
   }

@@ -35,7 +35,7 @@ export default class DockerDriver implements IDriver {
     } catch (error) {
       if (error.statusCode === 503) {
         await this.docker.swarm.init({
-          ListenAddr: '0.0.0.0:2377',
+          ListenAddr: ':2377',
         })
       } else {
         throw error

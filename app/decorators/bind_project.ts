@@ -12,7 +12,6 @@ export default function bindProject(_target: any, _key: string, descriptor: Prop
       await project.load('organization')
       return await originalMethod.call(this, ctx, project)
     } catch (error) {
-      console.log('error', error)
       return response.notFound()
     }
   }
