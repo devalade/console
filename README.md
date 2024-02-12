@@ -34,7 +34,7 @@ Software Citadel Console consists in :
 
 ```bash
 # Clone the repository
-git clone https://github.com/software-citadel/console.git
+git clone https://github.com/SoftwareCitadel/console.git
 cd console
 
 # Install dependencies
