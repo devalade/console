@@ -4,6 +4,8 @@ import Database from '#models/database'
 import Deployment from '#models/deployment'
 import { DnsEntries } from '#types/dns'
 import Certificate, { CertificateStatus } from '#models/certificate'
+import Organization from '#models/organization'
+import Project from '#models/project'
 
 export default interface IDriver {
   initializeDriver(): void | Promise<void>
@@ -14,32 +16,80 @@ export default interface IDriver {
 }
 
 export interface IDriverApplicationsService {
-  createApplication(application: Application): void | Promise<void>
-  deleteApplication(application: Application): void | Promise<void>
+  createApplication(
+    organization: Organization,
+    project: Project,
+    application: Application
+  ): void | Promise<void>
+
+  deleteApplication(
+    organization: Organization,
+    project: Project,
+    application: Application
+  ): void | Promise<void>
 
   streamLogs(
+    organization: Organization,
+    project: Project,
     application: Application,
     response: Response,
     scope: 'application' | 'builder'
   ): void | Promise<void>
 
-  createCertificate(application: Application, hostname: string): DnsEntries | Promise<DnsEntries>
+  createCertificate(
+    organization: Organization,
+    project: Project,
+    application: Application,
+    hostname: string
+  ): DnsEntries | Promise<DnsEntries>
+
   checkDnsConfiguration(
+    organization: Organization,
+    project: Project,
     application: Application,
     certificate: Certificate
   ): CertificateStatus | Promise<CertificateStatus>
-  deleteCertificate(application: Application, hostname: string): void | Promise<void>
+
+  deleteCertificate(
+    organization: Organization,
+    project: Project,
+    application: Application,
+    hostname: string
+  ): void | Promise<void>
 }
 
 export interface IDriverDatabasesService {
-  createDatabase(database: Database): void | Promise<void>
-  deleteDatabase(database: Database): void | Promise<void>
+  createDatabase(
+    organization: Organization,
+    project: Project,
+    database: Database
+  ): void | Promise<void>
+
+  deleteDatabase(
+    organization: Organization,
+    project: Project,
+    database: Database
+  ): void | Promise<void>
 }
 
 export interface IDriverDeploymentsService {
-  igniteBuilder(application: Application, deployment: Deployment): void | Promise<void>
-  igniteApplication(application: Application, deployment: Deployment): void | Promise<void>
+  igniteBuilder(
+    organization: Organization,
+    project: Project,
+    application: Application,
+    deployment: Deployment
+  ): void | Promise<void>
+
+  igniteApplication(
+    organization: Organization,
+    project: Project,
+    application: Application,
+    deployment: Deployment
+  ): void | Promise<void>
+
   shouldMonitorHealthcheck(
+    organization: Organization,
+    project: Project,
     application: Application,
     deployment: Deployment
   ): boolean | Promise<boolean>

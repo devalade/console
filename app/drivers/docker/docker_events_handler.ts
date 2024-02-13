@@ -4,6 +4,9 @@ import emitter from '@adonisjs/core/services/emitter'
 export default class DockerEventsHandler {
   async handleSuccessfulBuildEvent(applicationSlug: string) {
     const application = await Application.findByOrFail('slug', applicationSlug)
+    await application.load('project', (query) => {
+      query.preload('organization')
+    })
     const latestDeploymentWithBuildingStatus = await application
       .related('deployments')
       .query()
@@ -11,7 +14,12 @@ export default class DockerEventsHandler {
       .orderBy('created_at', 'desc')
       .firstOrFail()
 
-    emitter.emit('builds:success', [application, latestDeploymentWithBuildingStatus])
+    emitter.emit('builds:success', [
+      application.project.organization,
+      application.project,
+      application,
+      latestDeploymentWithBuildingStatus,
+    ])
   }
 
   async handleFailedBuildEvent(applicationSlug: string) {

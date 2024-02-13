@@ -3,6 +3,8 @@ import { IDriverDeploymentsService } from '#drivers/idriver'
 import Application from '#models/application'
 import Deployment from '#models/deployment'
 import DockerDeploymentsConfigurationBuilder from './docker_deployments_configuration_builder.js'
+import Organization from '#models/organization'
+import Project from '#models/project'
 
 export default class DockerDeploymentsService implements IDriverDeploymentsService {
   private readonly dockerDeploymentsConfigurationBuilder =
@@ -10,7 +12,12 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
 
   constructor(private readonly docker: Docker) {}
 
-  async igniteBuilder(application: Application, _deployment: Deployment) {
+  async igniteBuilder(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    _deployment: Deployment
+  ) {
     const builderConfiguration =
       this.dockerDeploymentsConfigurationBuilder.prepareBuilderContainerConfiguration(application)
 
@@ -29,7 +36,12 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
     await container.start()
   }
 
-  async igniteApplication(application: Application, _deployment: Deployment) {
+  async igniteApplication(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    _deployment: Deployment
+  ) {
     await this.igniteContainerForApplication(application)
   }
 
@@ -78,7 +90,12 @@ export default class DockerDeploymentsService implements IDriverDeploymentsServi
     await container.start()
   }
 
-  shouldMonitorHealthcheck(_application: Application, _deployment: Deployment) {
+  shouldMonitorHealthcheck(
+    _organization: Organization,
+    _project: Project,
+    _application: Application,
+    _deployment: Deployment
+  ) {
     /**
      * Docker driver does not support healthchecks (yet).
      */

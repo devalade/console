@@ -43,6 +43,9 @@ npm install
 # Create a .env file
 node ace install
 
+# Run the migrations
+node ace migration:run
+
 # Start the development server
 npm run dev
 ```
@@ -77,3 +80,19 @@ fly secrets set ORG=personal # Replace with something else if you're using some 
 fly secrets set HTTP_URL=<your_hostname>/fly/webhooks/logs
 fly secrets set HTTP_TOKEN=<replace_this_with_your_http_bearer>
 ```
+
+## FAQ
+
+### What if I want to use it with some not-supported orchestration driver?
+
+You can create a new driver by copy/pasting the blank driver like such :
+
+```bash
+cp -r app/drivers/blank app/drivers/<your_driver>
+```
+
+Then, you can iterate on the driver to make it work with your orchestration platform.
+
+For example, you might have to have to add some environment variables to the `.env` file, and validating them in the `start/env.ts` file, etc.
+
+If you need some help, feel free to [contact us](https://softwarecitadel.com/contact).

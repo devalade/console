@@ -17,10 +17,10 @@ export default class GitHubDeploymentsController {
   ) {}
 
   async handleWebhooks(ctx: HttpContext) {
-    // const isValidEvent = await this.octokitService.checkOctokitEventIsValid(ctx.request)
-    // if (!isValidEvent) {
-    //   return ctx.response.badRequest('Invalid event.')
-    // }
+    const isValidEvent = await this.octokitService.checkOctokitEventIsValid(ctx.request)
+    if (!isValidEvent) {
+      return ctx.response.badRequest('Invalid event.')
+    }
 
     const webhookType = ctx.request.header('X-GitHub-Event')
     switch (webhookType) {
@@ -47,7 +47,9 @@ export default class GitHubDeploymentsController {
 
     const githubCheckId = await this.octokitService.markDeploying(pushEventPayload)
 
-    await application.load('project')
+    await application.load('project', (query) => {
+      query.preload('organization')
+    })
 
     const downloadedCommit: ArrayBuffer = await this.octokitService.downloadCommit(
       pushEventPayload.installation!.id,
@@ -68,7 +70,12 @@ export default class GitHubDeploymentsController {
     })
 
     const driver = Driver.getDriver()
-    await driver.deployments.igniteBuilder(application, deployment)
+    await driver.deployments.igniteBuilder(
+      application.project.organization,
+      application.project,
+      application,
+      deployment
+    )
 
     emitter.emit('deployments:created', [application, deployment])
 

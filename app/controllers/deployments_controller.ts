@@ -23,7 +23,7 @@ export default class DeploymentsController {
   }
 
   @bindProjectAndApplication
-  async store({ request, response }: HttpContext, _project: Project, application: Application) {
+  async store({ request, response }: HttpContext, project: Project, application: Application) {
     const tarball = request.file('tarball', {
       size: '20mb',
       extnames: ['tar.gz'],
@@ -42,6 +42,8 @@ export default class DeploymentsController {
 
     const driver = Driver.getDriver()
     const shouldMonitorHealthcheck = driver.deployments.shouldMonitorHealthcheck(
+      project.organization,
+      project,
       application,
       deployment
     )

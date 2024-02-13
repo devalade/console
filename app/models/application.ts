@@ -86,12 +86,26 @@ export default class Application extends BaseModel {
 
   @afterCreate()
   static async emitCreatedEvent(application: Application) {
-    emitter.emit('applications:created', application)
+    await application.load('project', (query) => {
+      query.preload('organization')
+    })
+    emitter.emit('applications:created', [
+      application.project.organization,
+      application.project,
+      application,
+    ])
   }
 
   @beforeDelete()
   static async emitDeletedEvent(application: Application) {
-    emitter.emit('applications:deleted', application)
+    await application.load('project', (query) => {
+      query.preload('organization')
+    })
+    emitter.emit('applications:deleted', [
+      application.project.organization,
+      application.project,
+      application,
+    ])
   }
 
   /**

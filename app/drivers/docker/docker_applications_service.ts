@@ -10,13 +10,23 @@ import Driver from '#drivers/driver'
 import DockerDriver from './docker_driver.js'
 import dns from 'dns/promises'
 import env from '#start/env'
+import Organization from '#models/organization'
+import Project from '#models/project'
 
 export default class DockerApplicationsService implements IDriverApplicationsService {
   constructor(private readonly docker: Docker) {}
 
-  createApplication(_application: Application): void | Promise<void> {}
+  createApplication(
+    _organization: Organization,
+    _project: Project,
+    _application: Application
+  ): void | Promise<void> {}
 
-  async deleteApplication(application: Application) {
+  async deleteApplication(
+    _organization: Organization,
+    _project: Project,
+    application: Application
+  ) {
     try {
       const container = this.docker.container.get(application.slug)
       await container.delete({ force: true })
@@ -32,7 +42,13 @@ export default class DockerApplicationsService implements IDriverApplicationsSer
     }
   }
 
-  async streamLogs(application: Application, response: Response, scope: 'application' | 'builder') {
+  async streamLogs(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    response: Response,
+    scope: 'application' | 'builder'
+  ) {
     let serviceName: string
     if (scope === 'builder') {
       serviceName = `${env.get('DOCKER_BUILDER_NAME_PREFIX', 'citadel-builder')}-${application.slug}-builder`
@@ -100,7 +116,12 @@ export default class DockerApplicationsService implements IDriverApplicationsSer
     await driver.deployments.igniteContainerForApplication(application)
   }
 
-  async createCertificate(application: Application, hostname: string): Promise<DnsEntries> {
+  async createCertificate(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    hostname: string
+  ): Promise<DnsEntries> {
     await this.updateContainerForCertificateUpdate(application)
 
     const driver = Driver.getDriver() as DockerDriver
@@ -115,6 +136,8 @@ export default class DockerApplicationsService implements IDriverApplicationsSer
   }
 
   async checkDnsConfiguration(
+    _organization: Organization,
+    _project: Project,
     _application: Application,
     certificate: Certificate
   ): Promise<CertificateStatus> {
@@ -132,7 +155,12 @@ export default class DockerApplicationsService implements IDriverApplicationsSer
     }
   }
 
-  async deleteCertificate(application: Application, _hostname: string) {
+  async deleteCertificate(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    _hostname: string
+  ) {
     await this.updateContainerForCertificateUpdate(application)
   }
 }
