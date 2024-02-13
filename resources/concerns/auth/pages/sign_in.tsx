@@ -8,6 +8,7 @@ import Input from '@/components/input'
 import Label from '@/components/label'
 import SignInWithGitHub from '@/concerns/auth/components/sign_in_with_github'
 import PasswordField from '@/components/password_field'
+import isFeatureEnabled from '@/lib/is_feature_enabled'
 
 interface SignInProps {}
 
@@ -29,15 +30,17 @@ const SignIn: React.FunctionComponent<SignInProps> = () => {
 
   return (
     <AuthLayout>
-      <Link
-        className={clsx(
-          buttonVariants({ variant: 'ghost' }),
-          'absolute right-4 top-4 md:right-8 md:top-8'
-        )}
-        href="/auth/sign_up"
-      >
-        Create an account
-      </Link>
+      {isFeatureEnabled('sign_up') && (
+        <Link
+          className={clsx(
+            buttonVariants({ variant: 'ghost' }),
+            'absolute right-4 top-4 md:right-8 md:top-8'
+          )}
+          href="/auth/sign_up"
+        >
+          Create an account
+        </Link>
+      )}
 
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">

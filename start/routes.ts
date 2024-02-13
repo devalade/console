@@ -57,7 +57,7 @@ router
 /**
  * Authentication routes.
  */
-router.get('/auth/sign_up', [SignUpController, 'show'])
+router.get('/auth/sign_up', [SignUpController, 'show']).use(middleware.drapeau('sign_up'))
 router.post('/auth/sign_up', [SignUpController, 'handle']).use(middleware.drapeau('sign_up'))
 
 router.get('/auth/sign_in', [SignInController, 'show'])
@@ -106,6 +106,14 @@ router
   .params({ organizations: 'organizationSlug' })
   .use('*', middleware.auth({ guards: ['web', 'api'] }))
   .use('edit', middleware.loadProjects())
+
+router
+  .post('/organizations/:organizationSlug/quit', [OrganizationsController, 'quit'])
+  .use(middleware.auth())
+
+router
+  .post('/organizations/:organizationSlug/join', [OrganizationsController, 'join'])
+  .use(middleware.auth())
 
 /**
  * Projects CRUD.

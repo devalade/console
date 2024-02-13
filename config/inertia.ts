@@ -1,3 +1,4 @@
+import DrapeauService from '#services/drapeau_service'
 import env from '#start/env'
 import { defineConfig } from '@adonisjs/inertia'
 
@@ -32,5 +33,6 @@ export default defineConfig({
       }
       return ctx.organization.projects
     },
+    features: () => DrapeauService.getFeatureFlagsValues(),
   },
 })

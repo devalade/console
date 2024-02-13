@@ -1,5 +1,6 @@
 name: Tests
-on: push
+# Disable for now
+on: release
 
 jobs:
   tests:

@@ -35,6 +35,6 @@ test.group('Auth / Sign in', () => {
     await page.locator('#password').fill(password)
 
     await page.locator('button[type=submit]').click()
-    await page.waitForURL('/projects')
+    await page.waitForURL(/\/organizations\/.*\/projects/)
   })
 })

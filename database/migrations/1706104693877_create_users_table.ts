@@ -11,6 +11,7 @@ export default class extends BaseSchema {
       table.string('password').nullable()
       table.string('github_id').nullable()
       table.json('github_installation_ids').defaultTo('[]')
+      table.boolean('invited').defaultTo(false)
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()

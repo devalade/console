@@ -1,9 +1,11 @@
 import bindOrganization from '#decorators/bind_organization'
+import InviteMemberNotification from '#mails/invite_member_notification'
 import Organization from '#models/organization'
 import OrganizationMember from '#models/organization_member'
 import { createOrganizationValidator } from '#validators/create_organization_validator'
 import { updateOrganizationValidator } from '#validators/update_organization_validator'
 import type { HttpContext } from '@adonisjs/core/http'
+import mail from '@adonisjs/mail/services/main'
 
 export default class OrganizationsController {
   public async index({ inertia }: HttpContext) {
@@ -53,6 +55,12 @@ export default class OrganizationsController {
   }
 
   @bindOrganization
+  public async destroy({ response }: HttpContext, organization: Organization) {
+    await organization.delete()
+    return response.redirect().toPath('/organizations')
+  }
+
+  @bindOrganization
   public async quit(
     { response }: HttpContext,
     _organization: Organization,
@@ -60,5 +68,32 @@ export default class OrganizationsController {
   ) {
     await organizationMember.delete()
     return response.redirect().toPath('/organizations')
+  }
+
+  @bindOrganization
+  public async invite(
+    { request, response }: HttpContext,
+    organization: Organization,
+    organizationMember: OrganizationMember
+  ) {
+    if (organizationMember.role === 'owner') {
+      return response.unauthorized()
+    }
+    const email = request.input('email')
+    await mail.send(new InviteMemberNotification(organization, email))
+
+    return response.redirect().back()
+  }
+
+  public async join({ auth, request, response }: HttpContext) {
+    if (!request.hasValidSignature()) {
+      return response.redirect().toPath('/auth/sign_up')
+    }
+    const organization = await Organization.findByOrFail('slug', request.param('organizationSlug'))
+    await organization.related('members').create({
+      userId: auth.user!.id,
+      role: 'member',
+    })
+    return response.redirect().toPath(`/organizations/${organization.slug}/projects`)
   }
 }
