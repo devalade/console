@@ -29,7 +29,7 @@ export default function ApplicationSettingsCard({ project, application }: AppSet
     form.patch(
       `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`,
       {
-        onSuccess: successToast,
+        onSuccess: () => successToast(),
       }
     )
   }

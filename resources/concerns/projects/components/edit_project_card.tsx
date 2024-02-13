@@ -23,7 +23,7 @@ export default function EditProjectCard({ project }: EditProjectCardProps) {
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     form.patch(`/organizations/${params.organizationSlug}/projects/${project.slug}`, {
-      onSuccess: successToast,
+      onSuccess: () => successToast(),
     })
   }
 

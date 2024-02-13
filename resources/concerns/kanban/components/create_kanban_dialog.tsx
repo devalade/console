@@ -29,7 +29,7 @@ export default function CreateKanbanBoardDialog({
     e.preventDefault()
 
     form.post(`/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards`, {
-      onSuccess: successToast,
+      onSuccess: () => successToast(),
     })
   }
 

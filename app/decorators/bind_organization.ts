@@ -18,11 +18,12 @@ export default function bindOrganization(
 
       const organizationMember = await OrganizationMember.query()
         .where('userId', ctx.auth.user!.id)
-        .andWhere('id', organization.id)
+        .andWhere('organizationId', organization.id)
         .firstOrFail()
 
       return await originalMethod.call(this, ctx, organization, organizationMember)
-    } catch {
+    } catch (error) {
+      console.error(error)
       return response.notFound()
     }
   }

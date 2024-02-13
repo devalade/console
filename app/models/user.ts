@@ -53,8 +53,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare defaultOrganizationId: number
 
   @hasManyThrough([() => Organization, () => OrganizationMember], {
-    foreignKey: 'userId',
     throughForeignKey: 'id',
+    throughLocalKey: 'organizationId',
   })
   declare organizations: HasManyThrough<typeof Organization>
 

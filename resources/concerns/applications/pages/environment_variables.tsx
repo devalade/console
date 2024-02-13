@@ -57,7 +57,7 @@ const EnvironmentVariables: React.FunctionComponent<EnvironmentVariablesProps> =
     form.patch(
       `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/env`,
       {
-        onSuccess: successToast,
+        onSuccess: () => successToast(),
       }
     )
   }

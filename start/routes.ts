@@ -112,7 +112,11 @@ router
   .use(middleware.auth())
 
 router
-  .post('/organizations/:organizationSlug/join', [OrganizationsController, 'join'])
+  .get('/organizations/:organizationSlug/:email/join', [OrganizationsController, 'join'])
+  .use(middleware.auth())
+
+router
+  .post('/organizations/:organizationSlug/invite', [OrganizationsController, 'invite'])
   .use(middleware.auth())
 
 /**

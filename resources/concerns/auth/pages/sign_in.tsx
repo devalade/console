@@ -36,7 +36,8 @@ const SignIn: React.FunctionComponent<SignInProps> = () => {
             buttonVariants({ variant: 'ghost' }),
             'absolute right-4 top-4 md:right-8 md:top-8'
           )}
-          href="/auth/sign_up"
+          // Preserve the query string when redirecting to the sign up page
+          href={'/auth/sign_up' + window.location.search}
         >
           Create an account
         </Link>
