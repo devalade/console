@@ -36,6 +36,8 @@ export default class Organization extends BaseModel {
   @hasManyThrough([() => User, () => OrganizationMember], {
     foreignKey: 'organizationId',
     throughForeignKey: 'id',
+    throughLocalKey: 'userId',
+    localKey: 'id',
   })
   declare users: HasManyThrough<typeof User>
 

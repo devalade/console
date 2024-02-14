@@ -34,6 +34,8 @@ import Organization from '#models/organization'
 import OrganizationsController from '#controllers/organizations_controller'
 import ChatController from '#controllers/chat_controller'
 import ChannelsController from '#controllers/channels_controller'
+import MessagesController from '#controllers/messages_controller'
+import ConversationsController from '#controllers/conversations_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -112,11 +114,11 @@ router
   .use(middleware.auth())
 
 router
-  .get('/organizations/:organizationSlug/:email/join', [OrganizationsController, 'join'])
+  .post('/organizations/:organizationSlug/invite', [OrganizationsController, 'invite'])
   .use(middleware.auth())
 
 router
-  .post('/organizations/:organizationSlug/invite', [OrganizationsController, 'invite'])
+  .get('/organizations/:organizationSlug/:email/join', [OrganizationsController, 'join'])
   .use(middleware.auth())
 
 /**
@@ -292,6 +294,9 @@ router
   })
   .use('*', middleware.auth())
 
+/**
+ * Chat routes.
+ */
 router
   .get('/organizations/:organizationSlug/chat', [ChatController, 'index'])
   .use(middleware.auth())
@@ -301,3 +306,14 @@ router
   .params({ organizations: 'organizationSlug' })
   .use('*', middleware.auth())
   .only(['store'])
+
+router
+  .post('/organizations/:organizationSlug/messages', [MessagesController, 'store'])
+  .use(middleware.auth())
+router
+  .delete('/organizations/:organizationSlug/messages/:messageId', [MessagesController, 'destroy'])
+  .use(middleware.auth())
+
+router
+  .post('/organizations/:organizationSlug/conversations', [ConversationsController, 'store'])
+  .use(middleware.auth())

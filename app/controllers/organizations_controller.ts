@@ -116,10 +116,12 @@ export default class OrganizationsController {
       return response.redirect().toPath('/auth/sign_up')
     }
     const organization = await Organization.findByOrFail('slug', request.param('organizationSlug'))
-    await organization.related('members').firstOrCreate({
-      userId: auth.user!.id,
-      role: 'member',
-    })
+    await organization
+      .related('members')
+      .firstOrCreate(
+        { userId: auth.user!.id, role: 'member' },
+        { userId: auth.user!.id, role: 'member' }
+      )
     return response.redirect().toPath(`/organizations/${organization.slug}/projects`)
   }
 }
