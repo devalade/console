@@ -1,4 +1,4 @@
-import type { Organization } from '@/concerns/organizations/type'
+import type { Organization } from '@/concerns/organizations/types/organization'
 
 export interface Project {
   id: string

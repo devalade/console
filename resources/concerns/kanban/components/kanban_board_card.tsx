@@ -1,6 +1,6 @@
 import type { Project } from '@/concerns/projects/types/project'
 import { IconLayoutKanban } from '@tabler/icons-react'
-import type { KanbanBoard } from '../types/kanban_board'
+import type { Board } from '../types/board'
 import { Link } from '@inertiajs/react'
 import useParams from '@/hooks/use_params'
 import React from 'react'
@@ -8,7 +8,7 @@ import { Card, CardContent, CardTitle } from '@/components/card'
 
 interface KanbanBoardCardProps {
   project: Project
-  kanbanBoard: KanbanBoard
+  kanbanBoard: Board
 }
 
 const KanbanBoardCard: React.FunctionComponent<KanbanBoardCardProps> = ({

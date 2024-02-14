@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type { KanbanBoard } from '../types/kanban_board'
+import type { Board } from '../types/board'
 import useParams from '@/hooks/use_params'
 import { useForm } from '@inertiajs/react'
 import useSuccessToast from '@/hooks/use_success_toast'
@@ -9,7 +9,7 @@ import Input from '@/components/input'
 import Button from '@/components/button'
 
 interface EditKanbanBoardCardProps {
-  board: KanbanBoard
+  board: Board
 }
 
 const EditKanbanBoardCard: React.FunctionComponent<EditKanbanBoardCardProps> = ({ board }) => {

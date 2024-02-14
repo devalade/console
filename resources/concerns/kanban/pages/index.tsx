@@ -3,12 +3,12 @@ import ProjectLayout from '@/layouts/project_layout'
 import * as React from 'react'
 import CreateKanbanBoardDialog from '../components/create_kanban_dialog'
 import type { Project } from '@/concerns/projects/types/project'
-import type { KanbanBoard } from '../types/kanban_board'
+import type { Board } from '../types/board'
 import KanbanBoardCard from '../components/kanban_board_card'
 
 interface IndexProps {
   project: Project
-  boards: KanbanBoard[]
+  boards: Board[]
 }
 
 const Index: React.FunctionComponent<IndexProps> = ({ project, boards }) => {
