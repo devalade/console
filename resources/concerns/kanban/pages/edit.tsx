@@ -1,13 +1,13 @@
 import type { Project } from '@/concerns/projects/types/project'
 import * as React from 'react'
-import type { Board } from '../types/board'
+import type { KanbanBoard } from '../types/kanban_board'
 import KanbanBoardLayout from '../kanban_board_layout'
 import EditKanbanBoardCard from '../components/edit_kanban_board_card'
 import DestroyKanbanBoardCard from '../components/destroy_kanban_board_card'
 
 interface EditProps {
   project: Project
-  board: Board
+  board: KanbanBoard
 }
 
 const Edit: React.FunctionComponent<EditProps> = ({ project, board }) => {

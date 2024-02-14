@@ -1,6 +1,6 @@
 import type { Project } from '@/concerns/projects/types/project'
 import * as React from 'react'
-import type { Board } from '../types/board'
+import type { KanbanBoard } from '../types/kanban_board'
 import KanbanBoardLayout from '../kanban_board_layout'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { Badge } from '@/components/badge'
@@ -17,7 +17,7 @@ import Button from '@/components/button'
 
 interface ShowProps {
   project: Project
-  board: Board
+  board: KanbanBoard
 }
 
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {

@@ -1,12 +1,12 @@
 import type { Project } from '@/concerns/projects/types/project'
 import useParams from '@/hooks/use_params'
 import React from 'react'
-import type { Board } from '../types/board'
+import type { KanbanBoard } from '../types/kanban_board'
 import { Link } from '@inertiajs/react'
 
 export type KanbanBoardTabsProps = {
   project: Project
-  board: Board
+  board: KanbanBoard
 }
 
 export default function KanbanBoardTabs({ project, board }: KanbanBoardTabsProps) {
