@@ -4,9 +4,16 @@ import type { Board } from '../types/board'
 import KanbanBoardLayout from '../kanban_board_layout'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { Badge } from '@/components/badge'
-import { IconCalendar, IconDots, IconMessageCircle2, IconPaperclip } from '@tabler/icons-react'
+import {
+  IconCalendar,
+  IconDots,
+  IconMessageCircle2,
+  IconPaperclip,
+  IconPlus,
+} from '@tabler/icons-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/card'
 import type { Column } from '../types/column'
+import Button from '@/components/button'
 
 interface ShowProps {
   project: Project
@@ -15,13 +22,20 @@ interface ShowProps {
 
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
   console.log({ project, board })
+
+  function onDragEnd(data) {
+    console.log(data)
+  }
+
   return (
     <KanbanBoardLayout project={project} board={board}>
-      <div className="flex gap-x-4 items-start w-full h-full overflow-x-scroll ">
-        {board.columns.map((column) => (
-          <Column {...column} />
-        ))}
-      </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex gap-x-4 items-start w-full h-full overflow-x-scroll ">
+          {board.columns.map((column) => (
+            <Column {...column} />
+          ))}
+        </div>
+      </DragDropContext>
     </KanbanBoardLayout>
   )
 }
@@ -29,21 +43,45 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
 export default Show
 
 function Column(props: Column) {
-  const { name, tasks } = props
+  const { id, name, tasks } = props
   return (
-    <div className="w-80">
-      <div className="flex items-center justify-between mb-4 py-4 border-b-2 border-gray-500">
-        <div className="flex items-center gap-x-2">
-          <p className="text-sm font-medium ">{name}</p>
-          <Badge variant="outline">{tasks.length}</Badge>
-        </div>
-        <IconDots className="size-4 stroke-gray-500" />
-      </div>
+    <Droppable droppableId={id.toString()}>
+      {(provided, snapshot) => (
+        <div {...provided.droppableProps} ref={provided.innerRef} className="w-80">
+          <div className="flex items-center justify-between mb-4 py-4 border-b-2 border-gray-500">
+            <div className="flex items-center gap-x-2">
+              <p className="text-sm font-medium ">{name}</p>
+              <Badge variant="outline">{tasks.length}</Badge>
+            </div>
+            <IconDots className="size-4 stroke-gray-500" />
+          </div>
 
-      <div className="w-full p-2 rounded-lg bg-secondary">
-        <ColumnItem />
-      </div>
-    </div>
+          <div className="w-full p-2 rounded-lg bg-secondary space-y-2">
+            {[1, 2].map((task) => (
+              <Draggable key={task.toString() + id} draggableId={task.toString() + id} index={task}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <ColumnItem />{' '}
+                  </div>
+                )}
+              </Draggable>
+            ))}
+
+            <Button
+              className="w-full mt-4 border-2 border-dashed gap-x-2 bg-transparent"
+              variant="outline"
+            >
+              <IconPlus className="w-4" />
+              Add card
+            </Button>
+          </div>
+        </div>
+      )}
+    </Droppable>
   )
 }
 
