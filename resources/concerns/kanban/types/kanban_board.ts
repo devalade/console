@@ -1,4 +1,4 @@
-import type { Column } from './kanban_column'
+import type { KanbanColumn } from './kanban_column'
 
 export type KanbanBoard = {
   id: number
@@ -7,5 +7,5 @@ export type KanbanBoard = {
   projectId: string
   createdAt: string
   updatedAt: string
-  columns: Column[]
+  columns: KanbanColumn[]
 }

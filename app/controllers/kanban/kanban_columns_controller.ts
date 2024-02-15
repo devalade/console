@@ -19,35 +19,21 @@ export default class KanbanColumnsController {
     { request, response }: HttpContext,
     _project: Project,
     board: KanbanBoard,
-    column: KanbanColumn
+    firstColumn: KanbanColumn
   ) {
     const newOrder = request.input('order')
-    if (!newOrder) return response.redirect().back()
-    const oldOrder = column.order
-    column.order = request.input('order')
-    await column.save()
+    const oldOrder = firstColumn.order
 
-    // Update other columns' order
-    const columns = await board.related('columns').query()
-    const otherColumns = columns.filter((c) => c.id !== column.id)
+    const secondColumn = await KanbanColumn.query()
+      .where('order', newOrder)
+      .andWhere('board_id', board.id)
+      .firstOrFail()
 
-    if (oldOrder < newOrder) {
-      // Move column to the right
-      for (const c of otherColumns) {
-        if (c.order > oldOrder && c.order <= newOrder) {
-          c.order = c.order - 1
-          await c.save()
-        }
-      }
-    } else {
-      // Move column to the left
-      for (const c of otherColumns) {
-        if (c.order >= newOrder && c.order < oldOrder) {
-          c.order = c.order + 1
-          await c.save()
-        }
-      }
-    }
+    firstColumn.order = newOrder
+    secondColumn.order = oldOrder
+
+    await firstColumn.save()
+    await secondColumn.save()
 
     return response.redirect().back()
   }

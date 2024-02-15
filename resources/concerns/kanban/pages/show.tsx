@@ -3,8 +3,9 @@ import * as React from 'react'
 import type { KanbanBoard } from '../types/kanban_board'
 import KanbanBoardLayout from '../kanban_board_layout'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
-import type { KanbanTask } from '../types/kanban_task'
 import { Column } from '../components/kanban_colomn'
+import { router } from '@inertiajs/react'
+import useParams from '@/hooks/use_params'
 
 interface ShowProps {
   project: Project
@@ -13,7 +14,7 @@ interface ShowProps {
 
 type Result = {
   draggableId: string
-  type: 'card' | 'list'
+  type: 'card' | 'column'
   source: {
     index: number
     droppableId: string
@@ -27,112 +28,62 @@ type Result = {
   combine: null
 }
 
-function reorder<T>(list: T[], startIndex: number, endIndex: number) {
-  const result = Array.from(list)
-  const [removed] = result.splice(startIndex, 1)
-  result.splice(endIndex, 0, removed)
-
-  return result
-}
-
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
-  const [orderedData, setOrderedData] = React.useState(board.columns)
+  const params = useParams()
 
-  React.useEffect(() => {
-    setOrderedData(board.columns)
-  }, [board])
-
-  function onDragEnd(result: Result) {
-    const { destination, source, type } = result
-
-    if (!destination) {
+  function onDragEnd({ destination, source, type }: Result) {
+    /**
+     * Skip if the user drops the item in the same place.
+     */
+    if (
+      !destination ||
+      (destination.droppableId === source.droppableId && destination.index === source.index)
+    ) {
       return
     }
 
-    // if dropped in the same position
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
-      return
+    /**
+     * The user moves a column.
+     */
+    if (type === 'column') {
+      /**
+       * Retrieve the first and second columns.
+       */
+      const firstColumn = board.columns[source.index]
+      const secondColumn = board.columns[destination.index]
+
+      /**
+       * Update the order of the columns.
+       */
+      router.put(
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${firstColumn.id}`,
+        { order: secondColumn.order }
+      )
     }
 
-    // User moves a list
-    if (type === 'list') {
-      const items = reorder(orderedData, source.index, destination.index).map((item, index) => ({
-        ...item,
-        order: index,
-      }))
-
-      console.log({ items })
-
-      setOrderedData(items)
-      // executeUpdateListOrder({ items, boardId })
-    }
-
-    // User moves a card
+    /**
+     * The user moves a card.
+     */
     if (type === 'card') {
-      let newOrderedData = [...orderedData]
+      /**
+       * Retrieve the source and destination columns.
+       */
+      const sourceColumn = board.columns.find((column) => column.id === +source.droppableId)
+      const destColumn = board.columns.find((column) => column.id === +destination.droppableId)
+      if (!sourceColumn || !destColumn) return
 
-      // Source and destination list
-      const sourceColumn = newOrderedData.find((column) => column.id === +source.droppableId)
-      const destColumn = newOrderedData.find((column) => column.id === +destination.droppableId)
-
-      if (!sourceColumn || !destColumn) {
-        return
-      }
-
-      // Check if cards exists on the sourceColumn
-      if (!sourceColumn.tasks) {
-        sourceColumn.tasks = []
-      }
-
-      // Check if cards exists on the destColumn
-      if (!destColumn.tasks) {
-        destColumn.tasks = []
-      }
-
-      // Moving the card in the same list
+      /**
+       * The card is moved within the same column.
+       * We only need to update the order of the cards.
+       */
       if (source.droppableId === destination.droppableId) {
-        const reorderedCards = reorder<KanbanTask>(
-          sourceColumn.tasks,
-          source.index,
-          destination.index
-        )
-
-        reorderedCards.forEach((card, idx) => {
-          card.order = idx
-        })
-
-        sourceColumn.tasks = reorderedCards
-
-        setOrderedData(newOrderedData)
-        // executeUpdateCardOrder({
-        //   boardId: boardId,
-        //   items: reorderedCards,
-        // })
-        // User moves the card to another list
+        // TODO: Implement the logic for moving cards within the same column.
       } else {
-        // Remove card from the source list
-        const [movedCard] = sourceColumn.tasks.splice(source.index, 1)
-
-        // Assign the new listId to the moved card
-        movedCard.listId = destination.droppableId
-
-        // Add card to the destination list
-        destColumn.tasks.splice(destination.index, 0, movedCard)
-
-        sourceColumn.tasks.forEach((card, idx) => {
-          card.order = idx
-        })
-
-        // Update the order for each card in the destination list
-        destColumn.tasks.forEach((card, idx) => {
-          card.order = idx
-        })
-
-        setOrderedData(newOrderedData)
-        // executeUpdateCardOrder({
-        //   boardId: boardId,
-        //   items: destColumn.tasks,
-        // })
+        /**
+         * The card is moved to a different column.
+         * We need to update the order of the cards in both columns.
+         */
+        // TODO: Implement the logic for moving cards to a different column.
       }
     }
   }
@@ -140,7 +91,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
   return (
     <KanbanBoardLayout project={project} board={board}>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="lists" type="list" direction="horizontal">
+        <Droppable droppableId="columns" type="column" direction="horizontal">
           {(provided) => (
             <ol
               {...provided.droppableProps}
@@ -148,7 +99,9 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
               className="flex gap-x-4 items-start w-full h-full overflow-x-scroll "
             >
               {board.columns.map((column, index) => (
-                <Column key={column.id} {...column} index={index} />
+                <>
+                  <Column key={column.id} {...column} index={index} />
+                </>
               ))}
               {provided.placeholder}
             </ol>
