@@ -1,4 +1,4 @@
-import type { Column } from './column'
+import type { Column } from './kanban_column'
 
 export type KanbanBoard = {
   id: number
