@@ -36,6 +36,7 @@ import ChatController from '#controllers/chat_controller'
 import ChannelsController from '#controllers/channels_controller'
 import MessagesController from '#controllers/messages_controller'
 import ConversationsController from '#controllers/conversations_controller'
+import StorageBucketsController from '#controllers/storage_buckets_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -317,3 +318,17 @@ router
 router
   .post('/organizations/:organizationSlug/conversations', [ConversationsController, 'store'])
   .use(middleware.auth())
+
+/**
+ * Storage buckets.
+ */
+router
+  .resource('organizations.projects.storage_buckets', StorageBucketsController)
+  .params({
+    organizations: 'organizationSlug',
+    projects: 'projectSlug',
+    storage_buckets: 'storageBucketSlug',
+  })
+  .use('*', middleware.auth())
+  .use('*', middleware.drapeau('storage_buckets'))
+  .use(['index', 'show', 'edit'], middleware.loadProjects())

@@ -9,6 +9,7 @@ import {
 } from '@tabler/icons-react'
 import type { Project } from '../types/project'
 import useParams from '@/hooks/use_params'
+import isFeatureEnabled from '@/lib/is_feature_enabled'
 
 export default function useProjectLayoutNavigationItems(project: Project): Array<{
   name: string
@@ -34,12 +35,13 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
       current:
         page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/databases`,
     },
-    {
+    isFeatureEnabled('storage_buckets') && {
       name: 'Storage Buckets',
-      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/storage`,
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/storage_buckets`,
       icon: IconArchive,
       current:
-        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/storage`,
+        page.url ===
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/storage_buckets`,
     },
     {
       name: 'Task Boards',
@@ -56,5 +58,5 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
       current:
         page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/edit`,
     },
-  ]
+  ].filter(Boolean)
 }

@@ -2,6 +2,7 @@ import env from '#start/env'
 import IDriver from './idriver.js'
 import DockerDriver from './docker/docker_driver.js'
 import FlyDriver from '../drivers/fly/fly_driver.js'
+import BlankDriver from './blank/blank_driver.js'
 
 export default class Driver {
   static driver: IDriver
@@ -14,6 +15,9 @@ export default class Driver {
     switch (env.get('DRIVER')) {
       case 'docker':
         this.driver = new DockerDriver()
+        break
+      case 'blank':
+        this.driver = new BlankDriver()
         break
       case 'fly':
         this.driver = new FlyDriver()

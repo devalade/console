@@ -8,6 +8,7 @@ import Database from './database.js'
 import { cuid } from '@adonisjs/core/helpers'
 import KanbanBoard from './kanban_board.js'
 import Organization from './organization.js'
+import StorageBucket from './storage_bucket.js'
 
 export default class Project extends BaseModel {
   /**
@@ -39,6 +40,9 @@ export default class Project extends BaseModel {
 
   @hasMany(() => KanbanBoard)
   declare kanbanBoards: HasMany<typeof KanbanBoard>
+
+  @hasMany(() => StorageBucket)
+  declare storageBuckets: HasMany<typeof StorageBucket>
 
   /**
    * Hooks.

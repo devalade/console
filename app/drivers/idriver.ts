@@ -6,13 +6,20 @@ import { DnsEntries } from '#types/dns'
 import Certificate, { CertificateStatus } from '#models/certificate'
 import Organization from '#models/organization'
 import Project from '#models/project'
+import StorageBucket from '#models/storage_bucket'
 
 export default interface IDriver {
+  /**
+   * This method should initialize the driver.
+   * It is called when the console starts.
+   * It should do things like defining feature flags, etc.
+   */
   initializeDriver(): void | Promise<void>
 
   applications: IDriverApplicationsService
   databases: IDriverDatabasesService
   deployments: IDriverDeploymentsService
+  storageBuckets?: IDriverStorageBucketsService
 }
 
 export interface IDriverApplicationsService {
@@ -93,4 +100,39 @@ export interface IDriverDeploymentsService {
     application: Application,
     deployment: Deployment
   ): boolean | Promise<boolean>
+}
+
+export interface IDriverStorageBucketsService {
+  /**
+   * This method should create a storage bucket,
+   * and return the host, keyId and secretKey.
+   * @param organization
+   * @param project
+   * @param name
+   */
+  createStorageBucket(
+    organization: Organization,
+    project: Project,
+    name: string
+  ):
+    | { host: string; keyId: string; secretKey: string }
+    | Promise<{ host: string; keyId: string; secretKey: string }>
+
+  /**
+   * This method should return the size of the storage bucket (in bytes).
+   * @param organization
+   * @param project
+   * @param storageBucket
+   */
+  getStorageBucketSize(
+    organization: Organization,
+    project: Project,
+    storageBucket: StorageBucket
+  ): number | Promise<number>
+
+  deleteStorageBucket(
+    organization: Organization,
+    project: Project,
+    storageBucket: StorageBucket
+  ): void | Promise<void>
 }

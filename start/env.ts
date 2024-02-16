@@ -20,7 +20,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   LOG_LEVEL: Env.schema.string(),
   CACHE_VIEWS: Env.schema.boolean(),
 
-  DRIVER: Env.schema.enum(['docker', 'fly'] as const),
+  DRIVER: Env.schema.enum(['blank', 'docker', 'fly'] as const),
 
   /*
   |----------------------------------------------------------

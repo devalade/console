@@ -14,7 +14,7 @@ export default class DrapeauService {
   static isFeatureEnabled(name: string): boolean {
     const isEnabled = this.featuresFlags.get(name)
     if (!isEnabled) {
-      throw new Error(`Feature flag ${name} is not defined`)
+      return false
     }
     return isEnabled()
   }
