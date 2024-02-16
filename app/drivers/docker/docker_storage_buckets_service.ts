@@ -4,10 +4,14 @@ import Project from '#models/project'
 import * as Minio from 'minio'
 import env from '#start/env'
 import StorageBucket from '#models/storage_bucket'
+import logger from '@adonisjs/core/services/logger'
 
 export default class DockerStorageBucketsService implements IDriverStorageBucketsService {
   private minioClient = new Minio.Client({
     endPoint: env.get('S3_ENDPOINT').replace('http://', '').replace('https://', '').split(':')[0],
+    port: parseInt(
+      env.get('S3_ENDPOINT').replace('http://', '').replace('https://', '').split(':')[1]
+    ),
     useSSL: env.get('NODE_ENV') == 'production',
     accessKey: env.get('S3_ACCESS_KEY'),
     secretKey: env.get('S3_SECRET_KEY'),
@@ -16,7 +20,7 @@ export default class DockerStorageBucketsService implements IDriverStorageBucket
   createStorageBucket(_organization: Organization, _project: Project, name: string) {
     this.minioClient.makeBucket(name, env.get('S3_REGION'), function (error) {
       if (error) {
-        throw new Error('Error creating bucket: ' + error)
+        logger.error(error, 'Error creating bucket')
       }
     })
 
@@ -46,6 +50,10 @@ export default class DockerStorageBucketsService implements IDriverStorageBucket
     _project: Project,
     storageBucket: StorageBucket
   ) {
-    await this.minioClient.removeBucket(storageBucket.slug)
+    try {
+      await this.minioClient.removeBucket(storageBucket.slug)
+    } catch (error) {
+      logger.error(error, 'Error deleting bucket')
+    }
   }
 }

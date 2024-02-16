@@ -22,18 +22,32 @@ export default class StorageBucketsController {
   public async store({ request, response }: HttpContext, project: Project) {
     const payload = await request.validateUsing(createStorageBucketValidator)
 
+    /**
+     * We create a storage bucket with pending host, keyId and secretKey.
+     * This task is performed before the actual creation of the storage bucket,
+     * in order to give the actual name (slug) to the storage bucket.
+     */
+    const storageBucket = await project.related('storageBuckets').create({
+      name: payload.name,
+      host: 'pending',
+      keyId: 'pending',
+      secretKey: 'pending',
+    })
+
+    /**
+     * We retrieve the actual host, keyId and secretKey from the driver.
+     */
     const { host, keyId, secretKey } = await this.driver.storageBuckets!.createStorageBucket(
       project.organization as Organization,
       project,
-      payload.name
+      storageBucket.slug
     )
 
-    const storageBucket = await project.related('storageBuckets').create({
-      name: payload.name,
-      host,
-      keyId,
-      secretKey,
-    })
+    /**
+     * We update the storage bucket with the actual host, keyId and secretKey.
+     */
+    storageBucket.merge({ host, keyId, secretKey })
+    await storageBucket.save()
 
     return response
       .redirect()
