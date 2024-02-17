@@ -1,6 +1,6 @@
 export type KanbanTask = {
   id: number
-  title: number
+  title: string
   description: string
   columnId: number
   order: number

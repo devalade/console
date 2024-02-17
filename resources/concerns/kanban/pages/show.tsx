@@ -30,6 +30,11 @@ type Result = {
 
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
   const params = useParams()
+  const sortedColumns = board.columns.sort().sort((a, b) => {
+    if (a.order < b.order) return -1
+    if (a.order > b.order) return 1
+    return 0
+  })
 
   function onDragEnd({ destination, source, type }: Result) {
     /**
@@ -98,7 +103,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
               ref={provided.innerRef}
               className="flex gap-x-4 items-start w-full h-full overflow-x-scroll "
             >
-              {board.columns.map((column, index) => (
+              {sortedColumns.map((column, index) => (
                 <>
                   <Column key={column.id} {...column} index={index} />
                 </>
