@@ -1,9 +1,17 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  afterDelete,
+  afterSave,
+  beforeDelete,
+  belongsTo,
+  column,
+} from '@adonisjs/lucid/orm'
 import User from './user.js'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Channel from './channel.js'
 import Conversation from './conversation.js'
+import emitter from '@adonisjs/core/services/emitter'
 
 export default class Message extends BaseModel {
   /**
@@ -35,6 +43,39 @@ export default class Message extends BaseModel {
 
   @column()
   declare conversationId: number | null
+
+  /**
+   * Hooks.
+   */
+  @afterSave()
+  static async emitUpdateEvent(message: Message) {
+    if (message.conversationId) {
+      await message.load('conversation', (query) => query.preload('organization'))
+    }
+    if (message.channelId) {
+      await message.load('channel', (query) => query.preload('organization'))
+    }
+    await message.load('user')
+    emitter.emit(
+      `organizations:${(message.conversation || message.channel).organization.slug}:message-update`,
+      message
+    )
+  }
+
+  @beforeDelete()
+  static async emitDeleteEvent(message: Message) {
+    if (message.conversationId) {
+      await message.load('conversation', (query) => query.preload('organization'))
+    }
+    if (message.channelId) {
+      await message.load('channel', (query) => query.preload('organization'))
+    }
+    await message.load('user')
+    emitter.emit(
+      `organizations:${(message.conversation || message.channel).organization.slug}:message-delete`,
+      message
+    )
+  }
 
   /**
    * Timestamps.

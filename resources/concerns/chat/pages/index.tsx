@@ -8,6 +8,7 @@ import Message from '../components/message'
 import SendMessageForm from '../components/send_message_form'
 import type { Message as MessageType } from '../types/message'
 import type { Conversation } from '../types/conversation'
+import useParams from '@/hooks/use_params'
 
 interface ChatProps {
   channels: Channel[]
@@ -22,15 +23,86 @@ interface ChatProps {
 const Chat: React.FunctionComponent<ChatProps> = ({
   currentChannel,
   channels,
-  conversations,
+  conversations: initialConversations,
   currentConversation,
-  messages,
+  messages: initialMessages,
   members,
   isOwner,
 }) => {
+  const params = useParams()
+  const [messages, setMessages] = React.useState(initialMessages)
+  const [conversations, setConversations] = React.useState(initialConversations)
+
+  React.useEffect(() => {
+    let eventSource: EventSource
+
+    const url = `/organizations/${params.organizationSlug}/updates`
+
+    eventSource = new EventSource(url)
+
+    eventSource.onmessage = (event) => {
+      try {
+        const parsedJSON = JSON.parse(event.data)
+
+        /**
+         * Handle message creation and update.
+         */
+        if ('message' in parsedJSON) {
+          const { message } = parsedJSON as { message: MessageType }
+
+          /**
+           * Only update the message if it is include in the current channel or conversation.
+           */
+          if (message.channel && currentChannel.slug !== message.channel.slug) {
+            return
+          }
+          if (message.conversation && currentConversation?.id !== message.conversation.id) {
+            return
+          }
+
+          setMessages((prevMessages) => {
+            /**
+             * If the message already exists, update it.
+             */
+            if (prevMessages.find((m) => m.id === message.id)) {
+              return prevMessages.map((m) => (m.id === message.id ? message : m))
+            }
+
+            /**
+             * Else, add it to the list.
+             */
+            return [...prevMessages, message]
+          })
+        }
+
+        /**
+         * Handle message deletion.
+         */
+        if ('messageDeleted' in parsedJSON) {
+          const { messageDeleted } = parsedJSON as { messageDeleted: MessageType }
+          setMessages((prevMessages) => prevMessages.filter((m) => m.id !== messageDeleted.id))
+        }
+
+        /**
+         * Handle conversation creation.
+         */
+        if ('conversation' in parsedJSON) {
+          const { conversation } = parsedJSON as { conversation: Conversation }
+          setConversations((prevConversations) => [...prevConversations, conversation])
+        }
+      } catch {}
+    }
+
+    return () => {
+      if (eventSource) {
+        eventSource.close()
+      }
+    }
+  }, [])
+
   return (
     <MainLayout className="!p-0">
-      <div className="grid grid-cols-1 md:grid-cols-6 min-h-[calc(100vh-64px)]">
+      <div className="flex  min-h-[calc(100vh-64px)]">
         <ChatLeftSidebar
           channels={channels}
           currentChannel={currentChannel}
@@ -41,7 +113,7 @@ const Chat: React.FunctionComponent<ChatProps> = ({
           isOwner={isOwner}
         />
 
-        <div className="px-4 py-6 md:col-span-4 flex flex-col-reverse">
+        <div className="px-4 py-6 md:col-span-4 flex flex-col-reverse w-full max-h-[calc(100vh-64px)] overflow-y-auto">
           <SendMessageForm
             currentChannel={currentChannel}
             currentConversation={currentConversation}

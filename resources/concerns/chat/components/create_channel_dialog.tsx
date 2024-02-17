@@ -27,7 +27,10 @@ const CreateChannelDialog: React.FunctionComponent<CreateChannelDialogProps> = (
     e.preventDefault()
 
     form.post(`/organizations/${params.organizationSlug}/channels`, {
-      onSuccess: () => successToast(),
+      onSuccess: () => {
+        successToast()
+        setOpen(false)
+      },
     })
   }
 

@@ -54,13 +54,16 @@ export default class ChatController {
      * Let's load conversations for the current user,
      * so that we can display them in the sidebar.
      */
-    const conversations = (
-      await Conversation.query()
+    await organization.load('conversations', (query) => {
+      query
         .where('firstUserId', organizationMember.userId)
         .orWhere('secondUserId', organizationMember.userId)
-        .preload('firstUser')
-        .preload('secondUser')
-    ).map((conversation) => ({
+
+      query.preload('firstUser')
+      query.preload('secondUser')
+    })
+
+    const conversations = organization.conversations.map((conversation) => ({
       id: conversation.id,
       user:
         conversation.firstUserId === organizationMember.userId

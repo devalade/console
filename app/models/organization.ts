@@ -7,6 +7,7 @@ import Project from './project.js'
 import OrganizationMember from './organization_member.js'
 import User from './user.js'
 import Channel from './channel.js'
+import Conversation from './conversation.js'
 
 export default class Organization extends BaseModel {
   /**
@@ -32,6 +33,9 @@ export default class Organization extends BaseModel {
 
   @hasMany(() => Channel)
   declare channels: HasMany<typeof Channel>
+
+  @hasMany(() => Conversation)
+  declare conversations: HasMany<typeof Conversation>
 
   @hasManyThrough([() => User, () => OrganizationMember], {
     foreignKey: 'organizationId',

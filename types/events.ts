@@ -1,6 +1,8 @@
 import Application from '#models/application'
+import Conversation from '#models/conversation'
 import Database from '#models/database'
 import Deployment from '#models/deployment'
+import Message from '#models/message'
 import Organization from '#models/organization'
 import Project from '#models/project'
 import User from '#models/user'
@@ -24,5 +26,9 @@ declare module '@adonisjs/core/types' {
     [key: `github:installation:${number}`]: User
 
     [key: `fly:log:${string}`]: { message: string; timestamp: string }
+
+    [key: `organizations:${string}:message-update`]: Message
+    [key: `organizations:${string}:message-delete`]: Message
+    [key: `organizations:${string}:conversation-create`]: Conversation
   }
 }

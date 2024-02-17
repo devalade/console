@@ -18,21 +18,15 @@ export default class extends BaseSchema {
         .references('id')
         .inTable('users')
         .onDelete('CASCADE')
+      table
+        .integer('organization_id')
+        .unsigned()
+        .references('id')
+        .inTable('organizations')
+        .onDelete('CASCADE')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
-    })
-
-    this.schema.alterTable('messages', (table) => {
-      table
-        .integer('conversation_id')
-        .unsigned()
-        .references('id')
-        .inTable('conversations')
-        .onDelete('CASCADE')
-        .nullable()
-
-      table.integer('channel_id').nullable().alter()
     })
   }
 

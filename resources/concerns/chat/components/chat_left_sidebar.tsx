@@ -1,4 +1,12 @@
-import { IconChevronDown, IconChevronUp, IconHash, IconPlus } from '@tabler/icons-react'
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconEdit,
+  IconHash,
+  IconPencil,
+  IconPlus,
+  IconTrash,
+} from '@tabler/icons-react'
 import * as React from 'react'
 import CreateChannelDialog from './create_channel_dialog'
 import type { Channel } from '../types/channel'
@@ -36,7 +44,7 @@ const ChatLeftSidebar: React.FunctionComponent<ChatLeftSidebarProps> = ({
   return (
     <>
       <CreateChannelDialog open={open} setOpen={setOpen} />
-      <div className="bg-white col-span-1 border-r border-zinc-200 px-8 py-5 space-y-8">
+      <div className="bg-white min-w-64 border-r border-zinc-200 px-8 py-5 space-y-8">
         <div>
           <h2 className="font-medium text-sm flex items-center">
             {channelsShow ? (

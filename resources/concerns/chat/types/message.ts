@@ -7,4 +7,6 @@ export type Message = {
     fullName: string
     email: string
   }
+  channel?: { slug: string }
+  conversation?: { id: number }
 }

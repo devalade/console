@@ -115,6 +115,10 @@ router
   .use('edit', middleware.loadProjects())
 
 router
+  .get('/organizations/:organizationSlug/join', [OrganizationsController, 'join'])
+  .use(middleware.auth())
+
+router
   .post('/organizations/:organizationSlug/quit', [OrganizationsController, 'quit'])
   .use(middleware.auth())
 
@@ -123,7 +127,7 @@ router
   .use(middleware.auth())
 
 router
-  .get('/organizations/:organizationSlug/:email/join', [OrganizationsController, 'join'])
+  .get('/organizations/:organizationSlug/updates', [OrganizationsController, 'streamUpdates'])
   .use(middleware.auth())
 
 /**
@@ -311,7 +315,7 @@ router
   .resource('organizations.channels', ChannelsController)
   .params({ organizations: 'organizationSlug' })
   .use('*', middleware.auth())
-  .only(['store'])
+  .only(['store', 'destroy'])
 
 router
   .post('/organizations/:organizationSlug/messages', [MessagesController, 'store'])

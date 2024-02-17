@@ -1,10 +1,13 @@
 import bindOrganization from '#decorators/bind_organization'
 import InviteMemberNotification from '#mails/invite_member_notification'
+import Conversation from '#models/conversation'
+import Message from '#models/message'
 import Organization from '#models/organization'
 import OrganizationMember from '#models/organization_member'
 import { createOrganizationValidator } from '#validators/create_organization_validator'
 import { updateOrganizationValidator } from '#validators/update_organization_validator'
 import type { HttpContext } from '@adonisjs/core/http'
+import emitter from '@adonisjs/core/services/emitter'
 import mail from '@adonisjs/mail/services/main'
 
 export default class OrganizationsController {
@@ -123,5 +126,44 @@ export default class OrganizationsController {
         { userId: auth.user!.id, role: 'member' }
       )
     return response.redirect().toPath(`/organizations/${organization.slug}/projects`)
+  }
+
+  @bindOrganization
+  async streamUpdates({ auth, response }: HttpContext, organization: Organization) {
+    response.useServerSentEvents()
+
+    emitter.on(`organizations:${organization.slug}:message-update`, (message: Message) => {
+      response.response.write(`data: ${JSON.stringify({ message })}\n\n`)
+      response.response.flushHeaders()
+    })
+
+    emitter.on(`organizations:${organization.slug}:message-delete`, (message: Message) => {
+      response.response.write(`data: ${JSON.stringify({ messageDeleted: message })}\n\n`)
+      response.response.flushHeaders()
+    })
+
+    emitter.on(
+      `organizations:${organization.slug}:conversation-create`,
+      (conversation: Conversation) => {
+        response.response.write(
+          `data: ${JSON.stringify({
+            conversation: {
+              id: conversation.id,
+              user:
+                auth.user!.id === conversation.firstUserId
+                  ? conversation.secondUser
+                  : conversation.firstUser,
+            },
+          })}\n\n`
+        )
+        response.response.flushHeaders()
+      }
+    )
+
+    response.response.on('close', () => {
+      response.response.end()
+    })
+
+    return response.noContent()
   }
 }

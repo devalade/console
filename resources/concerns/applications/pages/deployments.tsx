@@ -24,29 +24,25 @@ const Deployments: React.FunctionComponent<DeploymentsProps> = ({
   React.useEffect(() => {
     let eventSource: EventSource
 
-    const initializeEventSource = () => {
-      const url = `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/deployments/updates`
+    const url = `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/deployments/updates`
 
-      eventSource = new EventSource(url)
+    eventSource = new EventSource(url)
 
-      eventSource.onmessage = (event) => {
-        try {
-          const { deployment } = JSON.parse(event.data) as { deployment: Deployment }
-          setDeployments((prevDeployments) => {
-            const deploymentAlreadyExists = prevDeployments.find((d) => d.id === deployment.id)
-            if (deploymentAlreadyExists) {
-              return prevDeployments.map((d) => (d.id === deployment.id ? deployment : d))
-            } else {
-              return [deployment, ...prevDeployments]
-            }
-          })
-        } catch (error) {
-          console.error(error)
-        }
+    eventSource.onmessage = (event) => {
+      try {
+        const { deployment } = JSON.parse(event.data) as { deployment: Deployment }
+        setDeployments((prevDeployments) => {
+          const deploymentAlreadyExists = prevDeployments.find((d) => d.id === deployment.id)
+          if (deploymentAlreadyExists) {
+            return prevDeployments.map((d) => (d.id === deployment.id ? deployment : d))
+          } else {
+            return [deployment, ...prevDeployments]
+          }
+        })
+      } catch (error) {
+        console.error(error)
       }
     }
-
-    initializeEventSource()
 
     return () => {
       if (eventSource) {

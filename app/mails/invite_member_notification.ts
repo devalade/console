@@ -21,8 +21,8 @@ export default class InviteMemberNotification extends BaseMail {
     const prefix = env.get('APP_URL')
     const suffix = router
       .builder()
-      .params({ email: this.email, organizationSlug: this.organization.slug })
-      .makeSigned(`/organizations/:organizationSlug/:email/join`, { expiresIn: '30m' })
+      .params({ organizationSlug: this.organization.slug })
+      .makeSigned(`/organizations/:organizationSlug/join`, { expiresIn: '30m' })
     const url = `${prefix}${suffix}`
 
     this.message.subject(
