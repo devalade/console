@@ -317,6 +317,9 @@ router
   .post('/organizations/:organizationSlug/messages', [MessagesController, 'store'])
   .use(middleware.auth())
 router
+  .patch('/organizations/:organizationSlug/messages/:messageId', [MessagesController, 'update'])
+  .use(middleware.auth())
+router
   .delete('/organizations/:organizationSlug/messages/:messageId', [MessagesController, 'destroy'])
   .use(middleware.auth())
 

@@ -2,9 +2,10 @@ import * as React from 'react'
 import type { Message as MessageType } from '../types/message'
 import getInitials from '@/lib/initials'
 import formatMessageDate from '../lib/format_message_date'
-import { IconTrash } from '@tabler/icons-react'
+import { IconPencil, IconTrash } from '@tabler/icons-react'
 import useUser from '@/hooks/use_user'
 import DeleteMessageDialog from './delete_message_dialog'
+import UpdateMessageDialog from './update_message_dialog'
 
 interface MessageProps {
   message: MessageType
@@ -13,9 +14,15 @@ interface MessageProps {
 const Message: React.FunctionComponent<MessageProps> = ({ message }) => {
   const user = useUser()
   const isOwner = user.id === message.user.id
+  const [showUpdateDialog, setShowUpdateDialog] = React.useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
   return (
     <li key={message.id} className="px-2 flex space-x-2">
+      <UpdateMessageDialog
+        message={message}
+        open={showUpdateDialog}
+        setOpen={setShowUpdateDialog}
+      />
       <DeleteMessageDialog
         message={message}
         open={showDeleteDialog}
@@ -32,7 +39,12 @@ const Message: React.FunctionComponent<MessageProps> = ({ message }) => {
             {formatMessageDate(message.createdAt)}
           </span>
           {isOwner && (
-            <div className="ml-auto">
+            <div className="flex ml-auto">
+              <IconPencil
+                className="w-4 h-4 mr-2 text-zinc-600 cursor-pointer"
+                onClick={() => setShowUpdateDialog(true)}
+              />
+
               <IconTrash
                 className="w-4 h-4 mr-2 text-red-600 cursor-pointer"
                 onClick={() => setShowDeleteDialog(true)}

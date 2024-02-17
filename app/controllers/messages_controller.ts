@@ -48,6 +48,23 @@ export default class MessagesController {
   }
 
   @bindOrganization
+  public async update(
+    { auth, request, response, params }: HttpContext,
+    _organization: Organization
+  ) {
+    const body = request.input('body')
+
+    const message = await Message.query()
+      .where('userId', auth.user!.id)
+      .where('id', params.messageId)
+      .firstOrFail()
+    message.body = body
+    await message.save()
+
+    return response.redirect().back()
+  }
+
+  @bindOrganization
   public async destroy({ auth, response, params }: HttpContext) {
     const message = await Message.query()
       .where('userId', auth.user!.id)
