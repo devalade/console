@@ -4,6 +4,7 @@ import type { KanbanColumn } from '../types/kanban_column'
 import { ColumnHeader } from './kanban_colomn_header'
 import { ColumnItem } from './kanban_column_item'
 import { CreateNewTask } from './form/create_kanban_task'
+import Button from '@/components/button'
 
 export function Column(props: KanbanColumn & { index: number }) {
   const { id, name, tasks, index } = props
@@ -16,9 +17,13 @@ export function Column(props: KanbanColumn & { index: number }) {
   return (
     <Draggable draggableId={id.toString() + '-list'} index={index}>
       {(provided) => (
-        <li {...provided.draggableProps} ref={provided.innerRef} className="w-full max-w-80">
+        <li
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+          className="w-full min-w-80 max-w-80"
+        >
           <div {...provided.dragHandleProps} className="">
-            <ColumnHeader columnName={name} countTask={tasks.length} />
+            <ColumnHeader columnId={id} columnName={name} countTask={tasks.length} />
             <Droppable droppableId={id.toString()} type="card">
               {(provided, snapshot) => (
                 <ol

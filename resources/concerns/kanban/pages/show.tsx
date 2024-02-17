@@ -6,6 +6,8 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { Column } from '../components/kanban_colomn'
 import { router } from '@inertiajs/react'
 import useParams from '@/hooks/use_params'
+import Button from '@/components/button'
+import { CreateNewColumn } from '../components/form/create_kanban_column'
 
 interface ShowProps {
   project: Project
@@ -108,13 +110,12 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
             <ol
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="flex gap-x-4 items-start w-full h-full overflow-x-scroll "
+              className="flex  gap-x-4 items-start w-full overflow-x-scroll  min-h-[calc(100vh_-_230px)] "
             >
               {sortedColumns.map((column, index) => (
-                <>
-                  <Column key={column.id} {...column} index={index} />
-                </>
+                <Column key={column.id} {...column} index={index} />
               ))}
+              <CreateNewColumn />
               {provided.placeholder}
             </ol>
           )}

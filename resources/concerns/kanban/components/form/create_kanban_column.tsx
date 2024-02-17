@@ -6,19 +6,18 @@ import { Card, CardHeader } from '@/components/card'
 import Button from '@/components/button'
 import { IconPlus, IconX } from '@tabler/icons-react'
 
-export function CreateNewTask(props: { columnId: number }) {
-  const { columnId } = props
+export function CreateNewColumn() {
   const [enabled, toggle] = useToggle(false)
   const params = useParams()
 
   const { data, setData, post, reset } = useForm({
-    title: '',
+    name: '',
   })
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     post(
-      `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}/columns/${columnId}/tasks`,
+      `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}/columns`,
       {
         onSuccess() {
           reset()
@@ -34,30 +33,24 @@ export function CreateNewTask(props: { columnId: number }) {
           <Card className="mt-auto">
             <CardHeader className="p-0 border-none space-y-1">
               <textarea
-                value={data.title}
-                onChange={(e) => setData('title', e.target.value)}
-                name="title"
+                value={data.name}
+                onChange={(e) => setData('name', e.target.value)}
+                name="name"
                 className="appearance-none text-sm  border-none focus:outline-none focus:border-none focus:shadow-transparent focus:ring-0 rounded "
-                placeholder="Enter a title for this card..."
+                placeholder="Enter column title..."
               ></textarea>
             </CardHeader>
           </Card>
           <div className="flex items-center mt-2">
-            <Button>Add card</Button>
+            <Button>Add column</Button>
             <Button variant="ghost">
-              {' '}
               <IconX className="size-5" />{' '}
             </Button>
           </div>
         </form>
       ) : (
-        <Button
-          onClick={toggle}
-          className="w-full mt-4 border-2 border-dashed gap-x-2 bg-transparent"
-          variant="outline"
-        >
-          <IconPlus className="w-4" />
-          Add card
+        <Button onClick={toggle} className="w-full min-w-80 max-w-80 mt-4" variant="outline">
+          Add another column
         </Button>
       )}
     </>
