@@ -52,7 +52,7 @@ const SignIn: React.FunctionComponent<SignInProps> = () => {
             </p>
           </div>
           <div className="grid gap-6">
-            <SignInWithGitHub />
+            {isFeatureEnabled('sign_in:github') && <SignInWithGitHub />}
 
             <form onSubmit={onSubmit}>
               <div className="grid gap-4">

@@ -107,6 +107,7 @@
     "react-syntax-highlighter": "^15.5.0",
     "reflect-metadata": "^0.2.1",
     "slug": "^8.2.3",
+    "socket.io": "^4.7.4",
     "tailwindcss-animate": "^1.0.7"
   },
   "eslintConfig": {

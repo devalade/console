@@ -77,8 +77,12 @@ router.post('/auth/sign_out', [SignOutController, 'handle'])
 /**
  * Github authentication.
  */
-router.get('/auth/github/redirect', [AuthGithubController, 'redirect'])
-router.get('/auth/github/callback', [AuthGithubController, 'callback'])
+router
+  .get('/auth/github/redirect', [AuthGithubController, 'redirect'])
+  .use(middleware.drapeau('sign_in:github'))
+router
+  .get('/auth/github/callback', [AuthGithubController, 'callback'])
+  .use(middleware.drapeau('sign_in:github'))
 
 /**
  * CLI authentication.
@@ -253,6 +257,7 @@ router
     router.post('/webhooks', [GitHubDeploymentsController, 'handleWebhooks'])
   })
   .prefix('/api/github')
+  .use(middleware.drapeau('deployments:github'))
 
 /**
  * Fly webhooks (in order to retrieve logs)

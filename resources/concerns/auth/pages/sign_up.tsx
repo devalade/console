@@ -8,6 +8,7 @@ import Input from '@/components/input'
 import Label from '@/components/label'
 import SignUpWithGitHub from '@/concerns/auth/components/sign_in_with_github'
 import PasswordField from '@/components/password_field'
+import isFeatureEnabled from '@/lib/is_feature_enabled'
 
 interface SignUpProps {}
 
@@ -43,7 +44,7 @@ const SignUp: React.FunctionComponent<SignUpProps> = () => {
             <p className="text-sm text-muted-foreground">Sign up for a Software Citadel account.</p>
           </div>
           <div className="grid gap-6">
-            <SignUpWithGitHub />
+            {isFeatureEnabled('sign_in:github') && <SignUpWithGitHub />}
 
             <form onSubmit={onSubmit}>
               <div className="grid gap-4">
