@@ -82,13 +82,20 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
        * We only need to update the order of the cards.
        */
       if (source.droppableId === destination.droppableId) {
-        // TODO: Implement the logic for moving cards within the same column.
+        console.log(source, destination)
+        router.patch(
+          `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${source.droppableId}/tasks/${sourceColumn.tasks[source.index].id}`,
+          { order: sourceColumn.tasks[destination.index].order }
+        )
       } else {
         /**
          * The card is moved to a different column.
          * We need to update the order of the cards in both columns.
          */
-        // TODO: Implement the logic for moving cards to a different column.
+        router.patch(
+          `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${source.droppableId}/tasks/${sourceColumn.tasks[source.index].id}`,
+          { order: sourceColumn.tasks[destination.index].order, columnId: destination.droppableId }
+        )
       }
     }
   }

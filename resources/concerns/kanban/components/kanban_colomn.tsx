@@ -12,6 +12,7 @@ export function Column(props: KanbanColumn & { index: number }) {
     if (a.order > b.order) return 1
     return 0
   })
+
   return (
     <Draggable draggableId={id.toString() + '-list'} index={index}>
       {(provided) => (
@@ -19,7 +20,7 @@ export function Column(props: KanbanColumn & { index: number }) {
           <div {...provided.dragHandleProps} className="">
             <ColumnHeader columnName={name} countTask={tasks.length} />
             <Droppable droppableId={id.toString()} type="card">
-              {(provided) => (
+              {(provided, snapshot) => (
                 <ol
                   ref={provided.innerRef}
                   {...provided.droppableProps}
@@ -28,7 +29,7 @@ export function Column(props: KanbanColumn & { index: number }) {
                   {sortedTasks.map((task, idx) => (
                     <ColumnItem key={task.id} {...task} index={idx} />
                   ))}
-                  <CreateNewTask columnId={id} />
+                  {!snapshot.draggingOverWith && <CreateNewTask columnId={id} />}
                   {provided.placeholder}
                 </ol>
               )}

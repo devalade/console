@@ -27,7 +27,7 @@ export function CreateNewTask(props: { columnId: number }) {
     <>
       {enabled ? (
         <form onSubmit={onSubmit}>
-          <Card>
+          <Card className="mt-auto">
             <CardHeader className="p-0 border-none space-y-1">
               <textarea
                 value={data.title}
