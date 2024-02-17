@@ -31,8 +31,8 @@ export default class Install extends BaseCommand {
     const envExampleContents = await readFile('.env.example', 'utf-8')
     let envContents = envExampleContents
     for (const [key, value] of Object.entries(environmentVariables)) {
-      envContents = envContents.replace(new RegExp(`${key}=.*`), `${key}=${value}`)
-      envContents = envContents.replace(new RegExp(`# ${key}=`), `${key}=`)
+      envContents = envContents.replace(new RegExp(`^${key}=.*$`, 'm'), `${key}=${value}`)
+      envContents = envContents.replace(new RegExp(`^# ${key}=$`, 'm'), `${key}=`)
     }
     await writeFile('.env', envContents)
   }
