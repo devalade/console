@@ -32,7 +32,9 @@ export default class KanbanBoardsController {
   @bindProjectAndKanbanBoard
   public async show({ inertia }: HttpContext, project: Project, board: KanbanBoard) {
     await board.load('columns', (query) => {
-      query.preload('tasks')
+      query.preload('tasks').orderBy('order', 'asc')
+
+      query.orderBy('order', 'asc')
     })
     return inertia.render('kanban/show', { project, board })
   }

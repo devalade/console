@@ -2,158 +2,125 @@ import type { Project } from '@/concerns/projects/types/project'
 import * as React from 'react'
 import type { KanbanBoard } from '../types/kanban_board'
 import KanbanBoardLayout from '../kanban_board_layout'
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { DragDropContext, Droppable } from 'react-beautiful-dnd'
+import { Column } from '../components/kanban_colomn'
+import { router } from '@inertiajs/react'
+import useParams from '@/hooks/use_params'
+import Button from '@/components/button'
+import { CreateNewColumn } from '../components/form/create_kanban_column'
 
 interface ShowProps {
   project: Project
   board: KanbanBoard
 }
 
-// fake data generator
-const getItems = (count, offset = 0) =>
-  Array.from({ length: count }, (v, k) => k).map((k) => ({
-    id: `item-${k + offset}-${new Date().getTime()}`,
-    content: `item ${k + offset}`,
-  }))
-
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list)
-  const [removed] = result.splice(startIndex, 1)
-  result.splice(endIndex, 0, removed)
-
-  return result
+type Result = {
+  draggableId: string
+  type: 'card' | 'column'
+  source: {
+    index: number
+    droppableId: string
+  }
+  reason: 'DROP'
+  mode: 'FLUID'
+  destination: {
+    droppableId: string
+    index: number
+  }
+  combine: null
 }
 
-/**
- * Moves an item from one list to another list.
- */
-const move = (source, destination, droppableSource, droppableDestination) => {
-  const sourceClone = Array.from(source)
-  const destClone = Array.from(destination)
-  const [removed] = sourceClone.splice(droppableSource.index, 1)
-
-  destClone.splice(droppableDestination.index, 0, removed)
-
-  const result = {}
-  result[droppableSource.droppableId] = sourceClone
-  result[droppableDestination.droppableId] = destClone
-
-  return result
-}
-const grid = 8
-
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: 'none',
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-
-  // change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
-
-  // styles we need to apply on draggables
-  ...draggableStyle,
-})
-const getListStyle = (isDraggingOver) => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
-  padding: grid,
-  width: 250,
-})
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
-  const [state, setState] = React.useState([getItems(10), getItems(5, 10)])
+  const params = useParams()
+  const sortedColumns = board.columns.sort().sort((a, b) => {
+    if (a.order < b.order) return -1
+    if (a.order > b.order) return 1
+    return 0
+  })
 
-  function onDragEnd(result) {
-    const { source, destination } = result
-
-    // dropped outside the list
-    if (!destination) {
+  function onDragEnd({ destination, source, type }: Result) {
+    /**
+     * Skip if the user drops the item in the same place.
+     */
+    if (
+      !destination ||
+      (destination.droppableId === source.droppableId && destination.index === source.index)
+    ) {
       return
     }
-    const sInd = +source.droppableId
-    const dInd = +destination.droppableId
 
-    if (sInd === dInd) {
-      const items = reorder(state[sInd], source.index, destination.index)
-      const newState = [...state]
-      newState[sInd] = items as any
-      setState(newState)
-    } else {
-      const result = move(state[sInd], state[dInd], source, destination)
-      const newState = [...state]
-      newState[sInd] = result[sInd]
-      newState[dInd] = result[dInd]
+    /**
+     * The user moves a column.
+     */
+    if (type === 'column') {
+      /**
+       * Retrieve the first and second columns.
+       */
+      const firstColumn = board.columns[source.index]
+      const secondColumn = board.columns[destination.index]
 
-      setState(newState.filter((group) => group.length))
+      /**
+       * Update the order of the columns.
+       */
+      router.put(
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${firstColumn.id}`,
+        { order: secondColumn.order }
+      )
+    }
+
+    /**
+     * The user moves a card.
+     */
+    if (type === 'card') {
+      /**
+       * Retrieve the source and destination columns.
+       */
+      const sourceColumn = board.columns.find((column) => column.id === +source.droppableId)
+      const destColumn = board.columns.find((column) => column.id === +destination.droppableId)
+      if (!sourceColumn || !destColumn) return
+
+      /**
+       * The card is moved within the same column.
+       * We only need to update the order of the cards.
+       */
+      if (source.droppableId === destination.droppableId) {
+        console.log(source, destination)
+        router.patch(
+          `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${source.droppableId}/tasks/${sourceColumn.tasks[source.index].id}`,
+          { order: sourceColumn.tasks[destination.index].order }
+        )
+      } else {
+        /**
+         * The card is moved to a different column.
+         * We need to update the order of the cards in both columns.
+         */
+        router.patch(
+          `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${source.droppableId}/tasks/${sourceColumn.tasks[source.index].id}`,
+          { order: sourceColumn.tasks[destination.index].order, columnId: destination.droppableId }
+        )
+      }
     }
   }
+
   return (
     <KanbanBoardLayout project={project} board={board}>
-      <div>
-        <button
-          type="button"
-          onClick={() => {
-            setState([...state, []])
-          }}
-        >
-          Add new group
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setState([...state, getItems(1)])
-          }}
-        >
-          Add new item
-        </button>
-        <div style={{ display: 'flex' }}>
-          <DragDropContext onDragEnd={onDragEnd}>
-            {state.map((el, ind) => (
-              <Droppable key={ind} droppableId={`${ind}`}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    style={getListStyle(snapshot.isDraggingOver)}
-                    {...provided.droppableProps}
-                  >
-                    {el.map((item, index) => (
-                      <Draggable key={item.id} draggableId={item.id} index={index}>
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
-                          >
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'space-around',
-                              }}
-                            >
-                              {item.content}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const newState = [...state]
-                                  newState[ind].splice(index, 1)
-                                  setState(newState.filter((group) => group.length))
-                                }}
-                              >
-                                delete
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            ))}
-          </DragDropContext>
-        </div>
-      </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="columns" type="column" direction="horizontal">
+          {(provided) => (
+            <ol
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="flex  gap-x-4 items-start w-full overflow-x-scroll  min-h-[calc(100vh_-_230px)] "
+            >
+              {sortedColumns.map((column, index) => (
+                <Column key={column.id} {...column} index={index} />
+              ))}
+              <CreateNewColumn />
+              {provided.placeholder}
+            </ol>
+          )}
+        </Droppable>
+      </DragDropContext>
     </KanbanBoardLayout>
   )
 }
