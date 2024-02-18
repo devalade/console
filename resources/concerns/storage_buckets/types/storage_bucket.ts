@@ -6,10 +6,3 @@ export type StorageBucket = {
   keyId: string
   secretKey: string
 }
-
-export type StorageBucketFile = {
-  size: number
-  filename: string
-  updatedAt: Date
-  type: string
-}

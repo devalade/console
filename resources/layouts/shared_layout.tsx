@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { IconExternalLink, IconMenu, IconX, type TablerIconsProps } from '@tabler/icons-react'
+import { IconExternalLink, IconMenu2, IconX, type TablerIconsProps } from '@tabler/icons-react'
 import { Link } from '@inertiajs/react'
 import Button from '@/components/button'
 import Logo from '@/components/logo'
@@ -193,7 +193,7 @@ const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
               className="-m-2.5 p-2.5 text-zinc-900 lg:hidden"
               onClick={() => setSidebarOpen(true)}
             >
-              <IconMenu className="h-6 w-6" aria-hidden="true" />
+              <IconMenu2 className="h-6 w-6" aria-hidden="true" />
             </button>
 
             {/* Separator */}

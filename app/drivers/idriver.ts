@@ -7,6 +7,7 @@ import Certificate, { CertificateStatus } from '#models/certificate'
 import Organization from '#models/organization'
 import Project from '#models/project'
 import StorageBucket from '#models/storage_bucket'
+import { StorageBucketFile } from '#types/storage'
 
 export default interface IDriver {
   /**
@@ -124,15 +125,40 @@ export interface IDriverStorageBucketsService {
    * @param project
    * @param storageBucket
    */
-  getStorageBucketSize(
+  listFilesAndComputeSize(
     organization: Organization,
     project: Project,
     storageBucket: StorageBucket
-  ): number | Promise<number>
+  ):
+    | { bucketSize: number; files: StorageBucketFile[] }
+    | Promise<{ bucketSize: number; files: StorageBucketFile[] }>
 
   deleteStorageBucket(
     organization: Organization,
     project: Project,
     storageBucket: StorageBucket
+  ): void | Promise<void>
+
+  uploadFile(
+    organization: Organization,
+    project: Project,
+    storageBucket: StorageBucket,
+    filePath: string,
+    tmpPath: string,
+    contentType: string
+  ): void | Promise<void>
+
+  downloadFile(
+    arg0: Organization,
+    project: Project,
+    storageBucket: StorageBucket,
+    filename: any
+  ): { file: string; contentType: string } | Promise<{ file: string; contentType: string }>
+
+  deleteFile(
+    organization: Organization,
+    project: Project,
+    bucket: StorageBucket,
+    filename: string
   ): void | Promise<void>
 }

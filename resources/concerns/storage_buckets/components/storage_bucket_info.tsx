@@ -13,7 +13,7 @@ const StorageBucketInfo: React.FunctionComponent<StorageBucketInfoProps> = ({
   size,
 }) => {
   return (
-    <div className="bg-white pb-10 px-12 border-b border-zinc-200">
+    <div className="bg-white pb-7 px-12 border-b border-zinc-200">
       <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-7 items-end overflow-x-auto">
         <div className="flex flex-col">
           <p className="text-zinc-700 text-sm font-semibold">Status</p>

@@ -344,3 +344,27 @@ router
   .use('*', middleware.auth())
   .use('*', middleware.drapeau('storage_buckets'))
   .use(['index', 'show', 'edit'], middleware.loadProjects())
+
+router
+  .post(
+    '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/upload',
+    [StorageBucketsController, 'uploadFile']
+  )
+  .use(middleware.auth())
+  .use(middleware.drapeau('storage_buckets'))
+
+router
+  .get(
+    '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/files/:filename',
+    [StorageBucketsController, 'downloadFile']
+  )
+  .use(middleware.auth())
+  .use(middleware.drapeau('storage_buckets'))
+
+router
+  .delete(
+    '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/files/:filename',
+    [StorageBucketsController, 'deleteFile']
+  )
+  .use(middleware.auth())
+  .use(middleware.drapeau('storage_buckets'))

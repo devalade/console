@@ -24,7 +24,7 @@ export default function DeleteStorageBucketCard() {
   }
 
   return (
-    <div className="py-6 px-12">
+    <div className="py-6 px-10">
       <Card variant="destructive">
         <CardHeader className="!border-red-600/30">
           <CardTitle>Delete Storage Bucket</CardTitle>

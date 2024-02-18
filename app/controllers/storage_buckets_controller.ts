@@ -58,17 +58,30 @@ export default class StorageBucketsController {
 
   @bindProjectAndStorageBucket
   public async show({ inertia }: HttpContext, project: Project, storageBucket: StorageBucket) {
-    const bucketSize = await this.driver.storageBuckets!.getStorageBucketSize(
+    const { bucketSize, files } = await this.driver.storageBuckets!.listFilesAndComputeSize(
       project.organization as Organization,
       project,
       storageBucket
     )
-    return inertia.render('storage_buckets/show', { project, storageBucket, bucketSize })
+    return inertia.render('storage_buckets/show', { project, storageBucket, bucketSize, files })
   }
 
   @bindProjectAndStorageBucket
   public async edit({ inertia }: HttpContext, project: Project, storageBucket: StorageBucket) {
     return inertia.render('storage_buckets/edit', { project, storageBucket })
+  }
+
+  @bindProjectAndStorageBucket
+  public async update(
+    { request, response }: HttpContext,
+    _project: Project,
+    storageBucket: StorageBucket
+  ) {
+    const name = request.input('name')
+    storageBucket.name = name
+    await storageBucket.save()
+
+    return response.redirect().back()
   }
 
   @bindProjectAndStorageBucket
@@ -83,8 +96,67 @@ export default class StorageBucketsController {
 
     return response
       .redirect()
-      .toPath(
-        `/organizations/${project.organization.slug}/projects/${project.slug}/storage_buckets`
-      )
+      .toPath(`/organizations/${project.organization.slug}/projects/${project.slug}`)
+  }
+
+  @bindProjectAndStorageBucket
+  public async uploadFile(
+    { request, response }: HttpContext,
+    project: Project,
+    storageBucket: StorageBucket
+  ) {
+    const file = request.file('file')
+
+    if (!file) {
+      return response.badRequest()
+    }
+
+    await this.driver.storageBuckets!.uploadFile(
+      project.organization as Organization,
+      project,
+      storageBucket,
+      file!.clientName,
+      file!.tmpPath!,
+      file!.headers['content-type'] || 'application/octet-stream'
+    )
+
+    return response.redirect().back()
+  }
+
+  @bindProjectAndStorageBucket
+  public async downloadFile(
+    { response, params }: HttpContext,
+    project: Project,
+    storageBucket: StorageBucket
+  ) {
+    const { file, contentType } = await this.driver.storageBuckets!.downloadFile(
+      project.organization as Organization,
+      project,
+      storageBucket,
+      params.filename
+    )
+
+    /**
+     * Create readable stream from file and send it as response
+     */
+    response.header('Content-Type', 'application/octet-stream')
+    response.header('Content-Disposition', `attachment; filename="${params.filename}"`)
+    response.send(file)
+  }
+
+  @bindProjectAndStorageBucket
+  public async deleteFile(
+    { response, params }: HttpContext,
+    project: Project,
+    storageBucket: StorageBucket
+  ) {
+    await this.driver.storageBuckets!.deleteFile(
+      project.organization as Organization,
+      project,
+      storageBucket,
+      params.filename
+    )
+
+    return response.redirect().back()
   }
 }

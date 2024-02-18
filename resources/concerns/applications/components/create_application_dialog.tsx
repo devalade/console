@@ -7,6 +7,8 @@ import CreateApplicationDialogNamingStep from './create_application_naming_step'
 import useParams from '@/hooks/use_params'
 import SteppedDialog from '@/components/stepped_dialog'
 import isFeatureEnabled from '@/lib/is_feature_enabled'
+import ResourcesConfigurator from './resources_configurator'
+import resourcesConfiguration from '@/constants/resources_configuration'
 
 interface CreateApplicationDialogProps {
   project: Project
@@ -25,6 +27,8 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
     githubRepository: '',
     githubBranch: '',
     githubInstallationId: 0,
+    cpu: 'shared-cpu-1x',
+    ram: '256MB',
   })
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -42,6 +46,7 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
       setOpen={setOpen}
       steps={[
         <CreateApplicationDialogNamingStep form={form} />,
+        isFeatureEnabled('resources_configurator') && <ResourcesConfigurator form={form} />,
         isFeatureEnabled('deployments:github') && <CreateApplicationDialogGithubStep form={form} />,
       ]}
       submitButton={
