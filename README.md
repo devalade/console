@@ -1,6 +1,8 @@
+[![](https://dcbadge.vercel.app/api/server/DPrfmDttMb)](https://discord.gg/DPrfmDttMb)
+
 # [WIP] Software Citadel - Console
 
-> An open-source platform for development teams.
+> An open-source collaborative cloud platform for development teams.
 
 ## About
 

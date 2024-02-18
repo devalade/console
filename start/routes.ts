@@ -313,9 +313,9 @@ router
 
 router
   .resource('organizations.channels', ChannelsController)
-  .params({ organizations: 'organizationSlug' })
+  .params({ organizations: 'organizationSlug', channels: 'channelSlug' })
   .use('*', middleware.auth())
-  .only(['store', 'destroy'])
+  .only(['store', 'update', 'destroy'])
 
 router
   .post('/organizations/:organizationSlug/messages', [MessagesController, 'store'])

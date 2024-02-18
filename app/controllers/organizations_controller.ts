@@ -160,6 +160,16 @@ export default class OrganizationsController {
       }
     )
 
+    emitter.on(`organizations:${organization.slug}:channel-update`, (channel) => {
+      response.response.write(`data: ${JSON.stringify({ channel })}\n\n`)
+      response.response.flushHeaders()
+    })
+
+    emitter.on(`organizations:${organization.slug}:channel-delete`, (channel) => {
+      response.response.write(`data: ${JSON.stringify({ channelDeleted: channel })}\n\n`)
+      response.response.flushHeaders()
+    })
+
     response.response.on('close', () => {
       response.response.end()
     })

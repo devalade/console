@@ -1,4 +1,5 @@
 import Application from '#models/application'
+import Channel from '#models/channel'
 import Conversation from '#models/conversation'
 import Database from '#models/database'
 import Deployment from '#models/deployment'
@@ -30,5 +31,7 @@ declare module '@adonisjs/core/types' {
     [key: `organizations:${string}:message-update`]: Message
     [key: `organizations:${string}:message-delete`]: Message
     [key: `organizations:${string}:conversation-create`]: Conversation
+    [key: `organizations:${string}:channel-update`]: Channel
+    [key: `organizations:${string}:channel-delete`]: Channel
   }
 }

@@ -45,7 +45,7 @@ export default class ChannelsController {
     const channel = await organization
       .related('channels')
       .query()
-      .where('slug', request.param('slug'))
+      .where('slug', request.param('channelSlug'))
       .firstOrFail()
     channel.name = payload.name
     await channel.save()
@@ -65,7 +65,7 @@ export default class ChannelsController {
     const channel = await organization
       .related('channels')
       .query()
-      .where('slug', params.slug)
+      .where('slug', params.channelSlug)
       .firstOrFail()
 
     await channel.delete()

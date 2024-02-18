@@ -22,7 +22,7 @@ interface ChatProps {
 
 const Chat: React.FunctionComponent<ChatProps> = ({
   currentChannel,
-  channels,
+  channels: initialChannels,
   conversations: initialConversations,
   currentConversation,
   messages: initialMessages,
@@ -32,6 +32,7 @@ const Chat: React.FunctionComponent<ChatProps> = ({
   const params = useParams()
   const [messages, setMessages] = React.useState(initialMessages)
   const [conversations, setConversations] = React.useState(initialConversations)
+  const [channels, setChannels] = React.useState(initialChannels)
 
   React.useEffect(() => {
     let eventSource: EventSource
@@ -90,6 +91,37 @@ const Chat: React.FunctionComponent<ChatProps> = ({
           const { conversation } = parsedJSON as { conversation: Conversation }
           setConversations((prevConversations) => [...prevConversations, conversation])
         }
+
+        /**
+         * Handle channel creation and update.
+         */
+        if ('channel' in parsedJSON) {
+          const { channel } = parsedJSON as { channel: Channel }
+          if (channels.find((c) => c.id === channel.id)) {
+            /**
+             * If the channel already exists, update it.
+             */
+            setChannels(channels.map((c) => (c.id === channel.id ? channel : c)))
+
+            return
+          }
+          setChannels((prevChannels) => [...prevChannels, channel])
+        }
+
+        /**
+         * Handle channel deletion.
+         */
+        if ('channelDeleted' in parsedJSON) {
+          const { channelDeleted } = parsedJSON as { channelDeleted: Channel }
+          setChannels((prevChannels) => prevChannels.filter((c) => c.id !== channelDeleted.id))
+
+          /**
+           * If the current channel was deleted, redirect to /chat.
+           */
+          if (currentChannel.id === channelDeleted.id) {
+            window.location.href = `/organizations/${params.organizationSlug}/chat`
+          }
+        }
       } catch {}
     }
 
@@ -114,10 +146,12 @@ const Chat: React.FunctionComponent<ChatProps> = ({
         />
 
         <div className="px-4 py-6 md:col-span-4 flex flex-col-reverse w-full max-h-[calc(100vh-64px)] overflow-y-auto">
-          <SendMessageForm
-            currentChannel={currentChannel}
-            currentConversation={currentConversation}
-          />
+          {(currentChannel || currentConversation) && (
+            <SendMessageForm
+              currentChannel={currentChannel}
+              currentConversation={currentConversation}
+            />
+          )}
           <ul className="list-none p-0 pb-4 m-0 space-y-4">
             {messages.map((message) => (
               <Message key={message.id} message={message} />
