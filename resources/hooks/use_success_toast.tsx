@@ -5,12 +5,12 @@ import { IconCircleCheck } from '@tabler/icons-react'
 export default function useSuccessToast() {
   const { toast } = useToast()
 
-  return function () {
+  return function (message = 'Saved successfully') {
     toast({
       title: (
         <div className="flex items-center space-x-2">
           <IconCircleCheck className="text-blue-600 h-5 w-5" />
-          <p>Saved successfully</p>
+          <p>{message}</p>
         </div>
       ),
     })

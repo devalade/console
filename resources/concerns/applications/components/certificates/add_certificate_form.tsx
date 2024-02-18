@@ -26,7 +26,7 @@ export default function AddCertificateForm({ project, application }: AddCertific
       `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}/certificates`,
       {
         preserveState: false,
-        onSuccess: successToast,
+        onSuccess: () => successToast(),
       }
     )
   }

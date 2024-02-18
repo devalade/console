@@ -1,6 +1,8 @@
 import { IDriverDeploymentsService } from '#drivers/idriver'
 import Application from '#models/application'
 import Deployment from '#models/deployment'
+import Organization from '#models/organization'
+import Project from '#models/project'
 import FlyApi from './api/fly_api.js'
 import FlyDeploymentsConfigurationBuilder from './fly_deployments_configuration_builder.js'
 
@@ -12,7 +14,12 @@ export default class FlyDeploymentsService implements IDriverDeploymentsService 
     this.flyDeploymentsConfigurationBuilder = new FlyDeploymentsConfigurationBuilder(this.flyApi)
   }
 
-  async igniteBuilder(application: Application, deployment: Deployment) {
+  async igniteBuilder(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    deployment: Deployment
+  ) {
     const flyBuilderName = this.flyApi.getFlyApplicationName(application.slug, true)
     const builderConfiguration =
       this.flyDeploymentsConfigurationBuilder.prepareBuilderConfiguration(deployment)
@@ -23,7 +30,12 @@ export default class FlyDeploymentsService implements IDriverDeploymentsService 
     await deployment.save()
   }
 
-  async igniteApplication(application: Application, deployment: Deployment) {
+  async igniteApplication(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    deployment: Deployment
+  ) {
     const flyApplicationName = this.flyApi.getFlyApplicationName(application.slug)
     const applicationConfiguration =
       this.flyDeploymentsConfigurationBuilder.prepareApplicationConfiguration(application)
@@ -34,7 +46,12 @@ export default class FlyDeploymentsService implements IDriverDeploymentsService 
     await deployment.save()
   }
 
-  shouldMonitorHealthcheck(application: Application, _deployment: Deployment) {
+  shouldMonitorHealthcheck(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    _deployment: Deployment
+  ) {
     return !!application.environmentVariables.PORT
   }
 }

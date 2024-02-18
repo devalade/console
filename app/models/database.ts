@@ -80,12 +80,18 @@ export default class Database extends BaseModel {
 
   @afterCreate()
   static async emitCreatedEvent(database: Database) {
-    emitter.emit('databases:created', database)
+    await database.load('project', (query) => {
+      query.preload('organization')
+    })
+    emitter.emit('databases:created', [database.project.organization, database.project, database])
   }
 
   @beforeDelete()
   static async emitDeletedEvent(database: Database) {
-    emitter.emit('databases:deleted', database)
+    await database.load('project', (query) => {
+      query.preload('organization')
+    })
+    emitter.emit('databases:deleted', [database.project.organization, database.project, database])
   }
 
   /**

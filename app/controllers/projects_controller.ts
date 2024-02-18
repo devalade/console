@@ -15,6 +15,13 @@ export default class ProjectsController {
     return inertia.render('projects/index', { projects })
   }
 
+  @bindProject
+  async show({ response }: HttpContext, project: Project) {
+    return response
+      .redirect()
+      .toPath(`/organizations/${project.organization.slug}/projects/${project.slug}/applications`)
+  }
+
   @bindOrganization
   async store({ request, response }: HttpContext, organization: Organization) {
     const payload = await request.validateUsing(projectValidator)

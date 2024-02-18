@@ -1,9 +1,10 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, belongsTo, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import slugify from 'slug'
 import { generate as generateRandomWord } from 'random-words'
 import Organization from './organization.js'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import Message from './message.js'
 
 export default class Channel extends BaseModel {
   /**
@@ -41,6 +42,9 @@ export default class Channel extends BaseModel {
 
   @column()
   declare organizationId: number
+
+  @hasMany(() => Message)
+  declare messages: HasMany<typeof Message>
 
   /**
    * Timestamps.

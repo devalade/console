@@ -55,8 +55,15 @@ export default class Deployment extends BaseModel {
    */
   @afterCreate()
   static async emitCreatedEvent(deployment: Deployment) {
-    await deployment.load('application')
-    emitter.emit('deployments:created', [deployment.application, deployment])
+    await deployment.load('application', (query) =>
+      query.preload('project', (query) => query.preload('organization'))
+    )
+    emitter.emit('deployments:created', [
+      deployment.application.project.organization,
+      deployment.application.project,
+      deployment.application,
+      deployment,
+    ])
   }
 
   @afterSave()

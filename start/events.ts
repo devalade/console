@@ -4,6 +4,28 @@ import DatabasesListener from '#listeners/databases_listener'
 import DeploymentsListener from '#listeners/deployments_listener'
 import emitter from '@adonisjs/core/services/emitter'
 import logger from '@adonisjs/core/services/logger'
+import db from '@adonisjs/lucid/services/db'
+import string from '@adonisjs/core/helpers/string'
+
+emitter.on('http:request_completed', (event) => {
+  const method = event.ctx.request.method()
+  const url = event.ctx.request.url(true)
+  const duration = event.duration
+
+  try {
+    // @ts-ignore (this can be safely ignored)
+    const handler = event.ctx.route!.handler.name
+
+    /**
+     * Print the route handler reference when available.
+     */
+    logger.info(`${method} [${handler}] ${url}: ${string.prettyHrTime(duration)}`)
+  } catch (error) {
+    logger.info(`${method} ${url}: ${string.prettyHrTime(duration)}`)
+  }
+})
+
+emitter.on('db:query', db.prettyPrint)
 
 emitter.on('applications:created', [ApplicationsListener, 'onDeleted'])
 emitter.on('applications:deleted', [ApplicationsListener, 'onDeleted'])

@@ -1,5 +1,7 @@
 import type { IDriverDatabasesService } from '#drivers/idriver'
 import Database from '#models/database'
+import Organization from '#models/organization'
+import Project from '#models/project'
 import FlyApi from './api/fly_api.js'
 import FlyDatabasesConfigurationBuilder from './fly_databases_configuration_builder.js'
 
@@ -7,7 +9,11 @@ export default class FlyDatabasesService implements IDriverDatabasesService {
   private readonly flyApi = new FlyApi()
   private readonly flyDatabasesConfigurationBuilder = new FlyDatabasesConfigurationBuilder()
 
-  public async createDatabase(database: Database): Promise<void> {
+  public async createDatabase(
+    _organization: Organization,
+    _project: Project,
+    database: Database
+  ): Promise<void> {
     const applicationName = this.flyApi.getFlyDatabaseName(database.slug)
 
     await this.flyApi.apps.createApplication({
@@ -28,5 +34,7 @@ export default class FlyDatabasesService implements IDriverDatabasesService {
     })
   }
 
-  async deleteDatabase(_database: Database) {}
+  async deleteDatabase(_organization: Organization, _project: Project, database: Database) {
+    await this.flyApi.apps.deleteApplication(this.flyApi.getFlyDatabaseName(database.slug))
+  }
 }

@@ -20,7 +20,12 @@ export type DeleteDatabaseDialogProps = {
   setOpen: (open: boolean) => void
 }
 
-export default function DeleteDatabaseDialog({ database, project, open, setOpen }) {
+export default function DeleteDatabaseDialog({
+  database,
+  project,
+  open,
+  setOpen,
+}: DeleteDatabaseDialogProps) {
   const { delete: handleDelete, processing } = useForm()
   const params = useParams()
 

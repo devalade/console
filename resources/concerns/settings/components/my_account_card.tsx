@@ -22,7 +22,7 @@ export default function MyAccountCard() {
     e.preventDefault()
 
     form.patch('/settings', {
-      onSuccess: successToast,
+      onSuccess: () => successToast(),
     })
   }
 

@@ -9,29 +9,22 @@ import {
 import * as React from 'react'
 import InviteMemberForm from './invite_member_form'
 import getInitials from '@/lib/initials'
+import type { Organization } from '../types/organization'
+import clsx from 'clsx'
 
 interface MembersManagementCardProps {
-  organization: {
-    name: string
-    slug: string
-    members: Array<{
-      id: number
-      role: 'owner' | 'member'
-      user: {
-        fullName: string
-        email: string
-      }
-    }>
-  }
+  organization: Organization
+  isOwner: boolean
 }
 
 const MembersManagementCard: React.FunctionComponent<MembersManagementCardProps> = ({
   organization,
+  isOwner,
 }) => {
   return (
     <Card className="mt-6">
       <CardHeader>
-        <CardTitle> Members</CardTitle>
+        <CardTitle>Members</CardTitle>
         <CardDescription>Manage and invite Team Members</CardDescription>
       </CardHeader>
       <CardContent>
@@ -44,7 +37,14 @@ const MembersManagementCard: React.FunctionComponent<MembersManagementCardProps>
               <div className="flex flex-col">
                 <div className="flex items-center gap-x-2">
                   <span className="font-medium">{member.user.fullName}</span>
-                  <span className="bg-accent text-blue-950 text-xs px-1 rounded-md border border-blue-600/20">
+                  <span
+                    className={clsx(
+                      'text-xs px-1 rounded-md border',
+                      member.role === 'owner'
+                        ? 'bg-accent border-blue-600/20 text-blue-950'
+                        : 'bg-emerald-50 border-emerald-100 text-emerald-800'
+                    )}
+                  >
                     {member.role === 'owner' ? 'Owner' : 'Member'}
                   </span>
                 </div>
@@ -54,9 +54,11 @@ const MembersManagementCard: React.FunctionComponent<MembersManagementCardProps>
           ))}
         </ul>
       </CardContent>
-      <CardFooter>
-        <InviteMemberForm />
-      </CardFooter>
+      {isOwner && (
+        <CardFooter>
+          <InviteMemberForm />
+        </CardFooter>
+      )}
     </Card>
   )
 }
