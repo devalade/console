@@ -1,27 +1,19 @@
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconEdit,
-  IconHash,
-  IconPencil,
-  IconPlus,
-  IconTrash,
-} from '@tabler/icons-react'
+import { IconChevronDown, IconChevronUp, IconPlus } from '@tabler/icons-react'
 import * as React from 'react'
 import CreateChannelDialog from './create_channel_dialog'
-import type { Channel } from '../types/channel'
+import type { Channel as ChannelType } from '../types/channel'
 import clsx from 'clsx'
 import useParams from '@/hooks/use_params'
 import { Link } from '@inertiajs/react'
 import type { Member } from '../types/member'
-import type { User } from '~/types/user'
 import getInitials from '@/lib/initials'
 import type { Message } from '../types/message'
 import type { Conversation } from '../types/conversation'
+import Channel from './channel'
 
 interface ChatLeftSidebarProps {
-  channels: Channel[]
-  currentChannel: Channel | null
+  channels: ChannelType[]
+  currentChannel: ChannelType | null
   conversations: Conversation[]
   currentConversation: Conversation | null
   messages: Array<Message>
@@ -69,20 +61,12 @@ const ChatLeftSidebar: React.FunctionComponent<ChatLeftSidebarProps> = ({
           {channelsShow && (
             <ul className="my-4 space-y-3">
               {channels.map((channel) => (
-                <Link
-                  href={`/organizations/${params.organizationSlug}/chat?channel=${channel.slug}`}
+                <Channel
                   key={channel.id}
-                >
-                  <li
-                    className={clsx(
-                      'flex items-center px-2 py-[6px] rounded-sm cursor-pointer text-[13px] mb-2',
-                      currentChannel?.slug === channel.slug ? 'bg-accent' : 'hover:bg-zinc-50'
-                    )}
-                  >
-                    <IconHash className="h-4 w-4 inline-block mr-2 text-zinc-700" />
-                    <span>{channel.name}</span>
-                  </li>
-                </Link>
+                  channel={channel}
+                  currentChannel={currentChannel}
+                  isOwner={isOwner}
+                />
               ))}
             </ul>
           )}
