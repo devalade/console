@@ -272,64 +272,75 @@ router.post('/fly/webhooks/logs', [FlyWebhooksController, 'handleIncomingLogs'])
  * Kanban routes.
  */
 router
-  .resource('organizations.projects.kanban_boards', KanbanBoardsController)
-  .params({
-    organizations: 'organizationSlug',
-    projects: 'projectSlug',
-    kanban_boards: 'kanbanBoardSlug',
-  })
-  .use('*', middleware.auth())
-  .use(['index', 'show', 'edit'], middleware.loadProjects())
+  .group(() => {
+    router
+      .resource('organizations.projects.kanban_boards', KanbanBoardsController)
+      .params({
+        organizations: 'organizationSlug',
+        projects: 'projectSlug',
+        kanban_boards: 'kanbanBoardSlug',
+      })
+      .use('*', middleware.auth())
+      .use(['index', 'show', 'edit'], middleware.loadProjects())
 
-router
-  .resource('organizations.projects.kanban_boards.columns', KanbanColumnsController)
-  .except(['index', 'show', 'edit'])
-  .params({
-    organizations: 'organizationSlug',
-    projects: 'projectSlug',
-    kanban_boards: 'kanbanBoardSlug',
-    columns: 'kanbanColumnId',
-  })
-  .use('*', middleware.auth())
+    router
+      .resource('organizations.projects.kanban_boards.columns', KanbanColumnsController)
+      .except(['index', 'show', 'edit'])
+      .params({
+        organizations: 'organizationSlug',
+        projects: 'projectSlug',
+        kanban_boards: 'kanbanBoardSlug',
+        columns: 'kanbanColumnId',
+      })
+      .use('*', middleware.auth())
 
-router
-  .resource('organizations.projects.kanban_boards.columns.tasks', KanbanTasksController)
-  .except(['index', 'show', 'edit'])
-  .params({
-    organizations: 'organizationSlug',
-    projects: 'projectSlug',
-    kanban_boards: 'kanbanBoardSlug',
-    columns: 'kanbanColumnId',
-    tasks: 'kanbanTaskId',
+    router
+      .resource('organizations.projects.kanban_boards.columns.tasks', KanbanTasksController)
+      .except(['index', 'show', 'edit'])
+      .params({
+        organizations: 'organizationSlug',
+        projects: 'projectSlug',
+        kanban_boards: 'kanbanBoardSlug',
+        columns: 'kanbanColumnId',
+        tasks: 'kanbanTaskId',
+      })
+      .use('*', middleware.auth())
   })
-  .use('*', middleware.auth())
+  .use(middleware.drapeau('kanban'))
 
 /**
  * Chat routes.
  */
 router
-  .get('/organizations/:organizationSlug/chat', [ChatController, 'index'])
-  .use(middleware.auth())
+  .group(() => {
+    router
+      .get('/organizations/:organizationSlug/chat', [ChatController, 'index'])
+      .use(middleware.auth())
 
-router
-  .resource('organizations.channels', ChannelsController)
-  .params({ organizations: 'organizationSlug', channels: 'channelSlug' })
-  .use('*', middleware.auth())
-  .only(['store', 'update', 'destroy'])
+    router
+      .resource('organizations.channels', ChannelsController)
+      .params({ organizations: 'organizationSlug', channels: 'channelSlug' })
+      .use('*', middleware.auth())
+      .only(['store', 'update', 'destroy'])
 
-router
-  .post('/organizations/:organizationSlug/messages', [MessagesController, 'store'])
-  .use(middleware.auth())
-router
-  .patch('/organizations/:organizationSlug/messages/:messageId', [MessagesController, 'update'])
-  .use(middleware.auth())
-router
-  .delete('/organizations/:organizationSlug/messages/:messageId', [MessagesController, 'destroy'])
-  .use(middleware.auth())
+    router
+      .post('/organizations/:organizationSlug/messages', [MessagesController, 'store'])
+      .use(middleware.auth())
+    router
+      .patch('/organizations/:organizationSlug/messages/:messageId', [MessagesController, 'update'])
+      .use(middleware.auth())
+    router
+      .delete('/organizations/:organizationSlug/messages/:messageId', [
+        MessagesController,
+        'destroy',
+      ])
+      .use(middleware.auth())
 
-router
-  .post('/organizations/:organizationSlug/conversations', [ConversationsController, 'store'])
-  .use(middleware.auth())
+    router
+      .post('/organizations/:organizationSlug/conversations', [ConversationsController, 'store'])
+      .use(middleware.auth())
+  })
+  .use(middleware.drapeau('chat'))
 
 /**
  * Storage buckets.

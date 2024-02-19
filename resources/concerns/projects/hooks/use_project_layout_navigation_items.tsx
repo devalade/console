@@ -43,7 +43,7 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
         page.url ===
         `/organizations/${params.organizationSlug}/projects/${project.slug}/storage_buckets`,
     },
-    {
+    isFeatureEnabled('kanban') && {
       name: 'Task Boards',
       href: `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards`,
       icon: IconLayoutKanban,

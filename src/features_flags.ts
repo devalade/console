@@ -21,3 +21,11 @@ DrapeauService.defineFeatureFlag(
     !!env.get('GITHUB_APP_PRIVATE_KEY') &&
     !!env.get('GITHUB_APP_WEBHOOK_SECRET')
 )
+
+/**
+ * Let's mark the kanban and chat features as disabled in production (for now).
+ */
+if (env.get('NODE_ENV') === 'production') {
+  DrapeauService.defineFeatureFlag('kanban', () => false)
+  DrapeauService.defineFeatureFlag('chat', () => false)
+}
