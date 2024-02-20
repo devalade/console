@@ -8,7 +8,7 @@ import useParams from '@/hooks/use_params'
 import SteppedDialog from '@/components/stepped_dialog'
 import isFeatureEnabled from '@/lib/is_feature_enabled'
 import ResourcesConfigurator from './resources_configurator'
-import resourcesConfiguration from '@/constants/resources_configuration'
+import resourcesConfiguration from '@/concerns/applications/constants/resources_configuration'
 
 interface CreateApplicationDialogProps {
   project: Project
@@ -30,8 +30,7 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
     cpu: 'shared-cpu-1x',
     ram: '256MB',
   })
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = () => {
     form.post(`/organizations/${params.organizationSlug}/projects/${project.slug}/applications`, {
       onSuccess: () => {
         setOpen(false)
@@ -50,7 +49,7 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
         isFeatureEnabled('deployments:github') && <CreateApplicationDialogGithubStep form={form} />,
       ]}
       submitButton={
-        <Button loading={form.processing} type="button">
+        <Button loading={form.processing} onClick={handleSubmit} type="button">
           <span>Create new application</span>
         </Button>
       }

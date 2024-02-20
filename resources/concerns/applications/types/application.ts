@@ -1,6 +1,8 @@
 import type { Certificate } from './certificates'
 
 export type Application = {
+  cpu?: string
+  ram?: string
   id: number
   name: string
   slug: string

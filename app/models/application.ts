@@ -40,6 +40,12 @@ export default class Application extends BaseModel {
   @column()
   declare ipv6: string | null
 
+  @column()
+  declare cpu: string | null
+
+  @column()
+  declare ram: string | null
+
   /**
    * GitHub-related columns.
    */
