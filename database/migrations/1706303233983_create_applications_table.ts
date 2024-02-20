@@ -10,6 +10,7 @@ export default class extends BaseSchema {
       table.string('project_id').references('projects.id').onDelete('CASCADE')
       table.string('slug').notNullable().unique()
       table.json('environment_variables').notNullable().defaultTo('{}')
+      table.string('hostname').notNullable()
 
       // Resources-related fields.
       table.string('cpu').nullable()

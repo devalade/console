@@ -4,6 +4,7 @@ export type Application = {
   cpu?: string
   ram?: string
   id: number
+  hostname: string
   name: string
   slug: string
   environmentVariables: Record<string, string>

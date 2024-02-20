@@ -28,7 +28,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, application, wildca
                   href={`https://${application.slug}.${wildcardDomain}`}
                   target="_blank"
                 >
-                  {application.slug}.{wildcardDomain}
+                  {application.hostname}
                 </a>
               </dd>
             </div>
