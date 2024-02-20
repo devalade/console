@@ -1,5 +1,5 @@
-export type Member = {
-  id: number
-  fullName: string
+import type { User } from '~/types/user'
+
+export type Member = User & {
   role: 'owner' | 'member'
 }

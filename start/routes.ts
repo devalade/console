@@ -130,6 +130,10 @@ router
   .get('/organizations/:organizationSlug/updates', [OrganizationsController, 'streamUpdates'])
   .use(middleware.auth())
 
+router
+  .get('/organizations/:organizationSlug/presence', [OrganizationsController, 'streamPresence'])
+  .use(middleware.auth())
+
 /**
  * Projects CRUD.
  */

@@ -1,6 +1,4 @@
-import getInitials from '@/lib/initials'
 import * as React from 'react'
-import MembersListItemDropdown from './members_list_item'
 import MembersListItem from './members_list_item'
 import type { Member } from '../types/member'
 

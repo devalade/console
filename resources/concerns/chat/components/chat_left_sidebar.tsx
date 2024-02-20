@@ -6,10 +6,10 @@ import clsx from 'clsx'
 import useParams from '@/hooks/use_params'
 import { Link } from '@inertiajs/react'
 import type { Member } from '../types/member'
-import getInitials from '@/lib/initials'
 import type { Message } from '../types/message'
 import type { Conversation } from '../types/conversation'
 import Channel from './channel'
+import Avatar from '@/components/avatar'
 
 interface ChatLeftSidebarProps {
   channels: ChannelType[]
@@ -100,9 +100,7 @@ const ChatLeftSidebar: React.FunctionComponent<ChatLeftSidebarProps> = ({
                       currentConversation?.id === conversation.id ? 'bg-accent' : 'hover:bg-zinc-50'
                     )}
                   >
-                    <div className="flex h-7 w-7 text-sm items-center justify-center rounded-full bg-zinc-800 border-zinc-700 border text-zinc-200">
-                      <span className="text-sm">{getInitials(conversation.user.fullName)}</span>
-                    </div>
+                    <Avatar user={conversation.user} />
                     <span>{conversation.user.fullName}</span>
                   </li>
                 </Link>

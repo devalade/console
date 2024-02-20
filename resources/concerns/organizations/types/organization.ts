@@ -1,3 +1,5 @@
+import type { User } from '~/types/user'
+
 export type Organization = {
   id: number
   name: string
@@ -7,9 +9,6 @@ export type Organization = {
   members: Array<{
     id: number
     role: 'owner' | 'member'
-    user: {
-      fullName: string
-      email: string
-    }
+    user: User
   }>
 }

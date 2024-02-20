@@ -9,6 +9,7 @@ import SendMessageForm from '../components/send_message_form'
 import type { Message as MessageType } from '../types/message'
 import type { Conversation } from '../types/conversation'
 import useParams from '@/hooks/use_params'
+import usePresence from '@/hooks/use_presence'
 
 interface ChatProps {
   channels: Channel[]
@@ -33,6 +34,8 @@ const Chat: React.FunctionComponent<ChatProps> = ({
   const [messages, setMessages] = React.useState(initialMessages)
   const [conversations, setConversations] = React.useState(initialConversations)
   const [channels, setChannels] = React.useState(initialChannels)
+  const presence = usePresence()
+  console.log('presence', presence)
 
   React.useEffect(() => {
     let eventSource: EventSource

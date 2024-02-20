@@ -33,5 +33,6 @@ declare module '@adonisjs/core/types' {
     [key: `organizations:${string}:conversation-create`]: Conversation
     [key: `organizations:${string}:channel-update`]: Channel
     [key: `organizations:${string}:channel-delete`]: Channel
+    [key: `organizations:${string}:presence-update`]: Array<User['id']>
   }
 }

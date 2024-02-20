@@ -8,10 +8,10 @@ import {
 } from '@/components/dropdown_menu'
 import useUser from '@/hooks/use_user'
 import { IconMessageForward } from '@tabler/icons-react'
-import getInitials from '@/lib/initials'
 import type { Member } from '../types/member'
 import useParams from '@/hooks/use_params'
 import clsx from 'clsx'
+import Avatar from '@/components/avatar'
 
 interface MembersListItemProps {
   member: Member
@@ -29,9 +29,7 @@ const MembersListItem: React.FunctionComponent<MembersListItemProps> = ({ member
             user.id !== member.id && 'hover:opacity-80'
           )}
         >
-          <div className="flex h-7 w-7 text-sm items-center justify-center rounded-full bg-zinc-800 border-zinc-700 border text-zinc-200">
-            <span className="text-sm">{getInitials(member.fullName)}</span>
-          </div>
+          <Avatar user={member} />
           <span className="text-sm">{member.fullName}</span>
         </button>
       </DropdownMenuTrigger>

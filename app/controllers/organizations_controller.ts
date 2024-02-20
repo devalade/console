@@ -4,6 +4,7 @@ import Conversation from '#models/conversation'
 import Message from '#models/message'
 import Organization from '#models/organization'
 import OrganizationMember from '#models/organization_member'
+import PresenceService from '#services/presence_service'
 import { createOrganizationValidator } from '#validators/create_organization_validator'
 import { updateOrganizationValidator } from '#validators/update_organization_validator'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -171,6 +172,30 @@ export default class OrganizationsController {
     })
 
     response.response.on('close', () => {
+      response.response.end()
+    })
+
+    return response.noContent()
+  }
+
+  @bindOrganization
+  async streamPresence({ auth, response }: HttpContext, organization: Organization) {
+    response.useServerSentEvents()
+
+    await PresenceService.addUserToOrganizationPresence(organization, auth.user!)
+
+    const presence = await PresenceService.getOrganizationPresence(organization)
+    response.response.write(`data: ${JSON.stringify({ presence })}\n\n`)
+    response.response.flushHeaders()
+
+    emitter.on(`organizations:${organization.slug}:presence-update`, async (presence) => {
+      console.log(`organizations:${organization.slug}:presence-update`, presence)
+      response.response.write(`data: ${JSON.stringify({ presence })}\n\n`)
+      response.response.flushHeaders()
+    })
+
+    response.response.on('close', async () => {
+      await PresenceService.removeUserFromOrganizationPresence(organization, auth.user!)
       response.response.end()
     })
 
