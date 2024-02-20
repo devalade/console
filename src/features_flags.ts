@@ -25,7 +25,7 @@ DrapeauService.defineFeatureFlag(
 /**
  * Let's mark the kanban and chat features as disabled in production (for now).
  */
-if (env.get('NODE_ENV') === 'production') {
-  DrapeauService.defineFeatureFlag('kanban', () => false)
-  DrapeauService.defineFeatureFlag('chat', () => false)
+if (env.get('NODE_ENV') !== 'production') {
+  DrapeauService.defineFeatureFlag('kanban', () => true)
+  DrapeauService.defineFeatureFlag('chat', () => true)
 }

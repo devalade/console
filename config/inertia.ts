@@ -33,6 +33,8 @@ export default defineConfig({
       }
       return ctx.organization.projects
     },
-    features: () => DrapeauService.getFeatureFlagsValues(),
+    features: () => {
+      return DrapeauService.getFeatureFlagsValues()
+    },
   },
 })
