@@ -75,32 +75,11 @@ services:
     volumes:
       - 'citadel_registry:/var/lib/registry'
 
-  mercure:
-    # The official Mercure image
-    image: dunglas/mercure
-    restart: unless-stopped
-    environment:
-      # Disables Mercure.rocks auto-HTTPS feature, HTTPS must be handled at edge by Traefik or another proxy in front of it
-      SERVER_NAME: ':80'
-      MERCURE_PUBLISHER_JWT_KEY: 'console'
-      MERCURE_SUBSCRIBER_JWT_KEY: 'console'
-    # Enables the development mode, comment the following line to run the hub in prod mode
-    command: /usr/bin/caddy run --config /etc/caddy/Caddyfile.dev
-    volumes:
-      - citadel_mercure_data:/data
-      - citadel_mercure_config:/config
-    labels:
-      - 'traefik.http.routers.mercure.rule=Host(`mercure.docker.localhost`)'
-    networks:
-      - traefik
-
 volumes:
   citadel_postgres:
   citadel_traefik:
   citadel_registry:
   citadel_minio:
-  citadel_mercure_data:
-  citadel_mercure_config:
 
 networks:
   traefik:

@@ -27,6 +27,7 @@ export default class extends BaseSchema {
         .inTable('conversations')
         .onDelete('CASCADE')
         .defaultTo(null)
+      table.string('bot').nullable()
       table.text('body').notNullable()
 
       table.timestamp('created_at')

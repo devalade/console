@@ -34,5 +34,7 @@ declare module '@adonisjs/core/types' {
     [key: `organizations:${string}:channel-update`]: Channel
     [key: `organizations:${string}:channel-delete`]: Channel
     [key: `organizations:${string}:presence-update`]: Array<User['id']>
+
+    'messages:created': [Organization, Channel, User, Message]
   }
 }

@@ -35,7 +35,6 @@ const Chat: React.FunctionComponent<ChatProps> = ({
   const [conversations, setConversations] = React.useState(initialConversations)
   const [channels, setChannels] = React.useState(initialChannels)
   const presence = usePresence()
-  console.log('presence', presence)
 
   React.useEffect(() => {
     let eventSource: EventSource

@@ -197,7 +197,6 @@ export default class OrganizationsController {
     response.response.flushHeaders()
 
     emitter.on(`organizations:${organization.slug}:presence-update`, async (presence) => {
-      console.log(`organizations:${organization.slug}:presence-update`, presence)
       response.response.write(`data: ${JSON.stringify({ presence })}\n\n`)
       response.response.flushHeaders()
     })

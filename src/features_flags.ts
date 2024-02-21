@@ -29,3 +29,8 @@ if (env.get('NODE_ENV') !== 'production') {
   DrapeauService.defineFeatureFlag('kanban', () => true)
   DrapeauService.defineFeatureFlag('chat', () => true)
 }
+
+/**
+ * Enable Alberta if the OPENAI_API_KEY is defined.
+ */
+DrapeauService.defineFeatureFlag('alberta', () => !!env.get('OPENAI_API_KEY'))

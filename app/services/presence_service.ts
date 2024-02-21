@@ -9,6 +9,9 @@ export default class PresenceService {
     if (!this.presenceStore[organization.id]) {
       this.presenceStore[organization.id] = []
     }
+    if (this.presenceStore[organization.id].includes(user.id)) {
+      return
+    }
     this.presenceStore[organization.id].push(user.id)
     emitter.emit(
       `organizations:${organization.slug}:presence-update`,
@@ -18,6 +21,10 @@ export default class PresenceService {
 
   static async removeUserFromOrganizationPresence(organization: Organization, user: User) {
     if (this.presenceStore[organization.id]) {
+      if (!this.presenceStore[organization.id].includes(user.id)) {
+        return
+      }
+
       this.presenceStore[organization.id] = this.presenceStore[organization.id].filter(
         (userId) => userId !== user.id
       )

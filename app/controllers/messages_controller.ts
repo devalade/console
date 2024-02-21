@@ -3,6 +3,7 @@ import Conversation from '#models/conversation'
 import Message from '#models/message'
 import Organization from '#models/organization'
 import type { HttpContext } from '@adonisjs/core/http'
+import emitter from '@adonisjs/core/services/emitter'
 
 export default class MessagesController {
   @bindOrganization
@@ -20,7 +21,8 @@ export default class MessagesController {
         .where('slug', request.qs().channelSlug)
         .firstOrFail()
 
-      await channel.related('messages').create({ body, userId: auth.user!.id })
+      const message = await channel.related('messages').create({ body, userId: auth.user!.id })
+      emitter.emit('messages:created', [organization, channel, auth.user!, message])
     }
 
     /**

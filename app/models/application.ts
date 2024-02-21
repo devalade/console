@@ -93,7 +93,6 @@ export default class Application extends BaseModel {
     /**
      * Generate a hostname for the application.
      */
-    console.log(`env.get('DRIVER'): ${env.get('DRIVER')}`)
     switch (env.get('DRIVER')) {
       case 'docker':
         application.hostname = `${env.get('DOCKER_APPLICATION_NAME_PREFIX', 'citadel-app')}-${application.slug}.${env.get(

@@ -6,6 +6,7 @@ import useUser from '@/hooks/use_user'
 import DeleteMessageDialog from './delete_message_dialog'
 import UpdateMessageDialog from './update_message_dialog'
 import Avatar from '@/components/avatar'
+import BotAvatar from './bot_avatar'
 
 interface MessageProps {
   message: MessageType
@@ -13,7 +14,7 @@ interface MessageProps {
 
 const Message: React.FunctionComponent<MessageProps> = ({ message }) => {
   const user = useUser()
-  const isOwner = user.id === message.user.id
+  const isOwner = user.id === message.user?.id
   const [showUpdateDialog, setShowUpdateDialog] = React.useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
   return (
@@ -29,10 +30,11 @@ const Message: React.FunctionComponent<MessageProps> = ({ message }) => {
         setOpen={setShowDeleteDialog}
       />
 
-      <Avatar user={message.user} />
+      {message.user ? <Avatar user={message.user} /> : <BotAvatar bot={message.bot} />}
+
       <div className="flex flex-col gap-1 w-full">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-sm">{message.user.fullName}</span>
+          <span className="font-medium text-sm">{message.user?.fullName || message.bot}</span>
           <span className="uppercase text-xs text-zinc-800">
             {formatMessageDate(message.createdAt)}
           </span>

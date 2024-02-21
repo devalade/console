@@ -1,12 +1,5 @@
 import { DateTime } from 'luxon'
-import {
-  BaseModel,
-  afterDelete,
-  afterSave,
-  beforeDelete,
-  belongsTo,
-  column,
-} from '@adonisjs/lucid/orm'
+import { BaseModel, afterSave, beforeDelete, belongsTo, column } from '@adonisjs/lucid/orm'
 import User from './user.js'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Channel from './channel.js'
@@ -23,6 +16,9 @@ export default class Message extends BaseModel {
   @column()
   declare body: string
 
+  @column()
+  declare bot: string | null
+
   /**
    * Relationships.
    */
@@ -30,7 +26,7 @@ export default class Message extends BaseModel {
   declare user: BelongsTo<typeof User>
 
   @column()
-  declare userId: number
+  declare userId: number | null
 
   @belongsTo(() => Channel)
   declare channel: BelongsTo<typeof Channel>

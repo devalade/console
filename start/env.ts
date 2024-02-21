@@ -22,6 +22,11 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   DRIVER: Env.schema.enum(['blank', 'docker', 'fly'] as const),
 
+  /**
+   * Variables for configuring the OpenAI API
+   */
+  OPENAI_API_KEY: Env.schema.string.optional(),
+
   /*
   |----------------------------------------------------------
   | Variables for configuring feature flags

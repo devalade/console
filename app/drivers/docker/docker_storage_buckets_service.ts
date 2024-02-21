@@ -131,7 +131,6 @@ export default class DockerStorageBucketsService implements IDriverStorageBucket
         })
       )
     } catch (error) {
-      console.log(error)
       logger.error('Error uploading file to bucket', error)
     }
   }
