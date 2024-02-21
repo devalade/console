@@ -35,6 +35,7 @@ const Chat: React.FunctionComponent<ChatProps> = ({
   const [conversations, setConversations] = React.useState(initialConversations)
   const [channels, setChannels] = React.useState(initialChannels)
   const presence = usePresence()
+  const messagesListRef = React.useRef<HTMLUListElement>(null)
 
   React.useEffect(() => {
     let eventSource: EventSource
@@ -134,6 +135,15 @@ const Chat: React.FunctionComponent<ChatProps> = ({
     }
   }, [])
 
+  /**
+   * Scroll to the bottom of the messages list when the messages change.
+   */
+  React.useEffect(() => {
+    if (messagesListRef.current) {
+      messagesListRef.current.scrollTop = messagesListRef.current.scrollHeight
+    }
+  }, [messages])
+
   return (
     <MainLayout className="!p-0">
       <div className="flex  min-h-[calc(100vh-64px)]">
@@ -147,14 +157,17 @@ const Chat: React.FunctionComponent<ChatProps> = ({
           isOwner={isOwner}
         />
 
-        <div className="px-4 py-6 md:col-span-4 flex flex-col-reverse w-full max-h-[calc(100vh-64px)] overflow-y-auto">
+        <div className="px-4 py-6 md:col-span-4 flex flex-col-reverse w-full max-h-[calc(100vh-64px)]">
           {(currentChannel || currentConversation) && (
             <SendMessageForm
               currentChannel={currentChannel}
               currentConversation={currentConversation}
             />
           )}
-          <ul className="list-none p-0 pb-4 m-0 space-y-4">
+          <ul
+            className="list-none p-0 mb-4 m-0 space-y-4 max-h-[calc(100vh-64px)] overflow-y-auto"
+            ref={messagesListRef}
+          >
             {messages.map((message) => (
               <Message key={message.id} message={message} />
             ))}
