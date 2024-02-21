@@ -8,6 +8,9 @@ import type { Project } from '@/concerns/projects/types/project'
 import { useForm } from '@inertiajs/react'
 import PasswordField from '@/components/password_field'
 import useParams from '@/hooks/use_params'
+import SteppedDialog from '@/components/stepped_dialog'
+import isFeatureEnabled from '@/lib/is_feature_enabled'
+import VolumeConfigurator from '@/components/volume_configurator'
 
 export type CreateDatabaseDialogProps = {
   project: Project
@@ -25,6 +28,7 @@ export default function CreateDatabaseDialog({
     name: '',
     username: '',
     password: '',
+    diskSize: isFeatureEnabled('volumes_configurator') ? 1 : undefined,
   })
   const [step, setStep] = React.useState(1)
   const params = useParams()
@@ -46,103 +50,84 @@ export default function CreateDatabaseDialog({
   ]
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px] rounded-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center space-x-2">
-            <span>Create database</span>
-          </DialogTitle>
-        </DialogHeader>
+    <form onSubmit={handleSubmit}>
+      <SteppedDialog
+        title="Create database"
+        open={open}
+        setOpen={setOpen}
+        steps={[
+          <div className="grid sm:grid-cols-2 gap-4 grid-flow-row auto-rows-fr px-6 py-2">
+            {dbms.map((db) => (
+              <label
+                key={db.value}
+                htmlFor={db.value}
+                className="flex cursor-pointer flex-col space-y-2 items-center justify-center space-x-2 rounded p-4 border border-accent"
+              >
+                <img src={`/icons/${db.value}.svg`} className="w-8 h-8" alt="PostgreSQL icon" />
+                <span className="text-sm">{db.name}</span>
+                <input
+                  className="h-3 w-3"
+                  type="radio"
+                  id={db.value}
+                  name="database"
+                  value={db.value}
+                  checked={form.data.dbms === db.value}
+                  onChange={() => form.setData('dbms', db.value)}
+                />
+              </label>
+            ))}
+          </div>,
 
-        <form onSubmit={handleSubmit}>
-          <main className="px-6">
-            {step === 1 && (
-              <div className="grid sm:grid-cols-2 gap-4 grid-flow-row auto-rows-fr">
-                {dbms.map((db) => (
-                  <label
-                    key={db.value}
-                    htmlFor={db.value}
-                    className="flex cursor-pointer flex-col space-y-2 items-center justify-center space-x-2 rounded p-4 border border-accent"
-                  >
-                    <img src={`/icons/${db.value}.svg`} className="w-8 h-8" alt="PostgreSQL icon" />
-                    <span className="text-sm">{db.name}</span>
-                    <input
-                      className="h-3 w-3"
-                      type="radio"
-                      id={db.value}
-                      name="database"
-                      value={db.value}
-                      checked={form.data.dbms === db.value}
-                      onChange={() => form.setData('dbms', db.value)}
-                    />
-                  </label>
-                ))}
-              </div>
-            )}
+          isFeatureEnabled('volumes_configurator') && (
+            <div className="px-6 py-2">
+              <VolumeConfigurator
+                diskSize={form.data.diskSize}
+                setDiskSize={(diskSize) => form.setData('diskSize', diskSize)}
+              />
+            </div>
+          ),
 
-            {step === 2 && (
-              <div className="space-y-4">
-                <div className="grid gap-1">
-                  <Label>Database Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="Database Name"
-                    value={form.data.name}
-                    onChange={(e) => form.setData('name', slugify(e.target.value))}
-                    required
-                  />
-                </div>
-                {form.data.dbms !== 'redis' && (
-                  <div className="grid gap-1">
-                    <Label>Database Username</Label>
-                    <Input
-                      id="username"
-                      placeholder="Database Username"
-                      value={form.data.username}
-                      onChange={(e) => form.setData('username', e.target.value)}
-                      required
-                    />
-                  </div>
-                )}
-                <PasswordField
-                  label="Database Password"
-                  divClassName="grid gap-1"
-                  id="password"
-                  placeholder="Database Password"
-                  value={form.data.password}
-                  onChange={(e) => form.setData('password', e.target.value)}
+          <div className="space-y-4 px-6 py-2">
+            <div className="grid gap-1">
+              <Label>Database Name</Label>
+              <Input
+                id="name"
+                placeholder="Database Name"
+                value={form.data.name}
+                onChange={(e) => form.setData('name', slugify(e.target.value))}
+                required
+              />
+            </div>
+            {form.data.dbms !== 'redis' && (
+              <div className="grid gap-1">
+                <Label>Database Username</Label>
+                <Input
+                  id="username"
+                  placeholder="Database Username"
+                  value={form.data.username}
+                  onChange={(e) => form.setData('username', e.target.value)}
                   required
-                  autogenerate
                 />
               </div>
             )}
-          </main>
-
-          <DialogFooter className="mt-4">
-            <div className="flex w-full justify-between space-x-2">
-              {step === 1 ? (
-                <span></span>
-              ) : (
-                <Button type="button" variant="outline" onClick={() => setStep(step - 1)}>
-                  <span>Previous</span>
-                </Button>
-              )}
-
-              {step === 1 && (
-                <Button onClick={() => setStep(step + 1)} type="button">
-                  <span>Next</span>
-                </Button>
-              )}
-
-              {step === 2 && (
-                <Button type="submit" loading={form.processing}>
-                  <span>Create database</span>
-                </Button>
-              )}
-            </div>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+            <PasswordField
+              label="Database Password"
+              divClassName="grid gap-1"
+              id="password"
+              placeholder="Database Password"
+              value={form.data.password}
+              onChange={(e) => form.setData('password', e.target.value)}
+              required
+              autogenerate
+            />
+          </div>,
+        ]}
+        submitButton={
+          <Button type="submit" loading={form.processing}>
+            <span>Create database</span>
+          </Button>
+        }
+      ></SteppedDialog>
+    </form>
   )
 }

@@ -13,6 +13,7 @@ export default class extends BaseSchema {
       table.string('username').nullable()
       table.string('password').nullable()
       table.string('project_id').references('projects.id').onDelete('CASCADE')
+      table.integer('disk_size').nullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

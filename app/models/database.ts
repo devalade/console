@@ -40,6 +40,9 @@ export default class Database extends BaseModel {
   @column()
   declare hostname: string
 
+  @column()
+  declare diskSize: number | null
+
   @computed()
   public get uri(): string {
     switch (this.dbms) {

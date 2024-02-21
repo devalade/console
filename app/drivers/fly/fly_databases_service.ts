@@ -3,6 +3,7 @@ import Database from '#models/database'
 import Organization from '#models/organization'
 import Project from '#models/project'
 import FlyApi from './api/fly_api.js'
+import { AddressType } from './api/fly_networks_api.js'
 import FlyDatabasesConfigurationBuilder from './fly_databases_configuration_builder.js'
 
 export default class FlyDatabasesService implements IDriverDatabasesService {
@@ -19,6 +20,14 @@ export default class FlyDatabasesService implements IDriverDatabasesService {
     await this.flyApi.apps.createApplication({
       app_name: applicationName,
       org_slug: 'personal',
+    })
+    await this.flyApi.networks.allocateSharedIpAddress({
+      appId: applicationName,
+      type: AddressType.shared_v4,
+    })
+    await this.flyApi.networks.allocateIpAddress({
+      appId: applicationName,
+      type: AddressType.v6,
     })
 
     const { id: volume } = await this.flyApi.volumes.createVolume(applicationName, {

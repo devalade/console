@@ -6,5 +6,6 @@ export const createDatabaseValidator = vine.compile(
     name: vine.string().trim().minLength(3).maxLength(255),
     username: vine.string().trim().minLength(3).maxLength(255),
     password: vine.string().trim().minLength(3).maxLength(255),
+    diskSize: vine.number().withoutDecimals().positive().optional(),
   })
 )
