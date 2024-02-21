@@ -10,6 +10,7 @@ import { updateOrganizationValidator } from '#validators/update_organization_val
 import type { HttpContext } from '@adonisjs/core/http'
 import emitter from '@adonisjs/core/services/emitter'
 import mail from '@adonisjs/mail/services/main'
+import vine from '@vinejs/vine'
 
 export default class OrganizationsController {
   public async index({ auth, inertia, response }: HttpContext) {
@@ -110,8 +111,15 @@ export default class OrganizationsController {
     if (organizationMember.role !== 'owner') {
       return response.unauthorized()
     }
-    const email = request.input('email')
-    await mail.send(new InviteMemberNotification(organization, email))
+    const payload = await request.validateUsing(
+      vine.compile(
+        vine.object({
+          email: vine.string().email(),
+        })
+      )
+    )
+
+    await mail.send(new InviteMemberNotification(organization, payload.email))
     return response.redirect().toPath(`/organizations/${organization.slug}/edit`)
   }
 
