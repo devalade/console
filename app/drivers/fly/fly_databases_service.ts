@@ -21,13 +21,16 @@ export default class FlyDatabasesService implements IDriverDatabasesService {
       app_name: applicationName,
       org_slug: 'personal',
     })
-    await this.flyApi.networks.allocateSharedIpAddress({
-      appId: applicationName,
-      type: AddressType.shared_v4,
-    })
+
+    /**
+     * 😢 WARNING: Dedicated IPv4 addresses are not free anymore.
+     *
+     * Then, we allocate a dedicated IPV4 for the database.
+     * We need these addresses to expose the database to the internet.
+     */
     await this.flyApi.networks.allocateIpAddress({
       appId: applicationName,
-      type: AddressType.v6,
+      type: AddressType.v4,
     })
 
     const { id: volume } = await this.flyApi.volumes.createVolume(applicationName, {

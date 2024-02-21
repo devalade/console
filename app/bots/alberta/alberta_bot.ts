@@ -8,7 +8,7 @@ import { IBot } from '../ibot.js'
 import prepareAlbertaAiFunctions from './alberta_ai_functions.js'
 
 export default class AlbertaBot implements IBot {
-  static prefix = '/alberta'
+  static prefix = '@alberta'
   #openai = new OpenAI()
 
   async handleMessage(organization: Organization, channel: Channel, user: User, message: Message) {

@@ -87,7 +87,7 @@ export default function CreateDatabaseDialog({
             </div>
           ),
 
-          <div className="space-y-4 px-6 py-2">
+          <div className="space-y-4 px-6 py-2 pb-4">
             <div className="grid gap-1">
               <Label>Database Name</Label>
               <Input
