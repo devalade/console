@@ -9,15 +9,15 @@ export function PresenceProvider({ children }: { children: React.ReactNode }) {
   const params = useParams()
 
   React.useEffect(() => {
-    let es = new EventSource(`/organizations/${params.organizationSlug}/presence`)
+    const eventSource = new EventSource(`/organizations/${params.organizationSlug}/presence`)
 
-    es.onmessage = (event) => {
+    eventSource.onmessage = (event) => {
       const { presence } = JSON.parse(event.data)
       setPresence(presence)
     }
 
     return () => {
-      es.close()
+      eventSource.close()
     }
   }, [])
 
