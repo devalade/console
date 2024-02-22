@@ -44,7 +44,7 @@ export default class Channel extends BaseModel {
   }
 
   @afterSave()
-  static async emitChannelCreateEvent(channel: Channel) {
+  static async emitChannelUpdateEvent(channel: Channel) {
     await channel.load('organization')
     const organization = channel.organization
     if (organization) {

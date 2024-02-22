@@ -4,44 +4,66 @@ import CreateChannelDialog from './create_channel_dialog'
 import type { Channel as ChannelType } from '../types/channel'
 import clsx from 'clsx'
 import useParams from '@/hooks/use_params'
-import { Link } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 import type { Member } from '../types/member'
 import type { Message } from '../types/message'
 import type { Conversation } from '../types/conversation'
 import Channel from './channel'
 import Avatar from '@/components/avatar'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import useChatUpdates from '../hooks/use_chat_updates'
 
 interface ChatLeftSidebarProps {
-  channels: ChannelType[]
   currentChannel: ChannelType | null
-  conversations: Conversation[]
   currentConversation: Conversation | null
-  messages: Array<Message>
   members: Member[]
   isOwner: boolean
 }
 
 const ChatLeftSidebar: React.FunctionComponent<ChatLeftSidebarProps> = ({
   currentConversation,
-  conversations,
   currentChannel,
-  channels,
   isOwner,
 }) => {
   const [open, setOpen] = React.useState(false)
   const [channelsShow, setChannelsShow] = React.useState(true)
   const [directMessagesShow, setDirectMessagesShow] = React.useState(true)
   const params = useParams()
+  const { channels, setChannels, conversations } = useChatUpdates()
 
   const handleDragEnd = (result) => {
     if (!result.destination) return
-    // Reorder channels array according to the drag and drop result
-    const reorderedChannels = Array.from(channels)
-    const [removed] = reorderedChannels.splice(result.source.index, 1)
-    reorderedChannels.splice(result.destination.index, 0, removed)
-    // Update state with the new order
-    // setState(reorderedChannels);
+    const oldOrder = channels[result.source.index].order
+    const channel = channels[result.source.index]
+    const order = channels[result.destination.index].order
+
+    let newOrderedChannels: ChannelType[] = []
+
+    channels.forEach((ch) => {
+      if (ch.slug === channel.slug) {
+        // Update the order of the moved channel
+        ch.order = order
+      } else if (order > oldOrder) {
+        // Shift channels down
+        if (ch.order > oldOrder && ch.order <= order) {
+          ch.order -= 1
+        }
+      } else {
+        // Shift channels up
+        if (ch.order >= order && ch.order < oldOrder) {
+          ch.order += 1
+        }
+      }
+      newOrderedChannels.push(ch)
+    })
+
+    setChannels(newOrderedChannels)
+
+    router.patch(
+      `/organizations/${params.organizationSlug}/channels/${channel.slug}/move${window.location.search}`,
+      { order },
+      { preserveScroll: true, preserveState: true }
+    )
   }
 
   return (
@@ -71,30 +93,32 @@ const ChatLeftSidebar: React.FunctionComponent<ChatLeftSidebarProps> = ({
           </h2>
           {channelsShow && (
             <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="channels">
+              <Droppable droppableId="channels" isDropDisabled={!isOwner}>
                 {(provided) => (
                   <ul
-                    className="my-4 space-y-3"
+                    className="my-4 space-y-2"
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    {channels.map((channel, index) => (
-                      <Draggable key={channel.id} draggableId={channel.slug} index={index}>
-                        {(provided) => (
-                          <li
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <Channel
-                              channel={channel}
-                              currentChannel={currentChannel}
-                              isOwner={isOwner}
-                            />
-                          </li>
-                        )}
-                      </Draggable>
-                    ))}
+                    {channels
+                      .sort((a, b) => a.order - b.order)
+                      .map((channel, index) => (
+                        <Draggable key={channel.id} draggableId={channel.slug} index={index}>
+                          {(provided) => (
+                            <li
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
+                              <Channel
+                                channel={channel}
+                                currentChannel={currentChannel}
+                                isOwner={isOwner}
+                              />
+                            </li>
+                          )}
+                        </Draggable>
+                      ))}
                     {provided.placeholder}
                   </ul>
                 )}

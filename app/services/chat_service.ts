@@ -50,11 +50,17 @@ export default class ChatService {
   }
 
   async loadCurrentChannel(
-    { request }: HttpContext,
+    { request, response }: HttpContext,
     organization: Organization
   ): Promise<Channel | null> {
     if (organization.channels.length === 0 && !request.qs().channel) {
       return null
+    }
+
+    if (organization.channels.length > 0 && !request.qs().channel) {
+      response
+        .redirect()
+        .toPath(`/organizations/${organization.slug}/chat?channel=${organization.channels[0].slug}`)
     }
 
     const currentChannel = request.qs().channel

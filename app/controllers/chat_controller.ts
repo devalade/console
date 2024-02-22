@@ -72,8 +72,13 @@ export default class ChatController {
       }
     )
 
-    emitter.on(`organizations:${organization.slug}:channel-update`, (channel) => {
-      response.sendServerSentEvent({ channel })
+    emitter.on(`organizations:${organization.slug}:channel-update`, async (channel) => {
+      const channels = await organization.related('channels').query().orderBy('order', 'asc')
+      if (!channels.some((c) => c.id === channel.id)) {
+        channels.push(channel)
+        channels.sort((a, b) => a.order - b.order)
+      }
+      response.sendServerSentEvent({ channels })
     })
 
     emitter.on(`organizations:${organization.slug}:channel-delete`, (channel) => {
