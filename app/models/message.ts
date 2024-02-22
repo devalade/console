@@ -64,6 +64,7 @@ export default class Message extends BaseModel {
       await message.load('channel', (query) => query.preload('organization'))
     }
     await message.load('user')
+    await message.user.assignAvatarUrl()
     await message.load('askedUserForAnswer')
     emitter.emit(
       `organizations:${(message.conversation || message.channel).organization.slug}:message-update`,
@@ -80,6 +81,7 @@ export default class Message extends BaseModel {
       await message.load('channel', (query) => query.preload('organization'))
     }
     await message.load('user')
+    await message.user.assignAvatarUrl()
     emitter.emit(
       `organizations:${(message.conversation || message.channel).organization.slug}:message-delete`,
       message

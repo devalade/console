@@ -48,7 +48,7 @@ node ace install
 # Run the migrations
 node ace migration:run
 
-# Start development containers (define in zarf/dev/docker-compose.yml)
+# Start development containers (as defined in zarf/dev/docker-compose.yml)
 # and the development server.
 npm run dev
 ```

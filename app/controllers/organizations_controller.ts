@@ -48,6 +48,9 @@ export default class OrganizationsController {
     await organization.load('members', (query) => {
       query.preload('user')
     })
+    for (const member of organization.members) {
+      await member.user.assignAvatarUrl()
+    }
     const isOwner = organizationMember.role === 'owner'
     return inertia.render('organizations/edit', {
       organization,

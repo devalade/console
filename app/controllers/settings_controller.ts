@@ -8,15 +8,23 @@ export default class SettingsController {
   }
 
   async update({ auth, request, response, session }: HttpContext) {
+    const avatar = request.file('avatar', {
+      size: '5mb',
+      extnames: ['jpg', 'png', 'jpeg', 'gif', 'webp', 'svg', 'bmp'],
+    })
     const { fullName, email, newPassword } = await request.validateUsing(settingsValidator)
     const user = auth.user!
-
     if (user.email !== email) {
       const emailExists = await User.query().where('email', email)
+      console.log('emailExists', emailExists)
       if (emailExists) {
         session.flash('errors.email', 'Email already exists')
         return response.redirect().back()
       }
+    }
+    console.log('avatar', avatar)
+    if (avatar) {
+      await user.uploadAvatar(avatar)
     }
 
     user.fullName = fullName
