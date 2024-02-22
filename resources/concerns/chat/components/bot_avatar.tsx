@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Alberta from '../alberta_sql.webp'
+import Alberta from '../assets/alberta_sql.webp'
 
 interface BotAvatarProps {
   bot: string

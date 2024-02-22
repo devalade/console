@@ -32,8 +32,7 @@ export default class KanbanColumnsController {
     firstColumn.order = newOrder
     secondColumn.order = oldOrder
 
-    await firstColumn.save()
-    await secondColumn.save()
+    await Promise.all([firstColumn.save(), secondColumn.save()])
 
     return response.redirect().back()
   }

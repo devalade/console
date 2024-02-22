@@ -10,6 +10,7 @@ import type { Message } from '../types/message'
 import type { Conversation } from '../types/conversation'
 import Channel from './channel'
 import Avatar from '@/components/avatar'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
 interface ChatLeftSidebarProps {
   channels: ChannelType[]
@@ -32,6 +33,16 @@ const ChatLeftSidebar: React.FunctionComponent<ChatLeftSidebarProps> = ({
   const [channelsShow, setChannelsShow] = React.useState(true)
   const [directMessagesShow, setDirectMessagesShow] = React.useState(true)
   const params = useParams()
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return
+    // Reorder channels array according to the drag and drop result
+    const reorderedChannels = Array.from(channels)
+    const [removed] = reorderedChannels.splice(result.source.index, 1)
+    reorderedChannels.splice(result.destination.index, 0, removed)
+    // Update state with the new order
+    // setState(reorderedChannels);
+  }
 
   return (
     <>
@@ -59,16 +70,36 @@ const ChatLeftSidebar: React.FunctionComponent<ChatLeftSidebarProps> = ({
             )}
           </h2>
           {channelsShow && (
-            <ul className="my-4 space-y-3">
-              {channels.map((channel) => (
-                <Channel
-                  key={channel.id}
-                  channel={channel}
-                  currentChannel={currentChannel}
-                  isOwner={isOwner}
-                />
-              ))}
-            </ul>
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="channels">
+                {(provided) => (
+                  <ul
+                    className="my-4 space-y-3"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {channels.map((channel, index) => (
+                      <Draggable key={channel.id} draggableId={channel.slug} index={index}>
+                        {(provided) => (
+                          <li
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <Channel
+                              channel={channel}
+                              currentChannel={currentChannel}
+                              isOwner={isOwner}
+                            />
+                          </li>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </ul>
+                )}
+              </Droppable>
+            </DragDropContext>
           )}
         </div>
 

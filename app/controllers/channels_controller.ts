@@ -3,6 +3,7 @@ import Channel from '#models/channel'
 import Organization from '#models/organization'
 import OrganizationMember from '#models/organization_member'
 import { createChannelValidator } from '#validators/create_channel_validator'
+import { updateChannelValidator } from '#validators/update_channel_validator'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class ChannelsController {
@@ -41,7 +42,7 @@ export default class ChannelsController {
       return response.forbidden()
     }
 
-    const payload = await request.validateUsing(createChannelValidator)
+    const payload = await request.validateUsing(updateChannelValidator)
     const channel = await organization
       .related('channels')
       .query()
@@ -69,6 +70,42 @@ export default class ChannelsController {
       .firstOrFail()
 
     await channel.delete()
+    return response.redirect().back()
+  }
+
+  @bindOrganization
+  async move(
+    { request, response }: HttpContext,
+    organization: Organization,
+    organizationMember: OrganizationMember
+  ) {
+    if (organizationMember.role !== 'owner') {
+      return response.forbidden()
+    }
+
+    const newOrder = request.input('order')
+    if (!newOrder) {
+      return response.badRequest()
+    }
+
+    const firstChannel = await organization
+      .related('channels')
+      .query()
+      .where('slug', request.param('channelSlug'))
+      .firstOrFail()
+
+    const secondChannel = await organization
+      .related('channels')
+      .query()
+      .where('order', parseInt(newOrder[0]))
+      .firstOrFail()
+    const oldOrder = firstChannel.order
+
+    firstChannel.order = newOrder
+    secondChannel.order = oldOrder
+
+    await Promise.all([firstChannel.save(), secondChannel.save()])
+
     return response.redirect().back()
   }
 }

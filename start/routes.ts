@@ -239,7 +239,7 @@ router
     '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/deployments',
     [DeploymentsController, 'store']
   )
-  .use([middleware.auth({ guards: ['api'] })])
+  .use([middleware.auth({ guards: ['api', 'web'] })])
 router
   .get(
     '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/deployments/updates',
@@ -284,7 +284,6 @@ router
         projects: 'projectSlug',
         kanban_boards: 'kanbanBoardSlug',
       })
-      .use('*', middleware.auth())
       .use(['index', 'show', 'edit'], middleware.loadProjects())
 
     router
@@ -296,7 +295,6 @@ router
         kanban_boards: 'kanbanBoardSlug',
         columns: 'kanbanColumnId',
       })
-      .use('*', middleware.auth())
 
     router
       .resource('organizations.projects.kanban_boards.columns.tasks', KanbanTasksController)
@@ -308,78 +306,71 @@ router
         columns: 'kanbanColumnId',
         tasks: 'kanbanTaskId',
       })
-      .use('*', middleware.auth())
   })
-  .use(middleware.drapeau('kanban'))
+  .use([middleware.auth(), middleware.drapeau('kanban')])
 
 /**
  * Chat routes.
  */
 router
   .group(() => {
-    router
-      .get('/organizations/:organizationSlug/chat', [ChatController, 'index'])
-      .use(middleware.auth())
+    router.get('/organizations/:organizationSlug/chat', [ChatController, 'index'])
 
     router
       .resource('organizations.channels', ChannelsController)
       .params({ organizations: 'organizationSlug', channels: 'channelSlug' })
-      .use('*', middleware.auth())
       .only(['store', 'update', 'destroy'])
 
-    router
-      .post('/organizations/:organizationSlug/messages', [MessagesController, 'store'])
-      .use(middleware.auth())
-    router
-      .patch('/organizations/:organizationSlug/messages/:messageId', [MessagesController, 'update'])
-      .use(middleware.auth())
-    router
-      .delete('/organizations/:organizationSlug/messages/:messageId', [
-        MessagesController,
-        'destroy',
-      ])
-      .use(middleware.auth())
+    router.patch('/organizations/:organizationSlug/channels/:channelSlug/move', [
+      ChannelsController,
+      'move',
+    ])
 
-    router
-      .post('/organizations/:organizationSlug/conversations', [ConversationsController, 'store'])
-      .use(middleware.auth())
+    router.post('/organizations/:organizationSlug/messages', [MessagesController, 'store'])
+    router.patch('/organizations/:organizationSlug/messages/:messageId', [
+      MessagesController,
+      'update',
+    ])
+    router.delete('/organizations/:organizationSlug/messages/:messageId', [
+      MessagesController,
+      'destroy',
+    ])
+
+    router.post('/organizations/:organizationSlug/conversations', [
+      ConversationsController,
+      'store',
+    ])
   })
-  .use(middleware.drapeau('chat'))
+  .use([middleware.auth(), middleware.drapeau('chat')])
 
 /**
  * Storage buckets.
  */
 router
-  .resource('organizations.projects.storage_buckets', StorageBucketsController)
-  .params({
-    organizations: 'organizationSlug',
-    projects: 'projectSlug',
-    storage_buckets: 'storageBucketSlug',
+  .group(() => {
+    router
+      .resource('organizations.projects.storage_buckets', StorageBucketsController)
+      .params({
+        organizations: 'organizationSlug',
+        projects: 'projectSlug',
+        storage_buckets: 'storageBucketSlug',
+      })
+      .use(['index', 'show', 'edit'], middleware.loadProjects())
+
+    router.post(
+      '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/upload',
+      [StorageBucketsController, 'uploadFile']
+    )
+
+    router.get(
+      '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/files/:filename',
+      [StorageBucketsController, 'downloadFile']
+    )
+
+    router.delete(
+      '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/files/:filename',
+      [StorageBucketsController, 'deleteFile']
+    )
   })
-  .use('*', middleware.auth())
-  .use('*', middleware.drapeau('storage_buckets'))
-  .use(['index', 'show', 'edit'], middleware.loadProjects())
-
-router
-  .post(
-    '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/upload',
-    [StorageBucketsController, 'uploadFile']
-  )
-  .use(middleware.auth())
-  .use(middleware.drapeau('storage_buckets'))
-
-router
-  .get(
-    '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/files/:filename',
-    [StorageBucketsController, 'downloadFile']
-  )
-  .use(middleware.auth())
-  .use(middleware.drapeau('storage_buckets'))
-
-router
-  .delete(
-    '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/files/:filename',
-    [StorageBucketsController, 'deleteFile']
-  )
   .use(middleware.auth())
   .use(middleware.drapeau('storage_buckets'))
