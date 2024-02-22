@@ -48,7 +48,8 @@ node ace install
 # Run the migrations
 node ace migration:run
 
-# Start the development server
+# Start development containers (define in zarf/dev/docker-compose.yml)
+# and the development server.
 npm run dev
 ```
 
@@ -105,6 +106,16 @@ fly secrets set HTTP_TOKEN=<replace_this_with_your_http_bearer>
 ```
 
 ## FAQ
+
+### How to contribute?
+
+The best way to contribute is to solve one of the [issues](https://github.com/softwarecitadel/console/issues) marked with the `open for external contributions` tag. And please comment on the issue to let us know that you're working on it.
+
+To get started, you can fork the repository, create a new branch, and start working on the issue. Once you're done, you can create a pull request.
+
+For more information, you can contact us on the [Discord server](https://discord.gg/DPrfmDttMb) or through this [contact form](https://softwarecitadel.com/contact).
+
+If you want to contribute with a new feature, please open an issue first, so we can discuss it.
 
 ### What if I want to use it with some not-supported orchestration driver?
 
