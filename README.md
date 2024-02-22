@@ -52,7 +52,28 @@ node ace migration:run
 npm run dev
 ```
 
-### Fly.io Setup
+### Set up GitHub OAuth
+
+1. Go to [GitHub Developer Settings](https://github.com/settings/apps) and create some new OAuth/regular app.
+
+2. Fill in the form with the following values :
+
+- Application name : `Software Citadel Console`
+- Homepage URL : `http://127.0.0.1:3333`
+- Callback URL : `http://127.0.0.1:3333/auth/github/callback`
+
+3. Once the app is created, you will be able to see the `Client ID` and `Client Secret`. Add them to the `.env` file :
+
+```env
+GITHUB_CLIENT_ID=<your_client_id>
+GITHUB_CLIENT_SECRET=<your_client_secret>
+```
+
+You now should be able to log in with GitHub.
+
+Please remember to use `http://127.0.0.1:3333` as your development URL, instead of `http://localhost:3333`.
+
+## Fly.io Setup
 
 ### Requirements
 
