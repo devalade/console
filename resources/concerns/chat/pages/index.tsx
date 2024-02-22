@@ -45,7 +45,7 @@ const Chat: React.FunctionComponent<ChatProps> = ({
     if (messagesListRef.current) {
       messagesListRef.current.scrollTop = messagesListRef.current.scrollHeight
     }
-  }, [initialMessages])
+  }, [messages])
 
   return (
     <MainLayout className="!p-0">

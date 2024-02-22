@@ -236,6 +236,80 @@ export default function prepareAlbertaAiFunctions(
 
       return { database }
     }
+
+    @AiFunction('Create a new application in a given project', {
+      type: 'object',
+      properties: {
+        projectId: { type: 'string' },
+        name: { type: 'string' },
+      },
+    })
+    static async createApplication({ projectId, name }: { projectId: string; name: string }) {
+      const project = await organization
+        .related('projects')
+        .query()
+        .where('id', projectId)
+        .firstOrFail()
+      const application = await project.related('applications').create({ name })
+
+      return { application }
+    }
+
+    @AiFunction('List applications for a given project', {
+      type: 'object',
+      properties: {
+        projectId: { type: 'string' },
+      },
+    })
+    static async listApplications({ projectId }: { projectId: string }) {
+      const project = await organization
+        .related('projects')
+        .query()
+        .where('id', projectId)
+        .firstOrFail()
+      const applications = await project.related('applications').query()
+
+      return { applications }
+    }
+
+    @AiFunction('Add some environment variable to a given application in a given project', {
+      type: 'object',
+      properties: {
+        projectId: { type: 'string' },
+        applicationId: { type: 'string' },
+        name: { type: 'string' },
+        value: { type: 'string' },
+      },
+    })
+    static async addEnvironmentVariable({
+      projectId,
+      applicationId,
+      name,
+      value,
+    }: {
+      projectId: string
+      applicationId: string
+      name: string
+      value: string
+    }) {
+      const project = await organization
+        .related('projects')
+        .query()
+        .where('id', projectId)
+        .firstOrFail()
+      const application = await project
+        .related('applications')
+        .query()
+        .where('id', applicationId)
+        .firstOrFail()
+      application.environmentVariables = {
+        ...application.environmentVariables,
+        [name]: value,
+      }
+      await application.save()
+
+      return { environmentVariables: application.environmentVariables }
+    }
   }
 
   return AlbertaAiFunctions

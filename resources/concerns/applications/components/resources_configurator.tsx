@@ -14,13 +14,19 @@ export interface ResourcesConfiguratorProps {
 }
 
 export default function ResourcesConfigurator({ form }: ResourcesConfiguratorProps) {
-  const [cpuIdx, setCpuIdx] = React.useState(0)
-  const [ramIdx, setRamIdx] = React.useState(0)
+  const [cpuIdx, setCpuIdx] = React.useState(
+    Object.keys(resourcesConfiguration).findIndex((cpu) => cpu === form.data.cpu)
+  )
+  const [ramIdx, setRamIdx] = React.useState(
+    Object.values(resourcesConfiguration[form.data.cpu] || {}).findIndex(
+      (ram) => ram === form.data.ram
+    )
+  )
 
   React.useEffect(() => {
     const cpu = Object.keys(resourcesConfiguration)[cpuIdx]
-    form.setData('cpu', cpu)
-    form.setData('ram', resourcesConfiguration[cpu][ramIdx])
+    const ram = resourcesConfiguration[cpu]?.[ramIdx]
+    form.setData((prev) => ({ ...prev, cpu, ram }))
   }, [cpuIdx, ramIdx])
 
   return (

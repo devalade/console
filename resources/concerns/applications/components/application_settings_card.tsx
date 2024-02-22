@@ -28,11 +28,11 @@ export default function ApplicationSettingsCard({ project, application }: AppSet
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     form.patch(
       `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`,
       {
         onSuccess: () => successToast(),
+        data: form.data,
       }
     )
   }
