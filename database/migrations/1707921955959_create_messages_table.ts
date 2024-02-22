@@ -20,6 +20,7 @@ export default class extends BaseSchema {
         .inTable('users')
         .onDelete('CASCADE')
         .defaultTo(null)
+      table.boolean('replied').defaultTo(false)
 
       table
         .integer('channel_id')

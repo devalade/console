@@ -9,4 +9,5 @@ export type Message = {
   askedUserForAnswer?: User
   channel?: { slug: string }
   conversation?: { id: number }
+  replied?: boolean
 }

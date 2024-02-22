@@ -18,17 +18,20 @@ export default function prepareAlbertaAiFunctions(
   user: User
 ) {
   class AlbertaAiFunctions extends AiFunctionsWrapper {
-    @AiFunction('Ask user some question', {
-      type: 'object',
-      properties: {
-        question: { type: 'string' },
-      },
-    })
+    @AiFunction(
+      'Ask user some question, and wait for the answer which is returned by this func. This function should always be used to ask the user a question.',
+      {
+        type: 'object',
+        properties: {
+          question: { type: 'string' },
+        },
+      }
+    )
     static async askQuestion({ question }: { question: string }) {
       /**
        * Send the question to the user.
        */
-      await channel.related('messages').create({
+      const questionMessage = await channel.related('messages').create({
         body: question,
         bot: 'Alberta',
         askedUserForAnswerId: user.id,
@@ -38,14 +41,14 @@ export default function prepareAlbertaAiFunctions(
       /**
        * Hang on while the user has not answered the question.
        */
-      emitter.on(
-        `organizations:${organization.slug}:alberta:ask-for-answer`,
-        (message: Message) => {
-          if (message.userId === user.id) {
-            return message.body
-          }
+      emitter.on(`organizations:${organization.slug}:alberta:answer`, (message: Message) => {
+        if (message.userId === user.id) {
+          questionMessage.replied = true
+          questionMessage.save()
+
+          return message.body
         }
-      )
+      })
     }
 
     @AiFunction('List projects for the current organization', {
@@ -178,6 +181,60 @@ export default function prepareAlbertaAiFunctions(
       if (database.dbms === 'mysql') {
         // TODO: Implement the same logic for MySQL
       }
+    }
+
+    @AiFunction('Create a project in the current organization', {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+      },
+    })
+    static async createProject({ name }: { name: string }) {
+      const project = await organization.related('projects').create({ name })
+
+      return { project }
+    }
+
+    @AiFunction('Create a database in a given project', {
+      type: 'object',
+      properties: {
+        projectId: { type: 'string' },
+        name: { type: 'string' },
+        dbms: { type: 'string', enum: ['postgres', 'mysql', 'redis'] },
+        username: { type: 'string' },
+        password: { type: 'string' },
+        hostname: { type: 'string' },
+      },
+    })
+    static async createDatabase({
+      projectId,
+      name,
+      dbms,
+      username,
+      password,
+      hostname,
+    }: {
+      projectId: string
+      name: string
+      dbms: 'postgres' | 'mysql' | 'redis'
+      username: string
+      password: string
+      hostname: string
+    }) {
+      const project = await organization
+        .related('projects')
+        .query()
+        .where('id', projectId)
+        .firstOrFail()
+      const database = await project.related('databases').create({
+        name,
+        dbms,
+        username,
+        password,
+        hostname,
+      })
+
+      return { database }
     }
   }
 

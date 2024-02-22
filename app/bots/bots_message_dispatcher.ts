@@ -23,7 +23,7 @@ export default class BotsMessageDispatcher {
        * Handle the message if it starts as an answer to the bot,
        * as an answer to a previous bot request.
        */
-      if (message.body.startsWith(`Answer for ${Bot.prefix}`)) {
+      if (message.body.startsWith(`Reply to ${Bot.prefix}: `)) {
         await bot.handleAnswer(organization, channel, user, message)
       }
     }

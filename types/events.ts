@@ -36,6 +36,6 @@ declare module '@adonisjs/core/types' {
     [key: `organizations:${string}:presence-update`]: Array<User['id']>
 
     'messages:created': [Organization, Channel, User, Message]
-    [key: `organizations:${string}:alberta:ask-for-answer`]: Message
+    [key: `organizations:${string}:alberta:answer`]: Message
   }
 }

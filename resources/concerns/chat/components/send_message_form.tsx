@@ -33,6 +33,11 @@ const SendMessageForm: React.FunctionComponent<SendMessageFormProps> = ({
       },
     })
   }
+
+  if (!currentChannel && !currentConversation) {
+    return null
+  }
+
   return (
     <form
       className="flex items-center space-y-0 space-x-2"

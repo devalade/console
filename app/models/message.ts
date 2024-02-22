@@ -28,9 +28,6 @@ export default class Message extends BaseModel {
   @column()
   declare userId: number | null
 
-  @belongsTo(() => User)
-  declare askedUserForAnswer: BelongsTo<typeof User>
-
   @belongsTo(() => Channel)
   declare channel: BelongsTo<typeof Channel>
 
@@ -48,6 +45,12 @@ export default class Message extends BaseModel {
    */
   @column()
   declare askedUserForAnswerId: number | null
+
+  @belongsTo(() => User, { foreignKey: 'askedUserForAnswerId' })
+  declare askedUserForAnswer: BelongsTo<typeof User>
+
+  @column()
+  declare replied: boolean
 
   /**
    * Hooks.
