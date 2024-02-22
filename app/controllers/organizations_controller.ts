@@ -1,7 +1,5 @@
 import bindOrganization from '#decorators/bind_organization'
 import InviteMemberNotification from '#mails/invite_member_notification'
-import Conversation from '#models/conversation'
-import Message from '#models/message'
 import Organization from '#models/organization'
 import OrganizationMember from '#models/organization_member'
 import PresenceService from '#services/presence_service'
@@ -138,67 +136,16 @@ export default class OrganizationsController {
   }
 
   @bindOrganization
-  async streamUpdates({ auth, response }: HttpContext, organization: Organization) {
-    response.useServerSentEvents()
-
-    emitter.on(`organizations:${organization.slug}:message-update`, (message: Message) => {
-      response.response.write(`data: ${JSON.stringify({ message })}\n\n`)
-      response.response.flushHeaders()
-    })
-
-    emitter.on(`organizations:${organization.slug}:message-delete`, (message: Message) => {
-      response.response.write(`data: ${JSON.stringify({ messageDeleted: message })}\n\n`)
-      response.response.flushHeaders()
-    })
-
-    emitter.on(
-      `organizations:${organization.slug}:conversation-create`,
-      (conversation: Conversation) => {
-        response.response.write(
-          `data: ${JSON.stringify({
-            conversation: {
-              id: conversation.id,
-              user:
-                auth.user!.id === conversation.firstUserId
-                  ? conversation.secondUser
-                  : conversation.firstUser,
-            },
-          })}\n\n`
-        )
-        response.response.flushHeaders()
-      }
-    )
-
-    emitter.on(`organizations:${organization.slug}:channel-update`, (channel) => {
-      response.response.write(`data: ${JSON.stringify({ channel })}\n\n`)
-      response.response.flushHeaders()
-    })
-
-    emitter.on(`organizations:${organization.slug}:channel-delete`, (channel) => {
-      response.response.write(`data: ${JSON.stringify({ channelDeleted: channel })}\n\n`)
-      response.response.flushHeaders()
-    })
-
-    response.response.on('close', () => {
-      response.response.end()
-    })
-
-    return response.noContent()
-  }
-
-  @bindOrganization
   async streamPresence({ auth, response }: HttpContext, organization: Organization) {
-    response.useServerSentEvents()
+    response.prepareServerSentEventsHeaders()
 
     await PresenceService.addUserToOrganizationPresence(organization, auth.user!)
 
     const presence = await PresenceService.getOrganizationPresence(organization)
-    response.response.write(`data: ${JSON.stringify({ presence })}\n\n`)
-    response.response.flushHeaders()
+    response.sendServerSentEvent({ presence })
 
     emitter.on(`organizations:${organization.slug}:presence-update`, async (presence) => {
-      response.response.write(`data: ${JSON.stringify({ presence })}\n\n`)
-      response.response.flushHeaders()
+      response.sendServerSentEvent({ presence })
     })
 
     response.response.on('close', async () => {

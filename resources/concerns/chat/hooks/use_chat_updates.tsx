@@ -25,7 +25,7 @@ const useChatUpdates = ({
   React.useEffect(() => {
     let eventSource: EventSource
 
-    const url = `/organizations/${params.organizationSlug}/updates`
+    const url = `/organizations/${params.organizationSlug}/chat/updates`
 
     eventSource = new EventSource(url)
 
@@ -118,7 +118,8 @@ const useChatUpdates = ({
         eventSource.close()
       }
     }
-  }, [])
+  }, [window.location.pathname])
+
   return {
     messages,
     conversations,

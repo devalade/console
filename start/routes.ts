@@ -127,7 +127,7 @@ router
   .use(middleware.auth())
 
 router
-  .get('/organizations/:organizationSlug/updates', [OrganizationsController, 'streamUpdates'])
+  .get('/organizations/:organizationSlug/chat/updates', [ChatController, 'streamUpdates'])
   .use(middleware.auth())
 
 router

@@ -56,11 +56,10 @@ export default class DeploymentsController {
 
   @bindProjectAndApplication
   async streamUpdates({ response }: HttpContext, _project: Project, application: Application) {
-    response.useServerSentEvents()
+    response.prepareServerSentEventsHeaders()
 
     emitter.on(`deployments:updated:${application.slug}`, (deployment: Deployment) => {
-      response.response.write(`data: ${JSON.stringify({ deployment })}\n\n`)
-      response.response.flushHeaders()
+      response.sendServerSentEvent({ deployment })
     })
 
     response.response.on('close', () => {
