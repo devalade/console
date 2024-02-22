@@ -6,13 +6,14 @@ import logger from '@adonisjs/core/services/logger'
 import OpenAI from 'openai'
 import { IBot } from '../ibot.js'
 import prepareAlbertaAiFunctions from './alberta_ai_functions.js'
+import emitter from '@adonisjs/core/services/emitter'
 
 export default class AlbertaBot implements IBot {
   static prefix = '@Alberta'
   #openai = new OpenAI()
 
   async handleMessage(organization: Organization, channel: Channel, user: User, message: Message) {
-    const { functions } = prepareAlbertaAiFunctions(organization)
+    const { functions } = prepareAlbertaAiFunctions(organization, channel, user)
     const runner = this.#openai.beta.chat.completions
       .runTools({
         model: 'gpt-4',
@@ -46,5 +47,9 @@ export default class AlbertaBot implements IBot {
       userId: null,
       bot: 'Alberta',
     })
+  }
+
+  async handleAnswer(organization: Organization, channel: Channel, user: User, message: Message) {
+    emitter.emit(`organizations:${organization.slug}:alberta:ask-for-answer`, message)
   }
 }

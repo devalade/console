@@ -34,7 +34,11 @@ const SendMessageForm: React.FunctionComponent<SendMessageFormProps> = ({
     })
   }
   return (
-    <form className="flex items-center space-y-0 space-x-2" onSubmit={handleSubmit}>
+    <form
+      className="flex items-center space-y-0 space-x-2"
+      onSubmit={handleSubmit}
+      id="send-message-form"
+    >
       <Input
         placeholder="Type a message..."
         id="message"

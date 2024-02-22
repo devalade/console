@@ -14,6 +14,14 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .defaultTo(null)
       table
+        .integer('asked_user_for_answer_id')
+        .unsigned()
+        .references('id')
+        .inTable('users')
+        .onDelete('CASCADE')
+        .defaultTo(null)
+
+      table
         .integer('channel_id')
         .unsigned()
         .references('id')

@@ -15,8 +15,22 @@ interface MessageProps {
 const Message: React.FunctionComponent<MessageProps> = ({ message }) => {
   const user = useUser()
   const isOwner = user.id === message.user?.id
+  const isAskedToAnswer = message.askedUserForAnswer?.id === user.id
   const [showUpdateDialog, setShowUpdateDialog] = React.useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
+
+  function reply() {
+    /**
+     * To allow the user to reply,
+     * we need to fill the input from the `#send-message-form` form,
+     * with the prefix `Reply To @username, ` and focus the input.
+     */
+    const form = document.getElementById('send-message-form') as HTMLFormElement
+    const input = form.querySelector('input') as HTMLInputElement
+    input.value = `Reply to ${message.user?.fullName || message.bot}, `
+    input.focus()
+  }
+
   return (
     <li key={message.id} className="px-2 flex space-x-2">
       <UpdateMessageDialog
@@ -38,6 +52,7 @@ const Message: React.FunctionComponent<MessageProps> = ({ message }) => {
           <span className="uppercase text-xs text-zinc-800">
             {formatMessageDate(message.createdAt)}
           </span>
+
           {isOwner && (
             <div className="flex ml-auto">
               <IconPencil
@@ -50,6 +65,14 @@ const Message: React.FunctionComponent<MessageProps> = ({ message }) => {
                 onClick={() => setShowDeleteDialog(true)}
               />
             </div>
+          )}
+
+          {message.askedUserForAnswer ? 'yes' : 'no'}
+
+          {isAskedToAnswer && (
+            <button type="button" className="text-xs text-zinc-600 underline" onClick={reply}>
+              Reply
+            </button>
           )}
         </div>
         <span className="text-sm text-zinc-900">{message.body}</span>

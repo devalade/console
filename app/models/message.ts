@@ -28,6 +28,9 @@ export default class Message extends BaseModel {
   @column()
   declare userId: number | null
 
+  @belongsTo(() => User)
+  declare askedUserForAnswer: BelongsTo<typeof User>
+
   @belongsTo(() => Channel)
   declare channel: BelongsTo<typeof Channel>
 
@@ -39,6 +42,12 @@ export default class Message extends BaseModel {
 
   @column()
   declare conversationId: number | null
+
+  /**
+   * Bot-related columns.
+   */
+  @column()
+  declare askedUserForAnswerId: number | null
 
   /**
    * Hooks.

@@ -2,13 +2,52 @@ import Organization from '#models/organization'
 import AiFunctionsWrapper from '../../ai_functions_wrapper.js'
 import AiFunction from '#decorators/ai_function'
 import pg from 'pg'
+import Channel from '#models/channel'
+import User from '#models/user'
+import emitter from '@adonisjs/core/services/emitter'
+import Message from '#models/message'
+
 /**
  * We cannot trust GPT-4 to avoid giving access to data from an unauthorized organization for the current user.
  * To avoid that, we have to make sure that AI functions only give access to data that the user has access to.
  * This is why we need to wrap the AI functions in a class that will be instantiated for each organization.
  */
-export default function prepareAlbertaAiFunctions(organization: Organization) {
+export default function prepareAlbertaAiFunctions(
+  organization: Organization,
+  channel: Channel,
+  user: User
+) {
   class AlbertaAiFunctions extends AiFunctionsWrapper {
+    @AiFunction('Ask user some question', {
+      type: 'object',
+      properties: {
+        question: { type: 'string' },
+      },
+    })
+    static async askQuestion({ question }: { question: string }) {
+      /**
+       * Send the question to the user.
+       */
+      await channel.related('messages').create({
+        body: question,
+        bot: 'Alberta',
+        askedUserForAnswerId: user.id,
+        userId: null,
+      })
+
+      /**
+       * Hang on while the user has not answered the question.
+       */
+      emitter.on(
+        `organizations:${organization.slug}:alberta:ask-for-answer`,
+        (message: Message) => {
+          if (message.userId === user.id) {
+            return message.body
+          }
+        }
+      )
+    }
+
     @AiFunction('List projects for the current organization', {
       type: 'object',
       properties: {},

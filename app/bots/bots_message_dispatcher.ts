@@ -9,9 +9,22 @@ export default class BotsMessageDispatcher {
 
   async dispatch(organization: Organization, channel: Channel, user: User, message: Message) {
     for (const Bot of BotsMessageDispatcher.bots) {
+      const bot = new Bot()
+
+      /**
+       * Handle the message if it starts with the bot prefix,
+       * as a new incoming request to the bot.
+       */
       if (message.body.startsWith(Bot.prefix)) {
-        const bot = new Bot()
         await bot.handleMessage(organization, channel, user, message)
+      }
+
+      /**
+       * Handle the message if it starts as an answer to the bot,
+       * as an answer to a previous bot request.
+       */
+      if (message.body.startsWith(`Answer for ${Bot.prefix}`)) {
+        await bot.handleAnswer(organization, channel, user, message)
       }
     }
   }
