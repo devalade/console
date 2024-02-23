@@ -42,6 +42,8 @@ export default function prepareAlbertaAiFunctions(
        * Hang on while the user has not answered the question.
        */
       emitter.on(`organizations:${organization.slug}:alberta:answer`, (message: Message) => {
+        console.log('Received answer', message.body)
+
         if (message.userId === user.id) {
           questionMessage.replied = true
           questionMessage.save()

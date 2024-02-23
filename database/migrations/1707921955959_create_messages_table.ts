@@ -20,6 +20,7 @@ export default class extends BaseSchema {
         .inTable('users')
         .onDelete('CASCADE')
         .defaultTo(null)
+        .nullable()
       table.boolean('replied').defaultTo(false)
 
       table

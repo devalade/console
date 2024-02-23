@@ -19,7 +19,7 @@ export default defineConfig({
       if (!ctx.auth.user) {
         return null
       }
-      await ctx.auth.user.assignAvatarUrl()
+      await ctx.auth.user?.assignAvatarUrl()
       return ctx.auth.user.toJSON()
     },
     wildcardDomain: () =>
