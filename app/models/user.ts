@@ -12,6 +12,7 @@ import { PutObjectCommand, S3Client, GetObjectCommand } from '@aws-sdk/client-s3
 import { readFile } from 'fs/promises'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import env from '#start/env'
+import logger from '@adonisjs/core/services/logger'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -130,6 +131,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
         { expiresIn: 60 * 60 * 24 * 7 }
       )
     } catch (error) {
+      logger.error('Error while fetching avatar url', error)
       return null
     }
   }
