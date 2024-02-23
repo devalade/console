@@ -1,8 +1,10 @@
-[![](https://dcbadge.vercel.app/api/server/DPrfmDttMb)](https://discord.gg/DPrfmDttMb)
+[![](/banner.jpg)]()
 
 # [WIP] Software Citadel - Console
 
 > An open-source collaborative cloud platform for development teams.
+
+[![](https://dcbadge.vercel.app/api/server/DPrfmDttMb)](https://discord.gg/DPrfmDttMb)
 
 ## About
 
@@ -134,3 +136,7 @@ Then, you can iterate on the driver to make it work with your orchestration plat
 For example, you might have to have to add some environment variables to the `.env` file, and validating them in the `start/env.ts` file, etc.
 
 If you need some help, feel free to [contact us](https://softwarecitadel.com/contact).
+
+## License
+
+This project is open-source and available under the [MIT License](https://github.com/SoftwareCitadel/console/blob/main/LICENSE).
