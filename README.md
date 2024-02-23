@@ -8,8 +8,12 @@
 
 Software Citadel Console consists in :
 
-- a PaaS (Platform as a Service) that allows developers to deploy their applications and databases in a cloud environment, supporting multiple drivers, such as Docker and Fly.io ;
+- a PaaS (Platform as a Service) that allows developers to deploy their applications and databases in a cloud environment, supporting multiple drivers, such as Docker, Fly.io, and more to come;
 - a development teams platform, that allows developers to plan tasks, chat, and share code.
+
+## Why
+
+Today, developers have to juggle between tons of different services to get their work done. They have to use GitHub for code hosting, Slack for communication, Trello for task management, and more. We believe that it's time to bring all these services together in a single platform, to make it easier for developers to get their work done.
 
 ## Stack
 
