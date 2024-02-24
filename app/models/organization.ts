@@ -8,6 +8,7 @@ import OrganizationMember from './organization_member.js'
 import User from './user.js'
 import Channel from './channel.js'
 import Conversation from './conversation.js'
+import MailDomain from './mail_domain.js'
 
 export default class Organization extends BaseModel {
   /**
@@ -44,6 +45,9 @@ export default class Organization extends BaseModel {
     localKey: 'id',
   })
   declare users: HasManyThrough<typeof User>
+
+  @hasMany(() => MailDomain)
+  declare mailDomains: HasMany<typeof MailDomain>
 
   /**
    * Hooks.

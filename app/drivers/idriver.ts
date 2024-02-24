@@ -21,6 +21,7 @@ export default interface IDriver {
   databases: IDriverDatabasesService
   deployments: IDriverDeploymentsService
   storageBuckets?: IDriverStorageBucketsService
+  mails?: IMailsService
 }
 
 export interface IDriverApplicationsService {
@@ -161,4 +162,10 @@ export interface IDriverStorageBucketsService {
     bucket: StorageBucket,
     filename: string
   ): void | Promise<void>
+}
+
+export interface IMailsService {
+  addDomain(domain: string): DnsEntries | Promise<DnsEntries>
+  checkDomain(domain: string): boolean | Promise<boolean>
+  removeDomain(domain: string): void | Promise<void>
 }
