@@ -6,6 +6,7 @@ import Channel from '#models/channel'
 import User from '#models/user'
 import emitter from '@adonisjs/core/services/emitter'
 import Message from '#models/message'
+import slug from 'slug'
 
 /**
  * We cannot trust GPT-4 to avoid giving access to data from an unauthorized organization for the current user.
@@ -192,7 +193,7 @@ export default function prepareAlbertaAiFunctions(
       },
     })
     static async createProject({ name }: { name: string }) {
-      const project = await organization.related('projects').create({ name })
+      const project = await organization.related('projects').create({ name: slug(name) })
 
       return { project }
     }
@@ -229,7 +230,7 @@ export default function prepareAlbertaAiFunctions(
         .where('id', projectId)
         .firstOrFail()
       const database = await project.related('databases').create({
-        name,
+        name: slug(name),
         dbms,
         username,
         password,
@@ -252,7 +253,7 @@ export default function prepareAlbertaAiFunctions(
         .query()
         .where('id', projectId)
         .firstOrFail()
-      const application = await project.related('applications').create({ name })
+      const application = await project.related('applications').create({ name: slug(name) })
 
       return { application }
     }
