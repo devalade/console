@@ -8,6 +8,7 @@ import { Toaster } from '@/components/toaster'
 import AccountDropdown from '@/components/account_dropdown'
 import clsx from 'clsx'
 import OrganizationsSelector from '@/concerns/organizations/components/organizations_selector'
+import { cn } from '@/lib/utils'
 
 interface SharedLayoutProps extends React.PropsWithChildren {
   className?: string
@@ -16,6 +17,7 @@ interface SharedLayoutProps extends React.PropsWithChildren {
     href: string
     icon: (props: TablerIconsProps) => JSX.Element
     current: boolean
+    comingSoon?: boolean
   }>
   sidebarHeaderChildren?: React.ReactNode
   sidebarFooterChildren?: React.ReactNode
@@ -96,12 +98,14 @@ const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
                             {navigationItems.map((item) => (
                               <li key={item.name}>
                                 <Link
-                                  href={item.href}
-                                  className={clsx(
+                                  href={item.comingSoon ? '#' : item.href}
+                                  disabled={item.comingSoon}
+                                  className={cn(
                                     item.current
                                       ? 'bg-accent'
-                                      : 'text-zinc-900 hover:bg-accent/40 transition-colors',
-                                    'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-medium'
+                                      : ' hover:bg-accent/40 transition-colors',
+                                    'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-zinc-900',
+                                    item.comingSoon && 'cursor-not-allowed opacity-50'
                                   )}
                                 >
                                   <item.icon
@@ -109,6 +113,11 @@ const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
                                     aria-hidden="true"
                                   />
                                   {item.name}
+                                  {item.comingSoon && (
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 italic text-zinc-800">
+                                      Coming soon
+                                    </span>
+                                  )}
                                 </Link>
                               </li>
                             ))}
@@ -152,17 +161,24 @@ const SharedLayout: React.FunctionComponent<SharedLayoutProps> = ({
                     {navigationItems.map((item) => (
                       <li key={item.name}>
                         <Link
-                          href={item.href}
-                          className={clsx(
+                          href={item.comingSoon ? '#' : item.href}
+                          className={cn(
                             item.current ? 'bg-accent' : ' hover:bg-accent/40 transition-colors',
-                            'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-zinc-900'
+                            'group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-zinc-900',
+                            item.comingSoon && 'cursor-not-allowed opacity-50'
                           )}
+                          disabled={item.comingSoon}
                         >
                           <item.icon
                             className="h-5 w-5 shrink-0 text-zinc-900"
                             aria-hidden="true"
                           />
                           {item.name}
+                          {item.comingSoon && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 italic text-zinc-800">
+                              Coming soon
+                            </span>
+                          )}
                         </Link>
                       </li>
                     ))}

@@ -2,8 +2,13 @@ import { usePage } from '@inertiajs/react'
 import {
   Icon3dCubeSphere,
   IconArchive,
+  IconBrandGit,
   IconDatabase,
+  IconFunction,
   IconLayoutKanban,
+  IconMailFast,
+  IconReportAnalytics,
+  IconServer,
   IconSettings,
   type TablerIconsProps,
 } from '@tabler/icons-react'
@@ -19,7 +24,7 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
 }> {
   const page = usePage()
   const params = useParams()
-  return [
+  const items = [
     {
       name: 'Applications',
       href: `/organizations/${params.organizationSlug}/projects/${project.slug}/applications`,
@@ -29,11 +34,44 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
         `/organizations/${params.organizationSlug}/projects/${project.slug}/applications`,
     },
     {
+      name: 'Analytics',
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/analytics`,
+      icon: IconReportAnalytics,
+      current:
+        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/analytics`,
+      comingSoon: true,
+    },
+    {
+      name: 'Git',
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/git`,
+      icon: IconBrandGit,
+      current:
+        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/git`,
+      comingSoon: true,
+    },
+    {
       name: 'Databases',
       href: `/organizations/${params.organizationSlug}/projects/${project.slug}/databases`,
       icon: IconDatabase,
       current:
         page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/databases`,
+    },
+    {
+      name: 'Dev Machines',
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/dev-machines`,
+      icon: IconServer,
+      current:
+        page.url ===
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/dev-machines`,
+      comingSoon: true,
+    },
+    {
+      name: 'Functions',
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/functions`,
+      icon: IconFunction,
+      current:
+        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/functions`,
+      comingSoon: true,
     },
     isFeatureEnabled('storage_buckets') && {
       name: 'Storage Buckets',
@@ -52,11 +90,26 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
         `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards`,
     },
     {
+      name: 'Mails',
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/mails`,
+      icon: IconMailFast,
+      current:
+        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/mails`,
+      comingSoon: true,
+    },
+  ].filter(Boolean)
+
+  const comingSoon = items.filter((item) => item.comingSoon)
+  const notComingSoon = items.filter((item) => !item.comingSoon)
+  return [
+    ...notComingSoon,
+    ...comingSoon,
+    {
       name: 'Project Settings',
       href: `/organizations/${params.organizationSlug}/projects/${project.slug}/edit`,
       icon: IconSettings,
       current:
         page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/edit`,
     },
-  ].filter(Boolean)
+  ]
 }

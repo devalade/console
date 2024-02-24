@@ -3,6 +3,7 @@ import {
   IconLayoutGrid,
   IconMessageCircle,
   IconSettings,
+  IconWorldWww,
   type TablerIconsProps,
 } from '@tabler/icons-react'
 import useOrganizations from '@/concerns/organizations/hooks/use_organizations'
@@ -28,6 +29,13 @@ export default function useMainLayoutNavigation(): Array<{
       href: `/organizations/${currentOrganization.slug}/chat`,
       icon: IconMessageCircle,
       current: page.url.startsWith(`/organizations/${currentOrganization.slug}/chat`),
+    },
+    {
+      name: 'Domains',
+      href: `/organizations/${currentOrganization.slug}/domains`,
+      icon: IconWorldWww,
+      current: page.url === `/organizations/${currentOrganization.slug}/domains`,
+      comingSoon: true,
     },
     {
       name: 'Organization Settings',
