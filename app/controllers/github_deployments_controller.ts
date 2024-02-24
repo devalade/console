@@ -77,7 +77,12 @@ export default class GitHubDeploymentsController {
       deployment
     )
 
-    emitter.emit('deployments:created', [application, deployment])
+    emitter.emit('deployments:created', [
+      application.project.organization,
+      application.project,
+      application,
+      deployment,
+    ])
 
     return response.ok('Push event handled')
   }

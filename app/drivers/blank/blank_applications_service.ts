@@ -8,49 +8,49 @@ import Project from '#models/project'
 
 export default class BlankApplicationsService implements IDriverApplicationsService {
   createApplication(
-    organization: Organization,
-    project: Project,
-    application: Application
+    _organization: Organization,
+    _project: Project,
+    _application: Application
   ): void | Promise<void> {
     throw new Error('Method not implemented.')
   }
   deleteApplication(
-    organization: Organization,
-    project: Project,
-    application: Application
+    _organization: Organization,
+    _project: Project,
+    _application: Application
   ): void | Promise<void> {
     throw new Error('Method not implemented.')
   }
   streamLogs(
-    organization: Organization,
-    project: Project,
-    application: Application,
-    response: Response,
-    scope: 'application' | 'builder'
+    _organization: Organization,
+    _project: Project,
+    _application: Application,
+    _response: Response,
+    _scope: 'application' | 'builder'
   ): void | Promise<void> {
     throw new Error('Method not implemented.')
   }
   createCertificate(
-    organization: Organization,
-    project: Project,
-    application: Application,
-    hostname: string
+    _organization: Organization,
+    _project: Project,
+    _application: Application,
+    _hostname: string
   ): DnsEntries | Promise<DnsEntries> {
     throw new Error('Method not implemented.')
   }
   checkDnsConfiguration(
-    organization: Organization,
-    project: Project,
-    application: Application,
-    certificate: Certificate
+    _organization: Organization,
+    _project: Project,
+    _application: Application,
+    _certificate: Certificate
   ): CertificateStatus | Promise<CertificateStatus> {
     throw new Error('Method not implemented.')
   }
   deleteCertificate(
-    organization: Organization,
-    project: Project,
-    application: Application,
-    hostname: string
+    _organization: Organization,
+    _project: Project,
+    _application: Application,
+    _hostname: string
   ): void | Promise<void> {
     throw new Error('Method not implemented.')
   }

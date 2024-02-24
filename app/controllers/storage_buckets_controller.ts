@@ -129,7 +129,7 @@ export default class StorageBucketsController {
     project: Project,
     storageBucket: StorageBucket
   ) {
-    const { file, contentType } = await this.driver.storageBuckets!.downloadFile(
+    const { file } = await this.driver.storageBuckets!.downloadFile(
       project.organization as Organization,
       project,
       storageBucket,

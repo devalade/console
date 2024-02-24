@@ -37,6 +37,7 @@ import ChannelsController from '#controllers/channels_controller'
 import MessagesController from '#controllers/messages_controller'
 import ConversationsController from '#controllers/conversations_controller'
 import StorageBucketsController from '#controllers/storage_buckets_controller'
+import MailsController from '#controllers/mails_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -374,3 +375,13 @@ router
   })
   .use(middleware.auth())
   .use(middleware.drapeau('storage_buckets'))
+
+/**
+ * Mails
+ */
+router
+  .get('/organizations/:organizationSlug/projects/:projectSlug/mails', [
+    MailsController,
+    'overview',
+  ])
+  .use([middleware.auth(), middleware.loadProjects()])

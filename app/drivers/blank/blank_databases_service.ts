@@ -5,16 +5,16 @@ import Project from '#models/project'
 
 export default class BlankDatabasesService implements IDriverDatabasesService {
   createDatabase(
-    organization: Organization,
-    project: Project,
-    database: Database
+    _organization: Organization,
+    _project: Project,
+    _database: Database
   ): void | Promise<void> {
     throw new Error('Method not implemented.')
   }
   deleteDatabase(
-    organization: Organization,
-    project: Project,
-    database: Database
+    _organization: Organization,
+    _project: Project,
+    _database: Database
   ): void | Promise<void> {
     throw new Error('Method not implemented.')
   }

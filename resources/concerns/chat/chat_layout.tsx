@@ -6,7 +6,7 @@ const ChatLayout: React.FunctionComponent<React.PropsWithChildren> = ({ children
   return (
     <ChatProvider>
       <MainLayout className="!p-0">
-        <div className="flex  min-h-[calc(100vh-64px)]">{children}</div>
+        <div className="flex min-h-[calc(100vh-64px)]">{children}</div>
       </MainLayout>
     </ChatProvider>
   )

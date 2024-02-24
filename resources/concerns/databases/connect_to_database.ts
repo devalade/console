@@ -1,7 +1,7 @@
-export type Runtime = 'Node.js' | 'PHP' | 'Python' | 'Java'
+export type Runtime = 'JavaScript' | 'PHP' | 'Python' | 'Java'
 
 export const codeTemplates: Record<Runtime, Record<'postgres' | 'mysql' | 'redis', string>> = {
-  'Node.js': {
+  JavaScript: {
     postgres: `const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: '{{databaseUri}}'
@@ -36,7 +36,7 @@ client.get('key', (error, result) => {
   console.log('Redis Result:', result);
 });`,
   },
-  'PHP': {
+  PHP: {
     postgres: `<?php
 $conn = pg_connect($databaseUri);
 
@@ -90,7 +90,7 @@ if ($value === false) {
 echo 'Redis Result: ' . $value;
 ?>`,
   },
-  'Python': {
+  Python: {
     postgres: `import psycopg2
 
 conn = psycopg2.connect('{{databaseUri}}')
@@ -133,7 +133,7 @@ if value is not None:
 else:
     print('Redis key not found')`,
   },
-  'Java': {
+  Java: {
     postgres: `import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
