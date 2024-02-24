@@ -6,19 +6,19 @@ interface MailsTabsProps {}
 
 const MailsTabs: React.FunctionComponent<MailsTabsProps> = () => {
   const params = useParams()
-  const tabHrefPrefix = `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/mails`
+  const tabHrefPrefix = `/organizations/${params.organizationSlug}/projects/${params.projectSlug}`
   const mailTabs = [
     {
       label: 'Overview',
-      href: tabHrefPrefix,
+      href: tabHrefPrefix + '/mails',
     },
     {
       label: 'Domains',
-      href: `${tabHrefPrefix}/domains`,
+      href: `${tabHrefPrefix}/mail_domains`,
     },
     {
       label: 'API keys',
-      href: `${tabHrefPrefix}/api-keys`,
+      href: `${tabHrefPrefix}/mail_api_keys`,
     },
   ]
 

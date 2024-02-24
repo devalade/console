@@ -14,6 +14,7 @@ export default class MailDomain extends BaseModel {
 
   @column()
   declare expectedDnsRecords: DnsEntries
+
   @column()
   declare domain: string
 

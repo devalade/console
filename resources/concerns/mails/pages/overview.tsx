@@ -135,7 +135,7 @@ const Overview: React.FunctionComponent<OverviewProps> = () => {
                 </p>
 
                 <Link
-                  href={`/organizations/${params.organizationSlug}/projects/${params.projectSlug}/mails/domains`}
+                  href={`/organizations/${params.organizationSlug}/projects/${params.projectSlug}/mail_domains`}
                 >
                   <Button size="sm">
                     <IconWorldWww className="w-4 h-4" />

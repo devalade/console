@@ -5,7 +5,11 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
+      table.string('id').primary()
+      table.string('organization_id').notNullable()
+      table.string('domain').notNullable()
+      table.json('expected_dns_records').notNullable()
+      table.boolean('is_verified').notNullable().defaultTo(false)
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

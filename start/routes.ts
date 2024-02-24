@@ -38,6 +38,7 @@ import MessagesController from '#controllers/messages_controller'
 import ConversationsController from '#controllers/conversations_controller'
 import StorageBucketsController from '#controllers/storage_buckets_controller'
 import MailsController from '#controllers/mails_controller'
+import MailDomainsController from '#controllers/mail_domains_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -385,3 +386,13 @@ router
     'overview',
   ])
   .use([middleware.auth(), middleware.loadProjects()])
+router
+  .resource('organizations.projects.mail_domains', MailDomainsController)
+  .except(['create', 'edit'])
+  .params({
+    organizations: 'organizationSlug',
+    projects: 'projectSlug',
+    mail_domains: 'mailDomainSlug',
+  })
+  .use('*', middleware.auth())
+  .use(['index', 'show'], middleware.loadProjects())
