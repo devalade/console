@@ -27,7 +27,7 @@ export default class AnalyticsWebsitesController {
       .related('analyticsWebsites')
       .query()
       .where('id', params.analyticsWebsiteId)
-      .first()
+      .firstOrFail()
     return inertia.render('analytics_websites/show', { project, analyticsWebsite })
   }
 
@@ -54,12 +54,17 @@ export default class AnalyticsWebsitesController {
   }
 
   @bindProject
-  async destroy({ params }: HttpContext, project: Project) {
+  async destroy({ params, response }: HttpContext, project: Project) {
     const analyticsWebsite = await project
       .related('analyticsWebsites')
       .query()
       .where('id', params.analyticsWebsiteId)
       .firstOrFail()
     await analyticsWebsite.delete()
+    return response
+      .redirect()
+      .toPath(
+        `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/analytics_websites`
+      )
   }
 }
