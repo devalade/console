@@ -39,6 +39,7 @@ import ConversationsController from '#controllers/conversations_controller'
 import StorageBucketsController from '#controllers/storage_buckets_controller'
 import MailsController from '#controllers/mails_controller'
 import MailDomainsController from '#controllers/mail_domains_controller'
+import DevMachinesController from '#controllers/dev_machines_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -396,3 +397,16 @@ router
   })
   .use('*', middleware.auth())
   .use(['index', 'show'], middleware.loadProjects())
+
+/**
+ * Dev Machines.
+ */
+router
+  .resource('organizations.projects.dev_machines', DevMachinesController)
+  .params({
+    organizations: 'organizationSlug',
+    projects: 'projectSlug',
+    dev_machines: 'devMachineSlug',
+  })
+  .use('*', [middleware.auth()])
+  .use('index', middleware.loadProjects())

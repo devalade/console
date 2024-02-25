@@ -7,6 +7,7 @@ import Message from '#models/message'
 import Organization from '#models/organization'
 import Project from '#models/project'
 import User from '#models/user'
+import DevMachine from '#models/dev_machine'
 
 declare module '@adonisjs/core/types' {
   interface EventsList {
@@ -37,5 +38,8 @@ declare module '@adonisjs/core/types' {
 
     'messages:created': [Organization, Channel, User, Message]
     [key: `organizations:${string}:alberta:answer`]: Message
+
+    'dev-machine:created': [Organization, Project, DevMachine]
+    'dev-machine:deleted': [Organization, Project, DevMachine]
   }
 }

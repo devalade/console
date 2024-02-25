@@ -8,6 +8,7 @@ import Organization from '#models/organization'
 import Project from '#models/project'
 import StorageBucket from '#models/storage_bucket'
 import { StorageBucketFile } from '#types/storage'
+import DevMachine from '#models/dev_machine'
 
 export default interface IDriver {
   /**
@@ -21,7 +22,8 @@ export default interface IDriver {
   databases: IDriverDatabasesService
   deployments: IDriverDeploymentsService
   storageBuckets?: IDriverStorageBucketsService
-  mails?: IMailsService
+  mails?: IDriverMailsService
+  devMachines?: IDriverDevMachinesService
 }
 
 export interface IDriverApplicationsService {
@@ -164,8 +166,22 @@ export interface IDriverStorageBucketsService {
   ): void | Promise<void>
 }
 
-export interface IMailsService {
+export interface IDriverMailsService {
   addDomain(domain: string): DnsEntries | Promise<DnsEntries>
   checkDomain(domain: string): boolean | Promise<boolean>
   removeDomain(domain: string): void | Promise<void>
+}
+
+export interface IDriverDevMachinesService {
+  createDevMachine(
+    organization: Organization,
+    project: Project,
+    devMachine: DevMachine
+  ): void | Promise<void>
+
+  deleteDevMachine(
+    organization: Organization,
+    project: Project,
+    devMachine: DevMachine
+  ): void | Promise<void>
 }
