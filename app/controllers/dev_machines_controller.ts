@@ -1,3 +1,4 @@
+import bindProject from '#decorators/bind_project'
 import bindProjectAndDevMachine from '#decorators/bind_project_and_dev_machine'
 import DevMachine from '#models/dev_machine'
 import Project from '#models/project'
@@ -6,7 +7,7 @@ import { HttpContext } from '@adonisjs/core/http'
 import emitter from '@adonisjs/core/services/emitter'
 
 export default class DevMachinesController {
-  @bindProjectAndDevMachine
+  @bindProject
   public async index({ inertia }: HttpContext, project: Project) {
     const devMachines = await project.related('devMachines').query()
     return inertia.render('dev_machines/index', { project, devMachines })

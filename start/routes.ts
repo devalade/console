@@ -412,6 +412,7 @@ router
   })
   .use('*', [middleware.auth()])
   .use('index', middleware.loadProjects())
+  .except(['create', 'edit', 'update'])
 
 /**
  * Git repositories.
