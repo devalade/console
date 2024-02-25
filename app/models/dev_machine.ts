@@ -18,6 +18,9 @@ export default class DevMachine extends BaseModel {
   @column()
   declare password: string
 
+  @column()
+  declare resourcesConfig: 'standard' | 'large'
+
   /**
    * Relationships.
    */
@@ -26,9 +29,6 @@ export default class DevMachine extends BaseModel {
 
   @column()
   declare projectId: string
-
-  @column()
-  declare resourcesConfig: 'standard' | 'large'
 
   /**
    * Hooks.
