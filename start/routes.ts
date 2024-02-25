@@ -40,6 +40,7 @@ import StorageBucketsController from '#controllers/storage_buckets_controller'
 import MailsController from '#controllers/mails_controller'
 import MailDomainsController from '#controllers/mail_domains_controller'
 import DevMachinesController from '#controllers/dev_machines_controller'
+import GitRepositoriesController from '#controllers/git_repositories_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -410,3 +411,16 @@ router
   })
   .use('*', [middleware.auth()])
   .use('index', middleware.loadProjects())
+
+/**
+ * Git repositories.
+ */
+router
+  .resource('organizations.projects.git_repositories', GitRepositoriesController)
+  .params({
+    organizations: 'organizationSlug',
+    projects: 'projectSlug',
+    git_repositories: 'gitRepositorySlug',
+  })
+  .use('*', [middleware.auth()])
+  .use(['index', 'show', 'edit'], middleware.loadProjects())

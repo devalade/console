@@ -43,10 +43,11 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
     },
     {
       name: 'Git',
-      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/git`,
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/git_repositories`,
       icon: IconBrandGit,
       current:
-        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/git`,
+        page.url ===
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/git_repositories`,
       comingSoon: true,
     },
     {
