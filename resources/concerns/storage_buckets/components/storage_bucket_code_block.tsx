@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react'
-import { Highlight, Prism, themes } from 'prism-react-renderer'
+import React from 'react'
 import type { StorageBucket } from '../types/storage_bucket'
+import Code from '@/components/code'
 
 export type StorageBucketCodeBlockProps = {
   storageBucket: StorageBucket
 }
 
 export default function StorageBucketCodeBlock({ storageBucket }: StorageBucketCodeBlockProps) {
-  const [loaded, setLoaded] = React.useState(false)
   const snippetsList: Array<{
     title: string
     language: string
@@ -45,7 +44,7 @@ console.log(response.Contents)`,
     },
     {
       title: 'Python',
-      language: 'python',
+      language: 'Python',
       code: `import boto3
 
 storage_bucket_key_id = '${storageBucket.keyId}'
@@ -66,7 +65,7 @@ print(response['Contents'])`,
     },
     {
       title: 'PHP',
-      language: 'php',
+      language: 'PHP',
       code: `<?php
 
 require 'vendor/autoload.php';
@@ -103,57 +102,15 @@ try {
   ]
   const [selectedSnippet, setSelectedSnippet] = React.useState(snippetsList[0])
 
-  useEffect(() => {
-    async function loadPrism() {
-      await import('prismjs/components/prism-bash')
-      await import('prismjs/components/prism-markup-templating')
-      await import('prismjs/components/prism-php')
-      setLoaded(true)
-    }
-    loadPrism()
-  }, [])
-
-  if (!loaded) {
-    return null
-  }
-
   return (
-    <div className="mt-6 shadow-lg overflow-hidden">
-      <div className="flex space-x-4 items-center bg-black/80 px-4 rounded-t-lg outline-b outline-zinc-600">
-        {snippetsList.map((snippet) => (
-          <button
-            key={snippet.title}
-            className={`text-sm py-3 ${
-              selectedSnippet.title === snippet.title
-                ? 'text-blue-200 border-b border-blue-200'
-                : 'text-zinc-300'
-            }`}
-            onClick={() => setSelectedSnippet(snippet)}
-          >
-            {snippet.title}
-          </button>
-        ))}
-      </div>
-      <Highlight
-        theme={themes.vsDark}
-        code={selectedSnippet.code}
-        language={selectedSnippet.language}
-      >
-        {({ style, tokens, getLineProps, getTokenProps }) => (
-          <pre
-            style={style}
-            className="rounded-b-lg overflow-x-auto p-4 !text-sm max-h-96 overflow-y-auto"
-          >
-            {tokens.map((line, i) => (
-              <div key={i} {...getLineProps({ line })}>
-                {line.map((token, key) => (
-                  <span key={key} {...getTokenProps({ token })} />
-                ))}
-              </div>
-            ))}
-          </pre>
-        )}
-      </Highlight>
-    </div>
+    <Code
+      runtimes={snippetsList.map((snippet, idx) => snippet.title)}
+      codeString={selectedSnippet.code}
+      selectedRuntime={selectedSnippet.title}
+      setSelectedRuntime={(runtime) =>
+        setSelectedSnippet(snippetsList.find((snippet) => snippet.title === runtime)!)
+      }
+      className="mt-6"
+    />
   )
 }
