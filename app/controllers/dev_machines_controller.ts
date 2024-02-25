@@ -9,7 +9,7 @@ export default class DevMachinesController {
   @bindProjectAndDevMachine
   public async index({ inertia }: HttpContext, project: Project) {
     const devMachines = await project.related('devMachines').query()
-    return inertia.render('dev-machines/Index', { project, devMachines })
+    return inertia.render('dev_machines/index', { project, devMachines })
   }
 
   @bindProjectAndDevMachine

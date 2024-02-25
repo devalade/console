@@ -28,9 +28,9 @@ const MembersManagementCard: React.FunctionComponent<MembersManagementCardProps>
         <CardDescription>Manage and invite Team Members</CardDescription>
       </CardHeader>
       <CardContent>
-        <ul>
+        <ul className="space-y-3">
           {organization.members.map((member) => (
-            <li className="flex items-center gap-x-4 py-3 text-sm leading-6 font-normal text-zinc-900">
+            <li className="flex items-center gap-x-4 text-sm leading-6 font-normal text-zinc-900">
               <Avatar user={member.user} />
               <div className="flex flex-col">
                 <div className="flex items-center gap-x-2">

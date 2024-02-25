@@ -32,3 +32,5 @@ minio
 registry
 
 Makefile
+
+zarf/docker/dev/gitea

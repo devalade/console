@@ -41,6 +41,7 @@ import MailsController from '#controllers/mails_controller'
 import MailDomainsController from '#controllers/mail_domains_controller'
 import DevMachinesController from '#controllers/dev_machines_controller'
 import GitRepositoriesController from '#controllers/git_repositories_controller'
+import AnalyticsWebsitesController from '#controllers/analytics_websites_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -421,6 +422,20 @@ router
     organizations: 'organizationSlug',
     projects: 'projectSlug',
     git_repositories: 'gitRepositorySlug',
+  })
+  .use('*', [middleware.auth()])
+  .use(['index', 'show', 'edit'], middleware.loadProjects())
+
+/**
+ * Analytics.
+ */
+router
+  .resource('organizations.projects.analytics_websites', AnalyticsWebsitesController)
+  .except(['create', 'update'])
+  .params({
+    organizations: 'organizationSlug',
+    projects: 'projectSlug',
+    analytics_websites: 'analyticsWebsiteId',
   })
   .use('*', [middleware.auth()])
   .use(['index', 'show', 'edit'], middleware.loadProjects())

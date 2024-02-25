@@ -29,6 +29,7 @@ Today, developers have to juggle between tons of different services to get their
 - [PostgreSQL](https://www.postgresql.org/) - A relational database management system
 - [Redis](https://redis.io/) - An in-memory data structure store
 - [Resend](https://resend.com) - A transactional email service
+- [Gitea](https://gitea.io/) - A self-hosted Git service, used in the Console for code hosting
 
 ## Development Setup
 

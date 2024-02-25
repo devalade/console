@@ -1,15 +1,21 @@
 import type { Project } from '@/concerns/projects/types/project'
 import * as React from 'react'
-import { IconLayoutGrid } from '@tabler/icons-react'
+import { IconLayoutGrid, IconReportAnalytics } from '@tabler/icons-react'
 import { Link } from '@inertiajs/react'
 import useParams from '@/hooks/use_params'
 import usePageProps from '@/hooks/use_page_props'
+import type { AnalyticsWebsite } from '../types'
 
-interface MailsBreadcrumbsProps {}
+interface AnalyticsWebsitesBreadcrumbsProps {}
 
-const MailsBreadcrumbs: React.FunctionComponent<MailsBreadcrumbsProps> = ({}) => {
+const AnalyticsWebsitesBreadcrumbs: React.FunctionComponent<
+  AnalyticsWebsitesBreadcrumbsProps
+> = () => {
   const params = useParams()
-  const { project } = usePageProps<{ project: Project }>()
+  const { project, analyticsWebsite } = usePageProps<{
+    project: Project
+    analyticsWebsite: AnalyticsWebsite
+  }>()
   return (
     <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 py-4 px-12 bg-white sm:flex-row sm:items-center border-b border-zinc-200">
       <div className="flex items-center gap-x-3">
@@ -21,18 +27,20 @@ const MailsBreadcrumbs: React.FunctionComponent<MailsBreadcrumbsProps> = ({}) =>
             <IconLayoutGrid className="w-5 h-5" />
           </Link>
           <span className="!text-zinc-600">/</span>
-
-          <div className="flex gap-x-2">
-            <span className="font-semibold text-zinc-900">{project.name}</span>
-          </div>
+          <span className="font-semibold text-zinc-900">{project.name}</span>
           <span className="!text-zinc-600">/</span>
-          <div className="flex gap-x-2">
-            <span className="font-semibold text-zinc-900">Mails</span>
-          </div>
+          <Link
+            className="hover:opacity-75 transition"
+            href={`/organizations/${params.organizationSlug}/projects/${params.projectSlug}/analytics_websites`}
+          >
+            <IconReportAnalytics className="w-5 h-5" />
+          </Link>
+          <span className="!text-zinc-600">/</span>
+          <span className="font-semibold text-zinc-900">{analyticsWebsite.domain}</span>
         </h1>
       </div>
     </div>
   )
 }
 
-export default MailsBreadcrumbs
+export default AnalyticsWebsitesBreadcrumbs

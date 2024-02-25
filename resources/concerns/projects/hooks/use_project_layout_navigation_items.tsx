@@ -35,10 +35,11 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
     },
     {
       name: 'Analytics',
-      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/analytics`,
+      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/analytics_websites`,
       icon: IconReportAnalytics,
       current:
-        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/analytics`,
+        page.url ===
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/analytics_websites`,
       comingSoon: true,
     },
     {
