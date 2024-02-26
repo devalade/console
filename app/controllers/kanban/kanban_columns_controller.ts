@@ -4,10 +4,11 @@ import KanbanBoard from '#models/kanban_board'
 import KanbanColumn from '#models/kanban_column'
 import Project from '#models/project'
 import { HttpContext } from '@adonisjs/core/http'
+import { updateKanbanColumnValidator } from '#validators/kanban_column/update_kanban_column_validator'
 
 export default class KanbanColumnsController {
   @bindProjectAndKanbanBoard
-  public async store({ request, response }: HttpContext, _project: Project, board: KanbanBoard) {
+  async store({ request, response }: HttpContext, _project: Project, board: KanbanBoard) {
     await board.load('columns')
     const order = board.columns.length + 1
     await board.related('columns').create({ ...request.only(['name']), order })
@@ -15,31 +16,40 @@ export default class KanbanColumnsController {
   }
 
   @bindProjectAndKanbanBoardAndKanbanColumn
-  public async update(
+  async update(
     { request, response }: HttpContext,
     _project: Project,
     board: KanbanBoard,
     firstColumn: KanbanColumn
   ) {
-    const newOrder = request.input('order')
-    const oldOrder = firstColumn.order
+    if (request.input('name')) {
+      await firstColumn
+        .merge({
+          name: request.input('name'),
+        })
+        .save()
+    }
 
-    const secondColumn = await KanbanColumn.query()
-      .where('order', newOrder)
-      .andWhere('board_id', board.id)
-      .firstOrFail()
+    if (request.input('order')) {
+      const newOrder = request.input('order')
+      const oldOrder = firstColumn.order
 
-    firstColumn.order = newOrder
-    secondColumn.order = oldOrder
+      const secondColumn = await KanbanColumn.query()
+        .where('order', newOrder)
+        .andWhere('board_id', board.id)
+        .firstOrFail()
 
-    await firstColumn.save()
-    await secondColumn.save()
+      firstColumn.order = newOrder
+      secondColumn.order = oldOrder
+      await secondColumn.save()
+      await firstColumn.save()
+    }
 
     return response.redirect().back()
   }
 
   @bindProjectAndKanbanBoardAndKanbanColumn
-  public async destroy(
+  async destroy(
     { response }: HttpContext,
     _project: Project,
     _board: KanbanBoard,

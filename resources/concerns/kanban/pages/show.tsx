@@ -6,8 +6,8 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { Column } from '../components/kanban_colomn'
 import { router } from '@inertiajs/react'
 import useParams from '@/hooks/use_params'
-import Button from '@/components/button'
 import { CreateNewColumn } from '../components/form/create_kanban_column'
+import { useState } from "react";
 
 interface ShowProps {
   project: Project
@@ -30,15 +30,23 @@ type Result = {
   combine: null
 }
 
+function reorder<T>(items: T[], startIndex: number, endIndex: number) {
+  const result = Array.from(items);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
   const params = useParams()
-  const sortedColumns = board.columns.sort().sort((a, b) => {
+  const [sortedColumns, setSortedColums] = useState(board.columns.sort().sort((a, b) => {
     if (a.order < b.order) return -1
     if (a.order > b.order) return 1
     return 0
-  })
+  }))
 
-  function onDragEnd({ destination, source, type }: Result) {
+  function onDragEnd({ destination, source, type, ...rest }: Result) {
     /**
      * Skip if the user drops the item in the same place.
      */
@@ -53,6 +61,13 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
      * The user moves a column.
      */
     if (type === 'column') {
+      const items = reorder(
+        sortedColumns,
+        source.index,
+        destination.index,
+      ).map((item, index) => ({ ...item, order: index + 1 }));
+
+      setSortedColums(items);
       /**
        * Retrieve the first and second columns.
        */
@@ -72,24 +87,76 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
      * The user moves a card.
      */
     if (type === 'card') {
+      let newSortedColums = [...sortedColumns];
       /**
        * Retrieve the source and destination columns.
        */
-      const sourceColumn = board.columns.find((column) => column.id === +source.droppableId)
-      const destColumn = board.columns.find((column) => column.id === +destination.droppableId)
+      const sourceColumn = newSortedColums.find((column) => column.id === +source.droppableId)
+      const destColumn = newSortedColums.find((column) => column.id === +destination.droppableId)
       if (!sourceColumn || !destColumn) return
+
+      // Check if cards exists on the sourceList
+      if (!sourceColumn.tasks) {
+        sourceColumn.tasks = [];
+      }
+
+      // Check if cards exists on the destList
+      if (!destColumn.tasks) {
+        destColumn.tasks = [];
+      }
 
       /**
        * The card is moved within the same column.
        * We only need to update the order of the cards.
        */
       if (source.droppableId === destination.droppableId) {
-        console.log(source, destination)
+        const reorderedCards = reorder(
+          sourceColumn.tasks,
+          source.index,
+          destination.index,
+        );
+
+        reorderedCards.forEach((task, idx) => {
+          task.order = idx + 1;
+        });
+
+        sourceColumn.tasks = reorderedCards;
+        setSortedColums(newSortedColums);
         router.patch(
           `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${source.droppableId}/tasks/${sourceColumn.tasks[source.index].id}`,
           { order: sourceColumn.tasks[destination.index].order }
         )
+
       } else {
+
+        /**
+         * Remove card from the source list
+         */
+        const [movedTask] = sourceColumn.tasks.splice(source.index, 1);
+
+        /**
+         * Assign the new listId to the moved card
+         */
+        movedTask.columnId = +destination.droppableId;
+
+        /**
+         * Add card to the destination list
+         */
+        destColumn.tasks.splice(destination.index, 0, movedTask);
+
+        sourceColumn.tasks.forEach((task, idx) => {
+          task.order = idx +1;
+        });
+
+        /**
+         * Update the order for each card in the destination list
+         */
+        destColumn.tasks.forEach((task, idx) => {
+          task.order = idx +1;
+        });
+
+        setSortedColums(newSortedColums);
+
         /**
          * The card is moved to a different column.
          * We need to update the order of the cards in both columns.
