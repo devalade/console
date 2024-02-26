@@ -395,7 +395,7 @@ router
   .params({
     organizations: 'organizationSlug',
     projects: 'projectSlug',
-    mail_domains: 'mailDomainSlug',
+    mail_domains: 'id',
   })
   .use('*', middleware.auth())
   .use(['index', 'show'], middleware.loadProjects())

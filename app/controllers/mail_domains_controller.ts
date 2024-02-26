@@ -12,8 +12,8 @@ export default class MailDomainsController {
 
   @bindProject
   async index({ inertia }: HttpContext, project: Project) {
-    const domains = await project.organization.related('mailDomains').query()
-    return inertia.render('mail_domains/index', { domains, project })
+    const mailDomains = await project.organization.related('mailDomains').query()
+    return inertia.render('mail_domains/index', { mailDomains, project })
   }
 
   @bindProject
@@ -21,10 +21,10 @@ export default class MailDomainsController {
     const { domain } = await request.validateUsing(storeDomainValidator)
 
     try {
-      const dnsRecords = await this.driver.mails!.addDomain(domain)
+      const dnsRecords = await this.driver.mails?.addDomain(domain)
       const createdDomain = await project.organization.related('mailDomains').create({
         domain,
-        expectedDnsRecords: dnsRecords,
+        expectedDnsRecords: dnsRecords || [],
       })
       await createdDomain!.save()
 
@@ -34,7 +34,7 @@ export default class MailDomainsController {
           `/organizations/${project.organization.slug}/projects/${project.slug}/mail_domains/${createdDomain.id}`
         )
     } catch (error) {
-      logger.error('Failed to add domain', error)
+      logger.error(error, 'Failed to add domain')
       return response.badRequest('Failed to add domain')
     }
   }
@@ -62,9 +62,10 @@ export default class MailDomainsController {
       .where('id', params.id)
       .firstOrFail()
 
-    const isVerified = await this.driver.mails!.checkDomain(domain.domain)
-
-    domain.isVerified = isVerified
+    const isVerified = await this.driver.mails?.checkDomain(domain.domain)
+    if (isVerified !== undefined) {
+      domain.isVerified = isVerified
+    }
 
     await domain.save()
 
