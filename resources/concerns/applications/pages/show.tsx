@@ -25,7 +25,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, application, wildca
               <dd className="mt-1 text-sm text-blue-100">
                 <a
                   className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
-                  href={`https://${application.slug}.${wildcardDomain}`}
+                  href={application.hostname}
                   target="_blank"
                 >
                   {application.hostname}
