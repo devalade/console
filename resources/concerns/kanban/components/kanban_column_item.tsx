@@ -24,7 +24,7 @@ export function ColumnItem(props: KanbanTask & { index: number }) {
               ref={provided.innerRef}
               role="button"
             >
-              <Card className="relative group">
+              <Card className="relative group mb-2">
                 <Button
                   onClick={onEnableEditing}
                   variant="ghost"

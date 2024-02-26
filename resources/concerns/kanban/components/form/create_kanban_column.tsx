@@ -4,7 +4,7 @@ import { useToggle } from '@/hooks/use_toggle'
 import { useForm } from '@inertiajs/react'
 import { Card, CardHeader } from '@/components/card'
 import Button from '@/components/button'
-import { IconPlus, IconX } from '@tabler/icons-react'
+import { IconX } from '@tabler/icons-react'
 
 export function CreateNewColumn() {
   const [enabled, toggle] = useToggle(false)
@@ -43,7 +43,7 @@ export function CreateNewColumn() {
           </Card>
           <div className="flex items-center mt-2">
             <Button>Add column</Button>
-            <Button variant="ghost">
+            <Button onClick={toggle} variant="ghost" type="button">
               <IconX className="size-5" />{' '}
             </Button>
           </div>

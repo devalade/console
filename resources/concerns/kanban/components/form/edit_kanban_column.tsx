@@ -1,10 +1,15 @@
 import { useClickOutside } from '@/hooks/use_click_outside'
-import { useForm } from '@inertiajs/react'
+import { router, useForm } from "@inertiajs/react";
 import React, { useRef, type ElementRef, type ChangeEvent, type FormEvent } from 'react'
+import useParams from "@/hooks/use_params";
+import useSuccessToast from "@/hooks/use_success_toast";
 
 export function EditColumn(props: { columnId: number; name: string; onClose: () => void }) {
-  const { name, onClose } = props
+  const params = useParams()
+  const { name, columnId, onClose } = props
   const ref = useRef<ElementRef<'input'>>(null)
+  const succcessToast = useSuccessToast()
+
 
   const { data, setData } = useForm({
     name,
@@ -12,6 +17,8 @@ export function EditColumn(props: { columnId: number; name: string; onClose: () 
 
   useClickOutside(ref, (event) => {
     onClose()
+    setData('name', name)
+
   })
 
   function onChange(e: ChangeEvent<HTMLInputElement>) {
@@ -20,7 +27,16 @@ export function EditColumn(props: { columnId: number; name: string; onClose: () 
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    // TODO: add logic to edit the column name
+    router.put(
+      `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}/columns/${columnId}`,
+      data,
+      {
+        onSuccess() {
+          succcessToast()
+          onClose();
+        }
+      }
+    )
   }
 
   return (

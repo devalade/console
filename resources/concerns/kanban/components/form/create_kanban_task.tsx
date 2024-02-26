@@ -53,7 +53,7 @@ export function CreateNewTask(props: { columnId: number }) {
       ) : (
         <Button
           onClick={toggle}
-          className="w-full mt-4 border-2 border-dashed gap-x-2 bg-transparent"
+          className="w-full  border-2 border-dashed gap-x-2 bg-transparent"
           variant="outline"
         >
           <IconPlus className="w-4" />
