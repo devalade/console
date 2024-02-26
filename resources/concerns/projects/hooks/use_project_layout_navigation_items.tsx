@@ -67,14 +67,6 @@ export default function useProjectLayoutNavigationItems(project: Project): Array
         `/organizations/${params.organizationSlug}/projects/${project.slug}/dev-machines`,
       comingSoon: true,
     },
-    {
-      name: 'Functions',
-      href: `/organizations/${params.organizationSlug}/projects/${project.slug}/functions`,
-      icon: IconFunction,
-      current:
-        page.url === `/organizations/${params.organizationSlug}/projects/${project.slug}/functions`,
-      comingSoon: true,
-    },
     isFeatureEnabled('storage_buckets') && {
       name: 'Storage Buckets',
       href: `/organizations/${params.organizationSlug}/projects/${project.slug}/storage_buckets`,
