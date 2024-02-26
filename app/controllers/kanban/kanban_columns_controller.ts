@@ -22,16 +22,17 @@ export default class KanbanColumnsController {
     board: KanbanBoard,
     firstColumn: KanbanColumn
   ) {
-    if (request.input('name')) {
+    const payload = await request.validateUsing(updateKanbanColumnValidator);
+    if (payload.name) {
       await firstColumn
         .merge({
-          name: request.input('name'),
+          name: payload.name,
         })
         .save()
     }
 
-    if (request.input('order')) {
-      const newOrder = request.input('order')
+    if (payload.order) {
+      const newOrder = payload.order
       const oldOrder = firstColumn.order
 
       const secondColumn = await KanbanColumn.query()
