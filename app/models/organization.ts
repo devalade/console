@@ -9,6 +9,7 @@ import User from './user.js'
 import Channel from './channel.js'
 import Conversation from './conversation.js'
 import MailDomain from './mail_domain.js'
+import MailApiKey from './mail_api_key.js'
 
 export default class Organization extends BaseModel {
   /**
@@ -48,6 +49,9 @@ export default class Organization extends BaseModel {
 
   @hasMany(() => MailDomain)
   declare mailDomains: HasMany<typeof MailDomain>
+
+  @hasMany(() => MailApiKey)
+  declare mailApiKeys: HasMany<typeof MailApiKey>
 
   /**
    * Hooks.

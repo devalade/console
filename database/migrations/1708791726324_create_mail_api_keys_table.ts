@@ -6,10 +6,14 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.string('id').primary()
-      table.string('organization_id').notNullable()
-      table.string('mail_domain_id').nullable()
       table.string('name').notNullable()
       table.string('value').notNullable()
+      table
+        .integer('organization_id')
+        .notNullable()
+        .references('organizations.id')
+        .onDelete('CASCADE')
+      table.string('mail_domain_id').nullable().references('mail_domains.id').onDelete('CASCADE')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

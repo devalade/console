@@ -24,7 +24,7 @@ export default class MailApiKey extends BaseModel {
   @beforeCreate()
   static async assignIdAndValue(mailApiKey: MailApiKey) {
     mailApiKey.id = cuid()
-    mailApiKey.value = `factory-${cuid()}`
+    mailApiKey.value = `sc_${cuid()}`
   }
 
   /**

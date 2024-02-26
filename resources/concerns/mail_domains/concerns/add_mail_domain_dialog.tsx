@@ -1,7 +1,6 @@
 import React from 'react'
 import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogHeader } from '@/components/dialog'
 import Button from '@/components/button'
-import slugify from '@/lib/slugify'
 import { useForm } from '@inertiajs/react'
 import Label from '@/components/label'
 import Input from '@/components/input'
@@ -47,7 +46,7 @@ export default function AddMailDomainDialog({ open, setOpen }: AddMailDomainDial
                 className="!col-span-3 w-full"
                 value={form.data.domain}
                 placeholder="acme.com"
-                onChange={(e) => form.setData('domain', slugify(e.target.value))}
+                onChange={(e) => form.setData('domain', e.target.value)}
               />
             </div>
           </div>

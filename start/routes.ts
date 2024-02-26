@@ -42,6 +42,7 @@ import MailDomainsController from '#controllers/mail_domains_controller'
 import DevMachinesController from '#controllers/dev_machines_controller'
 import GitRepositoriesController from '#controllers/git_repositories_controller'
 import AnalyticsWebsitesController from '#controllers/analytics_websites_controller'
+import MailApiKeysController from '#controllers/mail_api_keys_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -396,6 +397,16 @@ router
     organizations: 'organizationSlug',
     projects: 'projectSlug',
     mail_domains: 'id',
+  })
+  .use('*', middleware.auth())
+  .use(['index', 'show'], middleware.loadProjects())
+router
+  .resource('organizations.projects.mail_api_keys', MailApiKeysController)
+  .except(['create', 'edit'])
+  .params({
+    organizations: 'organizationSlug',
+    projects: 'projectSlug',
+    mail_api_keys: 'id',
   })
   .use('*', middleware.auth())
   .use(['index', 'show'], middleware.loadProjects())
