@@ -27,9 +27,6 @@ import DeploymentsController from '#controllers/deployments_controller'
 import GitHubDeploymentsController from '#controllers/github_deployments_controller'
 import GitHubController from '#controllers/github_controller'
 import FlyWebhooksController from '#drivers/fly/fly_logs_controller'
-import KanbanBoardsController from '#controllers/kanban/kanban_boards_controller'
-import KanbanColumnsController from '#controllers/kanban/kanban_columns_controller'
-import KanbanTasksController from '#controllers/kanban/kanban_tasks_controller'
 import Organization from '#models/organization'
 import OrganizationsController from '#controllers/organizations_controller'
 import ChatController from '#controllers/chat_controller'
@@ -255,38 +252,9 @@ router.post('/fly/webhooks/logs', [FlyWebhooksController, 'handleIncomingLogs'])
 /**
  * Kanban routes.
  */
-router
-  .resource('organizations.projects.kanban_boards', KanbanBoardsController)
-  .params({
-    organizations: 'organizationSlug',
-    projects: 'projectSlug',
-    kanban_boards: 'kanbanBoardSlug',
-  })
-  .use('*', middleware.auth())
-  .use(['index', 'show', 'edit'], middleware.loadProjects())
-
-router
-  .resource('organizations.projects.kanban_boards.columns', KanbanColumnsController)
-  .except(['index', 'show', 'edit'])
-  .params({
-    organizations: 'organizationSlug',
-    projects: 'projectSlug',
-    kanban_boards: 'kanbanBoardSlug',
-    columns: 'kanbanColumnId',
-  })
-  .use('*', middleware.auth())
-
-router
-  .resource('organizations.projects.kanban_boards.columns.tasks', KanbanTasksController)
-  .except(['index', 'show', 'edit'])
-  .params({
-    organizations: 'organizationSlug',
-    projects: 'projectSlug',
-    kanban_boards: 'kanbanBoardSlug',
-    columns: 'kanbanColumnId',
-    tasks: 'kanbanTaskId',
-  })
-  .use('*', middleware.auth())
+import './kanban/kanban_board.js'
+import './kanban/kanban_column.js'
+import './kanban/kanban_task.js'
 
 router
   .get('/organizations/:organizationSlug/chat', [ChatController, 'index'])
