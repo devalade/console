@@ -1,7 +1,7 @@
 import * as React from 'react'
 import MailsLayout from '../../mails/mails_layout'
 import { Card, CardContent } from '@/components/card'
-import { IconCirclePlus, IconDots, IconKey, IconTrash } from '@tabler/icons-react'
+import { IconCirclePlus, IconDots, IconKey, IconPencil, IconTrash } from '@tabler/icons-react'
 import Button from '@/components/button'
 import AddApiKeyDialog from '../concerns/add_api_key_dialog'
 import {
@@ -27,6 +27,7 @@ import {
 import type { MailApiKey } from '../types'
 import CopyToClipboard from '@/components/copy_to_clipboard'
 import Input from '@/components/input'
+import EditApiKeyDialog from '../concerns/edit_api_key_dialog'
 
 interface IndexProps {
   mailApiKeys: MailApiKey[]
@@ -50,7 +51,7 @@ const Index: React.FunctionComponent<IndexProps> = ({ mailApiKeys }) => {
       accessorKey: 'domain',
       header: 'Domain Access',
       cell: ({ row }) => (
-        <div>{row.getValue('domain') ? row.getValue('domain') : 'All domains'}</div>
+        <div>{row.original.mailDomain ? row.original.mailDomain.domain: 'All domains'}</div>
       ),
     },
     {
@@ -75,12 +76,22 @@ const Index: React.FunctionComponent<IndexProps> = ({ mailApiKeys }) => {
     {
       id: 'actions',
       enableHiding: false,
-      cell: ({ row }) => (
-        <DropdownMenu>
+      cell: ({ row }) =>
+        {
+          const [showEditApiKeyDialog, setShowEditApiKeyDialog] = React.useState(false)
+          return <>
+          <EditApiKeyDialog open={showEditApiKeyDialog} setOpen={setShowEditApiKeyDialog} apiKey={row.original} />
+          <DropdownMenu>
           <DropdownMenuTrigger type="button" className="flex items-center space-x-2">
             <IconDots className="w-4 h-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
+          <DropdownMenuItem asChild>
+                <button type="button" className="w-full cursor-pointer" onClick={() => setShowEditApiKeyDialog(true)}>
+                  <IconPencil className="w-4 h-4 mr-2" />
+                  Edit
+                </button>
+              </DropdownMenuItem>
             <form
               method="post"
               action={`/organizations/${params.organizationSlug}/projects/${params.projectSlug}/mail_api_keys/${row.original.id}?_method=DELETE`}
@@ -93,8 +104,8 @@ const Index: React.FunctionComponent<IndexProps> = ({ mailApiKeys }) => {
               </DropdownMenuItem>
             </form>
           </DropdownMenuContent>
-        </DropdownMenu>
-      ),
+        </DropdownMenu></>}
+      ,
     },
   ]
 

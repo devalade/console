@@ -8,7 +8,7 @@ export default class MailApiKeysController {
   @bindProject
   async index({ inertia }: HttpContext, project: Project) {
     const mailDomains = await project.organization.related('mailDomains').query()
-    const mailApiKeys = await project.organization.related('mailApiKeys').query()
+    const mailApiKeys = await project.organization.related('mailApiKeys').query().preload('mailDomain')
     return inertia.render('mail_api_keys/index', { project, mailDomains, mailApiKeys })
   }
 
@@ -30,6 +30,27 @@ export default class MailApiKeysController {
     if (request.wantsJSON()) {
       return mailApiKey
     }
+    return response.redirect().back()
+  }
+
+  @bindProject
+  async update({ request,response, params }: HttpContext, project: Project) {
+    const payload = request.only(['name', 'domain'])
+    let mailDomain: MailDomain | null = null
+
+    if (payload.domain) {
+      mailDomain = await project.organization
+        .related('mailDomains')
+        .query()
+        .where('domain', payload.domain)
+        .first()
+    }
+    const mailApiKey = await project.organization
+      .related('mailApiKeys')
+      .query()
+      .where('id', params.id)
+      .firstOrFail()
+    await mailApiKey.merge({ name: payload.name, mailDomainId: mailDomain?.id || null }).save()
     return response.redirect().back()
   }
 
