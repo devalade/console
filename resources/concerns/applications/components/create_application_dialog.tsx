@@ -30,7 +30,8 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
     cpu: 'shared-cpu-1x',
     ram: '256MB',
   })
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     form.post(`/organizations/${params.organizationSlug}/projects/${project.slug}/applications`, {
       onSuccess: () => {
         setOpen(false)
@@ -49,7 +50,7 @@ const CreateApplicationDialog: React.FunctionComponent<CreateApplicationDialogPr
         isFeatureEnabled('deployments:github') && <CreateApplicationDialogGithubStep form={form} />,
       ]}
       submitButton={
-        <Button loading={form.processing} onClick={handleSubmit} type="button">
+        <Button loading={form.processing} type="submit">
           <span>Create new application</span>
         </Button>
       }

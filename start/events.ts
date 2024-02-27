@@ -11,6 +11,10 @@ import MessagesListener from '#listeners/messages_listener'
 emitter.on('http:request_completed', (event) => {
   const method = event.ctx.request.method()
   const url = event.ctx.request.url(true)
+  if (url.startsWith('/node_modules') || url.startsWith('/resources')) {
+    return
+  }
+
   const duration = event.duration
 
   try {
@@ -28,7 +32,7 @@ emitter.on('http:request_completed', (event) => {
 
 emitter.on('db:query', db.prettyPrint)
 
-emitter.on('applications:created', [ApplicationsListener, 'onDeleted'])
+emitter.on('applications:created', [ApplicationsListener, 'onCreated'])
 emitter.on('applications:deleted', [ApplicationsListener, 'onDeleted'])
 
 emitter.on('databases:created', [DatabasesListener, 'onCreated'])

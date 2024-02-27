@@ -20,7 +20,7 @@ export default class DockerApplicationsService implements IDriverApplicationsSer
     _organization: Organization,
     _project: Project,
     _application: Application
-  ): void | Promise<void> {}
+  ) {}
 
   async deleteApplication(
     _organization: Organization,
