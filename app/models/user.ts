@@ -112,6 +112,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
   }
 
   async assignAvatarUrl() {
+    if (!this.avatarUrl) return
+
     try {
       const s3Client = new S3Client({
         endpoint: env.get('S3_ENDPOINT'),

@@ -18,11 +18,13 @@ const Avatar: React.FunctionComponent<AvatarProps> = ({ user, hidePresence, over
       <span className="relative inline-block">
         <div className="relative">
           {overrideImage || user.avatarUrl ? (
-            <img
-              src={overrideImage || user.avatarUrl}
-              alt={user.fullName}
-              className="h-8 w-8 rounded-full"
-            />
+            <>
+              <img
+                src={overrideImage || user.avatarUrl}
+                alt={user.fullName}
+                className="h-8 w-8 rounded-full"
+              />
+            </>
           ) : (
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 border-zinc-700 border text-zinc-200">
               <span className="font-medium">{getInitials(user.fullName)}</span>
