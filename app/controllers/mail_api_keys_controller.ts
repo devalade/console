@@ -1,6 +1,8 @@
 import bindProject from '#decorators/bind_project'
+import MailDomain from '#models/mail_domain'
 import Project from '#models/project'
 import type { HttpContext } from '@adonisjs/core/http'
+import logger from '@adonisjs/core/services/logger'
 
 export default class MailApiKeysController {
   @bindProject
@@ -13,14 +15,21 @@ export default class MailApiKeysController {
   @bindProject
   async store({ request, response }: HttpContext, project: Project) {
     const payload = request.only(['name', 'domain'])
-    const mailDomain = await project.organization
-      .related('mailDomains')
-      .query()
-      .where('domain', payload.domain)
-      .first()
-    await project.organization
+    let mailDomain: MailDomain | null = null
+    if (payload.domain) {
+      mailDomain = await project.organization
+        .related('mailDomains')
+        .query()
+        .where('domain', payload.domain)
+        .first()
+    }
+    const mailApiKey = await project.organization
       .related('mailApiKeys')
       .create({ name: payload.name, mailDomainId: mailDomain?.id || null })
+    logger.info('Mail API key created')
+    if (request.wantsJSON()) {
+      return mailApiKey
+    }
     return response.redirect().back()
   }
 

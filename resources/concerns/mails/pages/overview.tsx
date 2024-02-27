@@ -3,16 +3,19 @@ import MailsLayout from '../mails_layout'
 import Button from '@/components/button'
 import { IconKey, IconWorldWww } from '@tabler/icons-react'
 import Code from '@/components/code'
-import { Link } from '@inertiajs/react'
+import { Link, useForm } from '@inertiajs/react'
 import useParams from '@/hooks/use_params'
+import type { MailApiKey } from '@/concerns/mail_api_keys/types'
+import CopyToClipboard from '@/components/copy_to_clipboard'
+import Input from '@/components/input'
 
 interface OverviewProps {}
 
 const codeTemplates = [
-  `import Facteur from 'facteur-node';
+  `import Facteur from '@softwarecitadel/mails';
 
 async function sendSomeEmail() {
-  const facteur = new Facteur('facteur-...');
+  const facteur = new Facteur('sc-...');
 
   await facteur.sendEmail({
     from: 'no-reply@example.com',
@@ -27,7 +30,7 @@ async function sendSomeEmail() {
 sendSomeEmail();`,
   `import facteur
 
-f = facteur.Facteur("facteur-...")
+f = facteur.Facteur("sc-...")
 f.send_email(
     frm='no-reply@example.com',
     to='ayn@rand.com',
@@ -48,7 +51,7 @@ func main() {
       HTML: "<p>I started my life with <b>a single absolute</b>: that the world was mine to shape in the image of my highest values and never to be given up to a lesser standard, no matter how long or hard the struggle.</p>",
   }
 
-  f := facteur.NewFacteur("<YOUR_API_KEY>")
+  f := facteur.NewFacteur("sc-...")
   err := f.SendEmail(payload)
   if err != nil {
     fmt.Println(err)
@@ -56,7 +59,7 @@ func main() {
 }`,
   `use FacteurDev\FacteurPhp\Facteur;
 
-$facteur = new Facteur('<your-api-key>');
+$facteur = new Facteur('sc-...');
 
 try {
     $facteur->sendEmail([
@@ -75,6 +78,35 @@ const Overview: React.FunctionComponent<OverviewProps> = () => {
   const runtimes = ['JavaScript', 'Python', 'Go', 'PHP']
   const params = useParams()
   const [selectedRuntime, setSelectedRuntime] = React.useState<string>('JavaScript')
+
+  const [apiKey, setApiKey] = React.useState<string>('')
+  const [apiKeyFormLoading, setApiKeyFormLoading] = React.useState<boolean>(false)
+
+  const codeString = apiKey
+    ? codeTemplates[runtimes.indexOf(selectedRuntime)].replace('sc-...', apiKey)
+    : codeTemplates[runtimes.indexOf(selectedRuntime)]
+
+  const handleAddApiKeySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setApiKeyFormLoading(true)
+    try {
+      const response = await fetch(
+        `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/mail_api_keys`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ name: 'Onboarding' }),
+        }
+      )
+      const data = (await response.json()) as MailApiKey
+      setApiKey(data.value)
+    } catch (error) {
+      alert('An error occurred while adding the API key.' + error)
+    }
+    setApiKeyFormLoading(false)
+  }
+
   return (
     <MailsLayout>
       <h1 className="font-clash font-semibold text-3xl">Send your first email</h1>
@@ -95,9 +127,8 @@ const Overview: React.FunctionComponent<OverviewProps> = () => {
           <div className="rounded-xl bg-gradient-to-r via-root to-root p-0.5 transition duration-200 ease-in-out">
             <div className="rounded-[10px] bg-root">
               <form
-                action="{{ route('dashboard.api_keys.store') }}"
                 className="rounded-[10px] bg-gradient-to-r via-green-1 to-green-1 p-6"
-                method="POST"
+                onSubmit={handleAddApiKeySubmit}
               >
                 <div className="flex items-center gap-2">
                   <h3 className="mb-1 text-xl tracking-[-0.16px] text-zinc-900 font-bold">
@@ -109,10 +140,21 @@ const Overview: React.FunctionComponent<OverviewProps> = () => {
                   time.
                 </p>
 
-                <Button size="sm">
-                  <IconKey className="w-4 h-4" />
-                  <span>Add an API key</span>
-                </Button>
+                {apiKey ? (
+                  <div className="flex !w-auto">
+                    <Input
+                      className="!rounded-r-none !w-auto !text-zinc-700"
+                      value={apiKey}
+                      readOnly
+                    />
+                    <CopyToClipboard value={apiKey} />
+                  </div>
+                ) : (
+                  <Button size="sm" loading={apiKeyFormLoading} type="submit">
+                    <IconKey className="w-4 h-4" />
+                    <span>Add an API key</span>
+                  </Button>
+                )}
               </form>
             </div>
           </div>
@@ -164,7 +206,7 @@ const Overview: React.FunctionComponent<OverviewProps> = () => {
                 </p>
                 <Code
                   runtimes={runtimes}
-                  codeString={codeTemplates[runtimes.indexOf(selectedRuntime)]}
+                  codeString={codeString}
                   selectedRuntime={selectedRuntime}
                   setSelectedRuntime={setSelectedRuntime}
                 />
