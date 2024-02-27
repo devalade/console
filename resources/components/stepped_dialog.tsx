@@ -27,7 +27,9 @@ const SteppedDialog: React.FunctionComponent<SteppedDialogProps> = ({
 
   const [currentStep, setCurrentStep] = React.useState(0)
 
-  const handleNextStep = () => {
+  const handleNextStep = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     setCurrentStep(currentStep + 1)
   }
 

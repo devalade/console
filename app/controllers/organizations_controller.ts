@@ -11,12 +11,17 @@ import mail from '@adonisjs/mail/services/main'
 import vine from '@vinejs/vine'
 
 export default class OrganizationsController {
-  public async index({ auth, inertia, response }: HttpContext) {
+  async index({ auth, inertia, request, response }: HttpContext) {
     /**
      * If the current user is related to any organization,
      * then redirect to the first organization.
      */
     await auth.user!.load('organizations')
+
+    if (request.wantsJSON()) {
+      return auth.user!.organizations
+    }
+
     if (auth.user!.organizations.length) {
       const organization = auth.user!.organizations[0]
       return response.redirect().toPath(`/organizations/${organization.slug}/projects`)
@@ -29,7 +34,7 @@ export default class OrganizationsController {
     return inertia.render('organizations/index')
   }
 
-  public async store({ auth, request, response }: HttpContext) {
+  async store({ auth, request, response }: HttpContext) {
     const payload = await request.validateUsing(createOrganizationValidator)
     const organization = await Organization.create(payload)
     await organization.related('members').create({
@@ -40,7 +45,7 @@ export default class OrganizationsController {
   }
 
   @bindOrganization
-  public async edit(
+  async edit(
     { inertia }: HttpContext,
     organization: Organization,
     organizationMember: OrganizationMember
@@ -59,7 +64,7 @@ export default class OrganizationsController {
   }
 
   @bindOrganization
-  public async update(
+  async update(
     { request, response }: HttpContext,
     organization: Organization,
     organizationMember: OrganizationMember
@@ -78,7 +83,7 @@ export default class OrganizationsController {
   }
 
   @bindOrganization
-  public async destroy(
+  async destroy(
     { response }: HttpContext,
     organization: Organization,
     organizationMember: OrganizationMember
@@ -91,7 +96,7 @@ export default class OrganizationsController {
   }
 
   @bindOrganization
-  public async quit(
+  async quit(
     { response }: HttpContext,
     _organization: Organization,
     organizationMember: OrganizationMember
@@ -104,7 +109,7 @@ export default class OrganizationsController {
   }
 
   @bindOrganization
-  public async invite(
+  async invite(
     { request, response }: HttpContext,
     organization: Organization,
     organizationMember: OrganizationMember
@@ -124,7 +129,7 @@ export default class OrganizationsController {
     return response.redirect().toPath(`/organizations/${organization.slug}/edit`)
   }
 
-  public async join({ auth, request, response }: HttpContext) {
+  async join({ auth, request, response }: HttpContext) {
     if (!request.hasValidSignature()) {
       return response.redirect().toPath('/auth/sign_up')
     }

@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.string('name').notNullable()
       table.string('value').notNullable()
       table
-        .integer('organization_id')
+        .string('organization_id')
         .notNullable()
         .references('organizations.id')
         .onDelete('CASCADE')

@@ -18,10 +18,7 @@ export default class extends BaseSchema {
         .references('id')
         .inTable('users')
         .onDelete('CASCADE')
-      table
-        .integer('organization_id')
-        .unsigned()
-        .references('id')
+      table.string('organization_id').references('id')
         .inTable('organizations')
         .onDelete('CASCADE')
 
