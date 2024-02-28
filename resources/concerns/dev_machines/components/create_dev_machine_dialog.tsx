@@ -72,7 +72,7 @@ const CreateDevMachineDialog: React.FunctionComponent<CreateDevMachineDialogProp
           </div>
         </div>,
         // [2] ResourcesConfigurator
-        <div className="py-4 px-6">
+        <div className="pb-4 px-6">
           <fieldset>
             <div className="space-y-4">
               <label

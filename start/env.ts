@@ -51,6 +51,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   FLY_ORG: Env.schema.string.optional(),
   FLY_TOKEN: Env.schema.string.optional(),
   FLY_WEBHOOK_SECRET: Env.schema.string.optional(),
+  FLY_DEV_MACHINE_PREFIX: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------
