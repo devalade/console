@@ -17,6 +17,26 @@ Software Citadel Console consists in :
 
 Today, developers have to juggle between tons of different services to get their work done. They have to use GitHub for code hosting, Slack for communication, Trello for task management, and more. We believe that it's time to bring all these services together in a single platform, to make it easier for developers to get their work done.
 
+## Key Features
+
+- Applications: Deploy your dockerized applications in a cloud environment, with support for multiple drivers, such as Docker, Fly.io, and more to come.
+
+- Databases: Deploy your databases in a cloud environment, with support for multiple drivers, such as PostgreSQL, MySQL, and more to come.
+
+- Dev Machines: Create Ubuntu development machines, and access them through the open-source version of Visual Studio Code.
+
+- Chat: Chat with your team members, and share code in real-time.
+
+- Kanban: Plan your tasks, and track your progress.
+
+- Storage: Store your files in a cloud environment, with a S3-compatible storage driver.
+
+- Code Hosting: Host your code in a cloud environment, making use of the built-in integration of Gitea.
+
+- Send Emails: Send transactional emails to your users, with the built-in integration of Mailu.
+
+- Analytics: Track visits on your website.
+
 ## Stack
 
 - [AdonisJS](https://adonisjs.com/) - A fully-featured Node.js framework
