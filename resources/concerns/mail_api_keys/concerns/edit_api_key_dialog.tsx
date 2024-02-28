@@ -16,7 +16,7 @@ export type EditApiKeyDialogProps = {
   apiKey: MailApiKey
 }
 
-export default function EditApiKeyDialog({ open, setOpen,apiKey }: EditApiKeyDialogProps) {
+export default function EditApiKeyDialog({ open, setOpen, apiKey }: EditApiKeyDialogProps) {
   const params = useParams()
   const form = useForm({
     name: apiKey.name,

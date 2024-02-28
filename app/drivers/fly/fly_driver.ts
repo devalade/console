@@ -18,5 +18,6 @@ export default class FlyDriver implements IDriver {
   initializeDriver() {
     DrapeauService.defineFeatureFlag('resources_configurator', () => true)
     DrapeauService.defineFeatureFlag('volumes_configurator', () => true)
+    DrapeauService.defineFeatureFlag('storage_buckets', () => true)
   }
 }

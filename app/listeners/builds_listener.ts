@@ -5,6 +5,7 @@ import Organization from '#models/organization'
 import Project from '#models/project'
 import OctokitService from '#services/octokit_service'
 import { inject } from '@adonisjs/core'
+import logger from '@adonisjs/core/services/logger'
 
 @inject()
 export default class BuildsListener {
@@ -19,6 +20,7 @@ export default class BuildsListener {
     /**
      * Mark deployment as deploying.
      */
+    logger.info('Marking deployment as deploying')
     deployment.status = DeploymentStatus.Deploying
     await deployment.save()
 
@@ -29,7 +31,12 @@ export default class BuildsListener {
     await driver.deployments.igniteApplication(organization, project, application, deployment)
   }
 
-  async onFailure([application, deployment]: [Application, Deployment]) {
+  async onFailure([_organization, _project, application, deployment]: [
+    Organization,
+    Project,
+    Application,
+    Deployment,
+  ]) {
     /**
      * Mark deployment as failed.
      */

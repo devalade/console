@@ -16,11 +16,7 @@ import Project from '#models/project'
 export default class DockerApplicationsService implements IDriverApplicationsService {
   constructor(private readonly docker: Docker) {}
 
-  createApplication(
-    _organization: Organization,
-    _project: Project,
-    _application: Application
-  ) {}
+  createApplication(_organization: Organization, _project: Project, _application: Application) {}
 
   async deleteApplication(
     _organization: Organization,

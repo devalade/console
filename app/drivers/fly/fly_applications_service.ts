@@ -60,7 +60,7 @@ export default class FlyApplicationsService implements IDriverApplicationsServic
     await this.flyApi.apps.deleteApplication(builderName)
   }
 
-  async streamLogs(
+  streamLogs(
     _organization: Organization,
     _project: Project,
     application: Application,
@@ -72,8 +72,7 @@ export default class FlyApplicationsService implements IDriverApplicationsServic
       scope === 'builder'
     )
     emitter.on(`fly:log:${flyApplicationName}`, ({ message, timestamp }) => {
-      response.response.write(`data: ${timestamp} | ${message}\n\n`)
-      response.response.flushHeaders()
+      response.sendServerSentEvent(`${timestamp} | ${message}`)
     })
   }
 

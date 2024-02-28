@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import {
   BaseModel,
-  afterCreate,
   beforeCreate,
   beforeDelete,
   belongsTo,
@@ -34,10 +33,10 @@ export default class Application extends BaseModel {
   @column()
   declare environmentVariables: Record<string, string>
 
-  @column()
+  @column({ columnName: 'shared_ipv4' })
   declare sharedIpv4: string | null
 
-  @column()
+  @column({ columnName: 'ipv6' })
   declare ipv6: string | null
 
   @column()

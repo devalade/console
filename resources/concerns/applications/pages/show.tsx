@@ -46,6 +46,20 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, application, wildca
                 <dd className="mt-1 text-sm text-zinc-700">{application.ram}</dd>
               </div>
             )}
+
+            {application.sharedIpv4 && (
+              <div className="sm:col-span-1">
+                <dt className="text-sm font-semibold text-zinc-900">Shared IPV4</dt>
+                <dd className="mt-1 text-sm text-zinc-700">{application.sharedIpv4}</dd>
+              </div>
+            )}
+
+            {application.ipv6 && (
+              <div className="sm:col-span-1">
+                <dt className="text-sm font-semibold text-zinc-900">Dedicated IPV6</dt>
+                <dd className="mt-1 text-sm text-zinc-700">{application.ipv6}</dd>
+              </div>
+            )}
           </dl>
         </CardContent>
       </Card>

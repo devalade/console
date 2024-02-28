@@ -51,7 +51,7 @@ const Index: React.FunctionComponent<IndexProps> = ({ mailApiKeys }) => {
       accessorKey: 'domain',
       header: 'Domain Access',
       cell: ({ row }) => (
-        <div>{row.original.mailDomain ? row.original.mailDomain.domain: 'All domains'}</div>
+        <div>{row.original.mailDomain ? row.original.mailDomain.domain : 'All domains'}</div>
       ),
     },
     {
@@ -76,36 +76,46 @@ const Index: React.FunctionComponent<IndexProps> = ({ mailApiKeys }) => {
     {
       id: 'actions',
       enableHiding: false,
-      cell: ({ row }) =>
-        {
-          const [showEditApiKeyDialog, setShowEditApiKeyDialog] = React.useState(false)
-          return <>
-          <EditApiKeyDialog open={showEditApiKeyDialog} setOpen={setShowEditApiKeyDialog} apiKey={row.original} />
-          <DropdownMenu>
-          <DropdownMenuTrigger type="button" className="flex items-center space-x-2">
-            <IconDots className="w-4 h-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-          <DropdownMenuItem asChild>
-                <button type="button" className="w-full cursor-pointer" onClick={() => setShowEditApiKeyDialog(true)}>
-                  <IconPencil className="w-4 h-4 mr-2" />
-                  Edit
-                </button>
-              </DropdownMenuItem>
-            <form
-              method="post"
-              action={`/organizations/${params.organizationSlug}/projects/${params.projectSlug}/mail_api_keys/${row.original.id}?_method=DELETE`}
-            >
-              <DropdownMenuItem asChild>
-                <button type="submit" className="w-full cursor-pointer">
-                  <IconTrash className="w-4 h-4 mr-2 text-red-500" />
-                  Delete
-                </button>
-              </DropdownMenuItem>
-            </form>
-          </DropdownMenuContent>
-        </DropdownMenu></>}
-      ,
+      cell: ({ row }) => {
+        const [showEditApiKeyDialog, setShowEditApiKeyDialog] = React.useState(false)
+        return (
+          <>
+            <EditApiKeyDialog
+              open={showEditApiKeyDialog}
+              setOpen={setShowEditApiKeyDialog}
+              apiKey={row.original}
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger type="button" className="flex items-center space-x-2">
+                <IconDots className="w-4 h-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <button
+                    type="button"
+                    className="w-full cursor-pointer"
+                    onClick={() => setShowEditApiKeyDialog(true)}
+                  >
+                    <IconPencil className="w-4 h-4 mr-2" />
+                    Edit
+                  </button>
+                </DropdownMenuItem>
+                <form
+                  method="post"
+                  action={`/organizations/${params.organizationSlug}/projects/${params.projectSlug}/mail_api_keys/${row.original.id}?_method=DELETE`}
+                >
+                  <DropdownMenuItem asChild>
+                    <button type="submit" className="w-full cursor-pointer">
+                      <IconTrash className="w-4 h-4 mr-2 text-red-500" />
+                      Delete
+                    </button>
+                  </DropdownMenuItem>
+                </form>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
+        )
+      },
     },
   ]
 

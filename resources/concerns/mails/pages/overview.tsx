@@ -9,7 +9,7 @@ import type { MailApiKey } from '@/concerns/mail_api_keys/types'
 import CopyToClipboard from '@/components/copy_to_clipboard'
 import Input from '@/components/input'
 
-interface OverviewProps { }
+interface OverviewProps {}
 
 const codeTemplates = [
   `import Facteur from '@softwarecitadel/mails';
