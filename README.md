@@ -33,13 +33,15 @@ Today, developers have to juggle between tons of different services to get their
 
 ## Development Setup
 
-### Requirements
+### Docker
+
+#### Requirements
 
 - [Node.js](https://nodejs.org/) - JavaScript runtime
 - [npm](https://www.npmjs.com/) - Node.js package manager
 - [Docker](https://www.docker.com/) - A containerization platform
 
-### Installation
+#### Installation
 
 ```bash
 # Clone the repository
@@ -60,7 +62,7 @@ node ace migration:run
 npm run dev
 ```
 
-### Set up GitHub OAuth
+#### Set up GitHub OAuth
 
 1. Go to [GitHub Developer Settings](https://github.com/settings/apps) and create some new OAuth/regular app.
 
@@ -81,22 +83,73 @@ You now should be able to log in with GitHub.
 
 Please remember to use `http://127.0.0.1:3333` as your development URL, instead of `http://localhost:3333`.
 
-## Fly.io Setup
+### Fly.io Setup
 
-### Requirements
+#### Requirements
 
 - [Fly.io](https://fly.io/) - A Fly.io account with a registered billing card
 - [Flyctl](https://fly.io/docs/getting-started/installing-flyctl/) - The Fly.io CLI
 
-### Set up the database
+#### Set up the logs shipper
 
-TO BE WRITTEN
+```bash
+# Set up Smee.io, to deliver webhooks to your local development environment
+npm install -g smee-client
+smee --target http://127.0.0.1:3333/fly/webhooks/logs --url https://smee.io/<your_smee_id>
 
-### Deploy the application
+# Create a new directory for the logs shipper
+mkdir logshippper
+cd logshippper
 
-TO BE WRITTEN
+# Don't deploy just yet. We need to set up the secrets first.
+fly launch --image ghcr.io/superfly/fly-log-shipper:latest --no-deploy
 
-### Set up the logs shipper
+# Let's set up the secrets
+fly secrets set ORG=personal # Replace with something else if you're using some organization
+fly secrets set HTTP_URL=https://smee.io/<your_smee_id>
+fly secrets set HTTP_TOKEN=<replace_this_with_your_http_bearer>
+
+# Now, you can deploy the logs shipper
+fly deploy
+```
+
+## Production Setup
+
+### Fly.io
+
+#### Requirements
+
+- [Fly.io](https://fly.io/) - A Fly.io account with a registered billing card
+- [Flyctl](https://fly.io/docs/getting-started/installing-flyctl/) - The Fly.io CLI
+
+#### Launch the application
+
+
+#### Set up the PostgreSQL database
+
+```bash
+fly postgres create
+```
+
+Now, you can set the environment variables : DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE.
+
+#### Set up the Redis database
+
+```bash
+fly redis create
+```
+
+Now, you can set the environment variables : REDIS_HOST, REDIS_PORT, REDIS_PASSWORD.
+
+#### Set up the storage bucket
+
+```bash
+fly storage create
+```
+
+Now, you can set the environment variables : S3_ENDPOINT, S3_BUCKET, S3_AVATAR_BUCKET, S3_REGION, S3_ACCESS_KEY, S3_SECRET_KEY.
+
+#### Set up the logs shipper
 
 ```bash
 # Create a new directory for the logs shipper
@@ -108,9 +161,21 @@ fly launch --image ghcr.io/superfly/fly-log-shipper:latest
 
 # Let's set up the secrets
 fly secrets set ORG=personal # Replace with something else if you're using some organization
-fly secrets set HTTP_URL=<your_hostname>/fly/webhooks/logs
+fly secrets set HTTP_URL=https://console.<your_domain>/fly/webhooks/logs
 fly secrets set HTTP_TOKEN=<replace_this_with_your_http_bearer>
+fly secrets set ACCESS_TOKEN=<replace_this_with_your_access_token>
+
+# Now, you can deploy the logs shipper
+fly deploy
 ```
+
+#### Deploy the application
+
+```bash
+# Deploy the application
+fly deploy
+```
+
 
 ## FAQ
 

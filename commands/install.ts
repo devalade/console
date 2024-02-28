@@ -91,6 +91,7 @@ export default class Install extends BaseCommand {
         default: 'citadel-db',
       }
     )
+    environmentVariables.REGISTRY_HOST = 'registry.fly.io'
 
     environmentVariables.DRIVER = 'fly'
 
