@@ -13,4 +13,3 @@ router
     tasks: 'kanbanTaskId',
   })
   .use('*', middleware.auth())
-

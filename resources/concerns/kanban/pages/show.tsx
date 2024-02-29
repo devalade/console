@@ -36,7 +36,7 @@ function reorder<T>(items: T[], startIndex: number, endIndex: number) {
   result.splice(endIndex, 0, removed);
 
   return result;
-};
+}
 
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
   const params = useParams()
@@ -46,7 +46,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
     return 0
   }))
 
-  function onDragEnd({ destination, source, type, ...rest }: Result) {
+  function onDragEnd({ destination, source, type }: Result) {
     /**
      * Skip if the user drops the item in the same place.
      */
@@ -165,6 +165,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
           `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${source.droppableId}/tasks/${sourceColumn.tasks[source.index].id}`,
           { order: sourceColumn.tasks[destination.index].order, columnId: destination.droppableId }
         )
+
       }
     }
   }

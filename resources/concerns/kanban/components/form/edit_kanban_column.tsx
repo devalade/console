@@ -8,14 +8,14 @@ export function EditColumn(props: { columnId: number; name: string; onClose: () 
   const params = useParams()
   const { name, columnId, onClose } = props
   const ref = useRef<ElementRef<'input'>>(null)
-  const succcessToast = useSuccessToast()
+  const success = useSuccessToast()
 
 
-  const { data, setData } = useForm({
+  const { data, setData, put } = useForm({
     name,
   })
 
-  useClickOutside(ref, (event) => {
+  useClickOutside(ref, () => {
     onClose()
     setData('name', name)
 
@@ -27,12 +27,12 @@ export function EditColumn(props: { columnId: number; name: string; onClose: () 
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    router.put(
+    put(
       `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}/columns/${columnId}`,
-      data,
       {
         onSuccess() {
-          succcessToast()
+          router.reload();
+          success()
           onClose();
         }
       }
@@ -46,7 +46,7 @@ export function EditColumn(props: { columnId: number; name: string; onClose: () 
         autoFocus
         onChange={onChange}
         value={data.name}
-        className="appearance-none bg-transparent text-sm font-medium border-none p-0 w-fit rounded-full focus:ring-black outline:ring-black"
+        className="appearance-none border bg-transparent text-sm font-medium p-0 w-fit rounded-full focus:ring-black outline:ring-black"
       />
     </form>
   )

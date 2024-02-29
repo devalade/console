@@ -22,7 +22,7 @@ export default class KanbanColumnsController {
     board: KanbanBoard,
     firstColumn: KanbanColumn
   ) {
-    const payload = await request.validateUsing(updateKanbanColumnValidator);
+    const payload = await request.validateUsing(updateKanbanColumnValidator)
     if (payload.name) {
       await firstColumn
         .merge({
