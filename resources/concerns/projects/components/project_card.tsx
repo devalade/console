@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardContent, CardTitle } from '@/components/card'
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/card'
 import { IconLayoutGrid } from '@tabler/icons-react'
 import { Link } from '@inertiajs/react'
 import type { Project } from '../types/project'
@@ -19,6 +19,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <Card>
         <CardContent>
           <CardTitle className="!text-lg">{project.name}</CardTitle>
+          <CardDescription>{project.slug}</CardDescription>
           <IconLayoutGrid className="w-5 h-5 mt-2 text-blue-600" />
         </CardContent>
       </Card>

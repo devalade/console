@@ -11,7 +11,7 @@ import type { Conversation } from '../types/conversation'
 import Channel from './channel'
 import Avatar from '@/components/avatar'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import useChatUpdates from '../hooks/use_chat_updates'
+import { ChatContext } from '../chat_context'
 
 interface ChatLeftSidebarProps {
   currentChannel: ChannelType | null
@@ -29,7 +29,7 @@ const ChatLeftSidebar: React.FunctionComponent<ChatLeftSidebarProps> = ({
   const [channelsShow, setChannelsShow] = React.useState(true)
   const [directMessagesShow, setDirectMessagesShow] = React.useState(true)
   const params = useParams()
-  const { channels, setChannels, conversations } = useChatUpdates()
+  const { channels, setChannels, conversations } = React.useContext(ChatContext)
 
   const handleDragEnd = (result) => {
     if (!result.destination) return

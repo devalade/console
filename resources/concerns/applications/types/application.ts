@@ -11,4 +11,6 @@ export type Application = {
   certificates?: Array<Certificate>
   githubBranch?: string
   githubRepository?: string
+  sharedIpv4?: string
+  ipv6?: string
 }

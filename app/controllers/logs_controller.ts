@@ -13,7 +13,6 @@ export default class LogsController {
   @bindProjectAndApplication
   async stream(ctx: HttpContext, project: Project, application: Application) {
     ctx.response.prepareServerSentEventsHeaders()
-
     const scope = ctx.request.qs().scope === 'builder' ? 'builder' : 'application'
 
     const driver = Driver.getDriver()

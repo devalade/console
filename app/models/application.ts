@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import {
   BaseModel,
-  afterCreate,
   beforeCreate,
   beforeDelete,
   belongsTo,
@@ -34,10 +33,10 @@ export default class Application extends BaseModel {
   @column()
   declare environmentVariables: Record<string, string>
 
-  @column()
+  @column({ columnName: 'shared_ipv4' })
   declare sharedIpv4: string | null
 
-  @column()
+  @column({ columnName: 'ipv6' })
   declare ipv6: string | null
 
   @column()
@@ -80,7 +79,9 @@ export default class Application extends BaseModel {
    * Hooks.
    */
   @beforeCreate()
-  static async assignSlugAndHostname(application: Application) {
+  static async prepareApplication(application: Application) {
+    application.id = cuid()
+
     /**
      * Generate a unique slug for the application.
      */
@@ -95,7 +96,7 @@ export default class Application extends BaseModel {
      */
     switch (env.get('DRIVER')) {
       case 'docker':
-        application.hostname = `${env.get('DOCKER_APPLICATION_NAME_PREFIX', 'citadel-app')}-${application.slug}.${env.get(
+        application.hostname = `${application.slug}.${env.get(
           'TRAEFIK_WILDCARD_DOMAIN',
           'softwarecitadel.app'
         )}`
@@ -106,23 +107,13 @@ export default class Application extends BaseModel {
       default:
         application.hostname = ''
     }
-  }
 
-  @beforeCreate()
-  static async assignId(application: Application) {
-    application.id = cuid()
-  }
-
-  @afterCreate()
-  static async emitCreatedEvent(application: Application) {
-    await application.load('project', (query) => {
-      query.preload('organization')
-    })
-    emitter.emit('applications:created', [
-      application.project.organization,
-      application.project,
-      application,
-    ])
+    /**
+     * Emit created event.
+     */
+    const project = await Project.findByOrFail('id', application.projectId)
+    await project!.load('organization')
+    emitter.emit('applications:created', [project.organization, project, application])
   }
 
   @beforeDelete()

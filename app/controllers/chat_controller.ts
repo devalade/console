@@ -19,6 +19,9 @@ export default class ChatController {
     organizationMember: OrganizationMember
   ) {
     await organization.load('users')
+    for (const user of organization.users) {
+      await user?.assignAvatarUrl()
+    }
     await organization.load('channels', (query) => {
       query.orderBy('order', 'asc')
     })

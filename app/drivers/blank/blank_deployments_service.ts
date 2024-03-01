@@ -6,26 +6,26 @@ import Project from '#models/project'
 
 export default class BlankDeploymentsService implements IDriverDeploymentsService {
   igniteBuilder(
-    organization: Organization,
-    project: Project,
-    application: Application,
-    deployment: Deployment
+    _organization: Organization,
+    _project: Project,
+    _application: Application,
+    _deployment: Deployment
   ): void | Promise<void> {
     throw new Error('Method not implemented.')
   }
   igniteApplication(
-    organization: Organization,
-    project: Project,
-    application: Application,
-    deployment: Deployment
+    _organization: Organization,
+    _project: Project,
+    _application: Application,
+    _deployment: Deployment
   ): void | Promise<void> {
     throw new Error('Method not implemented.')
   }
   shouldMonitorHealthcheck(
-    organization: Organization,
-    project: Project,
-    application: Application,
-    deployment: Deployment
+    _organization: Organization,
+    _project: Project,
+    _application: Application,
+    _deployment: Deployment
   ): boolean | Promise<boolean> {
     throw new Error('Method not implemented.')
   }

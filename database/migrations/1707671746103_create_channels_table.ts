@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.string('name').notNullable()
       table.string('slug').notNullable().unique()
       table.integer('order').notNullable()
-      table.integer('organization_id').unsigned().references('organizations.id').onDelete('CASCADE')
+      table.string('organization_id').references('organizations.id').onDelete('CASCADE')
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

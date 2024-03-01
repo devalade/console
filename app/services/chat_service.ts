@@ -73,6 +73,10 @@ export default class ChatService {
         query.preload('askedUserForAnswer')
         query.orderBy('created_at', 'asc')
       })
+
+      for (const message of currentChannel!.messages) {
+        await message.user?.assignAvatarUrl()
+      }
     }
 
     return currentChannel || null

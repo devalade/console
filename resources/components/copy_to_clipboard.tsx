@@ -21,6 +21,7 @@ export default function CopyToClipboard({ value }) {
     <button
       className="bg-zinc-900 rounded-md rounded-l-none px-2 flex items-center justify-center"
       onClick={copyToClipboardUri}
+      type="button"
     >
       {copiedProperty ? (
         <svg

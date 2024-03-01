@@ -113,26 +113,6 @@ export default function StorageBucketBrowser({
             </form>
           </DropdownMenuContent>
         </DropdownMenu>
-        // <div>
-        //   <a
-        //     href={`/organizations/${project.organization.slug}/projects/${project.slug}/storage_buckets/${storageBucket.slug}/files/${row.getValue('filename')}`}
-        //   >
-        //       <IconDownload className="w-4 h-4 mr-2" />
-        //       Download
-        //   </a>
-
-        //   <DropdownMenuSeparator />
-
-        //   <form
-        //     method="post"
-        //     action={`/organizations/${project.organization.slug}/projects/${project.slug}/storage_buckets/${storageBucket.slug}/files/${row.getValue('filename')}?_method=DELETE`}
-        //   >
-        //     <button className="w-full" type="submit">
-        //       <IconTrash className="w-4 h-4 mr-2 text-red-500" />
-        //       Delete
-        //     </button>
-        //   </form>
-        // </div>
       ),
     },
   ]

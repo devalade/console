@@ -7,7 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.enum('role', ['owner', 'member']).notNullable()
-      table.integer('organization_id').unsigned().references('organizations.id').onDelete('CASCADE')
+      table.string('organization_id').references('organizations.id').onDelete('CASCADE')
       table.integer('user_id').unsigned().references('users.id').onDelete('CASCADE')
 
       table.timestamp('created_at')

@@ -51,6 +51,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   FLY_ORG: Env.schema.string.optional(),
   FLY_TOKEN: Env.schema.string.optional(),
   FLY_WEBHOOK_SECRET: Env.schema.string.optional(),
+  FLY_DEV_MACHINE_PREFIX: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------
@@ -111,6 +112,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   */
   S3_ENDPOINT: Env.schema.string(),
   S3_BUCKET: Env.schema.string(),
+  S3_AVATAR_BUCKET: Env.schema.string(),
   S3_REGION: Env.schema.string(),
   S3_ACCESS_KEY: Env.schema.string(),
   S3_SECRET_KEY: Env.schema.string(),

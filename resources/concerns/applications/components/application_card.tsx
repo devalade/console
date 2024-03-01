@@ -2,7 +2,7 @@ import type { Project } from '@/concerns/projects/types/project'
 import * as React from 'react'
 import type { Application } from '../types/application'
 import { Link } from '@inertiajs/react'
-import { Card, CardContent, CardTitle } from '@/components/card'
+import { Card, CardContent, CardDescription, CardTitle } from '@/components/card'
 import { IconTerminal2 } from '@tabler/icons-react'
 import useParams from '@/hooks/use_params'
 
@@ -24,7 +24,7 @@ const ApplicationCard: React.FunctionComponent<ApplicationCardProps> = ({
       <Card>
         <CardContent>
           <CardTitle className="!text-lg">{application.name}</CardTitle>
-
+          <CardDescription>{application.slug}</CardDescription>
           <IconTerminal2 className="w-5 h-5 mt-2 text-blue-600" />
         </CardContent>
       </Card>

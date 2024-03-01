@@ -21,7 +21,9 @@ export default class MessagesController {
         .where('slug', request.qs().channelSlug)
         .firstOrFail()
 
-      const message = await channel.related('messages').create({ body, userId: auth.user!.id })
+      const message = await channel
+        .related('messages')
+        .create({ body, userId: auth.user!.id, askedUserForAnswerId: null })
       emitter.emit('messages:created', [organization, channel, auth.user!, message])
     }
 
@@ -40,7 +42,9 @@ export default class MessagesController {
         return response.unauthorized()
       }
 
-      await conversation.related('messages').create({ body, userId: auth.user!.id })
+      await conversation
+        .related('messages')
+        .create({ body, userId: auth.user!.id, askedUserForAnswerId: null })
     }
 
     const suffix = request.qs().channelSlug

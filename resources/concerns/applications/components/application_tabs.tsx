@@ -1,9 +1,8 @@
 import type { Project } from '@/concerns/projects/types/project'
-import { Link } from '@inertiajs/react'
 import React from 'react'
 import type { Application } from '../types/application'
-import ApplicationTab from './application_tab'
 import useParams from '@/hooks/use_params'
+import Tab from '@/components/tab'
 
 export type ApplicationTabsProps = {
   project: Project
@@ -45,7 +44,7 @@ export default function ApplicationTabs({ project, application }: ApplicationTab
     <nav className="flex overflow-x-auto border-b border-zinc-200 bg-white py-4 px-12">
       <ul className="flex min-w-full flex-none gap-x-6 text-sm font-semibold leading-6 text-zinc-600">
         {applicationTabs.map((item) => (
-          <ApplicationTab key={item.label} {...item} />
+          <Tab key={item.label} {...item} />
         ))}
       </ul>
     </nav>

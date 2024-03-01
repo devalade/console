@@ -15,7 +15,13 @@ export default defineConfig({
     errors: (ctx) => ctx.session.flashMessages.get('errors'),
     qs: (ctx) => ctx.request.qs(),
     params: (ctx) => ctx.request.params(),
-    user: (ctx) => ctx.auth.user,
+    user: async (ctx) => {
+      if (!ctx.auth.user) {
+        return null
+      }
+      await ctx.auth.user?.assignAvatarUrl()
+      return ctx.auth.user.toJSON()
+    },
     wildcardDomain: () =>
       env.get('DRIVER') === 'docker'
         ? env.get('TRAEFIK_WILDCARD_DOMAIN', 'softwarecitadel.app')

@@ -70,7 +70,7 @@ export default class FlyDeploymentsConfigurationBuilder {
       S3_ACCESS_KEY_ID: env.get('S3_ACCESS_KEY'),
       S3_SECRET_ACCESS_KEY: env.get('S3_SECRET_KEY'),
       REGISTRY_HOST: 'registry.fly.io',
-      REGISTRY_TOKEN: env.get('FLY_TOKEN'),
+      REGISTRY_TOKEN: env.get('REGISTRY_TOKEN'),
       FILE_NAME: `${application.slug}.tar.gz`,
       IMAGE_NAME: flyApplicationName,
     }

@@ -14,9 +14,16 @@ export const buttonVariants = cva(
         outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
       },
+      size: {
+        default: '',
+        sm: 'h-8 rounded-md px-3 text-xs',
+        lg: 'h-10 rounded-md px-8',
+        icon: 'h-9 w-9',
+      },
     },
     defaultVariants: {
       variant: 'default',
+      size: 'default',
     },
   }
 )
@@ -34,13 +41,14 @@ const Button: React.FunctionComponent<React.PropsWithChildren<ButtonProps>> = ({
   loading,
   variant,
   className,
+  size,
   ...props
 }) => {
   return (
     <button
       disabled={loading || disabled}
       {...props}
-      className={cn(buttonVariants({ variant }), className)}
+      className={cn(buttonVariants({ variant, size }), className)}
     >
       {loading && <Spinner className="mr-2 h-4 w-4 animate-spin" />}
       {children}

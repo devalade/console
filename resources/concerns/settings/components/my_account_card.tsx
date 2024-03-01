@@ -1,4 +1,3 @@
-import React from 'react'
 import useUser from '@/hooks/use_user'
 import { useForm } from '@inertiajs/react'
 import Input from '@/components/input'
@@ -6,34 +5,77 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import Button from '@/components/button'
 import Label from '@/components/label'
 import useSuccessToast from '@/hooks/use_success_toast'
+import * as React from 'react'
+import Avatar from '@/components/avatar'
 
 export default function MyAccountCard() {
   const user = useUser()
   const successToast = useSuccessToast()
+  const userAvatarRef = React.useRef<HTMLInputElement>(null)
+  const [avatar, setAvatar] = React.useState<string | null>(user.avatarUrl)
 
   const form = useForm({
     email: user.email,
     fullName: user.fullName,
     newPassword: '',
     confirmPassword: '',
+    avatar: null,
   })
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      form.setData('avatar', file)
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setAvatar(URL.createObjectURL(file))
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     form.patch('/settings', {
       onSuccess: () => successToast(),
+      forceFormData: true,
     })
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} encType="multipart/form-data">
       <Card className="mt-6">
         <CardHeader>
           <CardTitle>My Account</CardTitle>
         </CardHeader>
-        <CardContent className="px-0 space-y-4 divide-y divide-blue-600/20">
-          <div className="space-y-4 px-4">
+        <CardContent className="px-0 !pt-4 space-y-4 divide-y divide-blue-600/20">
+          <div className="space-y-4 px-6">
+            <div>
+              <Label>Avatar</Label>
+              <div className="flex items-center space-x-4">
+                <Avatar user={user} hidePresence overrideImage={avatar} />
+                <input
+                  name="userAvatar"
+                  id="userAvatar"
+                  type="file"
+                  ref={userAvatarRef}
+                  accept="image/*"
+                  hidden
+                  onChange={onFileChange}
+                />
+                <Button
+                  onClick={() => userAvatarRef.current?.click()}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                >
+                  Change
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4 px-6 pt-6">
             <div className="grid gap-1">
               <Label>Email Address</Label>
               <Input
@@ -56,7 +98,7 @@ export default function MyAccountCard() {
             </div>
           </div>
 
-          <div className="space-y-4 px-4 pt-6">
+          <div className="space-y-4 px-6 pt-6">
             <div className="grid gap-1">
               <Label>
                 New Password <span className="text-zinc-700">(optional)</span>

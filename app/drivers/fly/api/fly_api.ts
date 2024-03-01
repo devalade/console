@@ -33,11 +33,11 @@ type LogItem = {
 export default class FlyApi {
   private readonly apiCaller: FlyApiCaller
 
-  public readonly apps: FlyAppsApi
-  public readonly machines: FlyMachinesApi
-  public readonly networks: FlyNetworksApi
-  public readonly certificates: FlyCertificatesApi
-  public readonly volumes: FlyVolumesApi
+  readonly apps: FlyAppsApi
+  readonly machines: FlyMachinesApi
+  readonly networks: FlyNetworksApi
+  readonly certificates: FlyCertificatesApi
+  readonly volumes: FlyVolumesApi
 
   constructor(token: string = env.get('FLY_TOKEN')!) {
     this.apiCaller = new FlyApiCaller(token)
@@ -54,7 +54,7 @@ export default class FlyApi {
    * @param applicationSlug The slug of the application to deploy.
    * @param isBuilder Whether the machine is a builder or not.
    */
-  public getFlyApplicationName(applicationSlug: string, isBuilder: boolean = false): string {
+  getFlyApplicationName(applicationSlug: string, isBuilder: boolean = false): string {
     if (isBuilder) {
       return `${FLY_BUILDER_NAME_PREFIX}-${applicationSlug}`
     }
@@ -65,11 +65,11 @@ export default class FlyApi {
    * Returns the name of the machine that will be used to build the database.
    * @param databaseSlug The slug of the database to deploy.
    */
-  public getFlyDatabaseName(databaseSlug: string): string {
+  getFlyDatabaseName(databaseSlug: string): string {
     return `${FLY_DATABASE_NAME_PREFIX}-${databaseSlug}`
   }
 
-  public async getLogs(applicationId: string, nextToken?: string) {
+  async getLogs(applicationId: string, nextToken?: string) {
     const baseUrl = 'https://api.fly.io/api/v1'
 
     let path = `/apps/${applicationId}/logs`

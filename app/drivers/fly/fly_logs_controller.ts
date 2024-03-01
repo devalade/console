@@ -11,7 +11,7 @@ import emitter from '@adonisjs/core/services/emitter'
  * It listens for logs from the Fly API and emits events based on the log entry.
  */
 export default class FlyWebhooksController {
-  public async handleIncomingLogs({ request, response }: HttpContext) {
+  async handleIncomingLogs({ request, response }: HttpContext) {
     /**
      * Ensure that the request is coming from Fly by checking the Authorization header.
      * If the header is not present or the secret is incorrect, return a 401 Unauthorized response.
@@ -38,12 +38,13 @@ export default class FlyWebhooksController {
        * We need the application to emit events based on the log entry.
        */
       const applicationSlug: string = logEntry.fly.app.name
-        .replace('citadel-builder-', '')
-        .replace('citadel-app-', '')
+        .replace(FLY_APPLICATION_NAME_PREFIX + '-', '')
+        .replace(FLY_BUILDER_NAME_PREFIX + '-', '')
       const application = await Application.findBy('slug', applicationSlug)
       if (!application) {
         continue
       }
+      await application.load('project', (query) => query.preload('organization'))
 
       /**
        * Find the deployment that the log entry is for.
@@ -72,7 +73,12 @@ export default class FlyWebhooksController {
         logEntry.message.includes('Main child exited normally with code:')
       ) {
         const event = logEntry.message.includes('1') ? 'builds:failure' : 'builds:success'
-        emitter.emit(event, [application, deployment])
+        emitter.emit(event, [
+          application.project.organization,
+          application.project,
+          application,
+          deployment,
+        ])
         return response.noContent()
       }
 

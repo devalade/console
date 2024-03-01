@@ -8,13 +8,16 @@ import OrganizationMember from './organization_member.js'
 import User from './user.js'
 import Channel from './channel.js'
 import Conversation from './conversation.js'
+import MailDomain from './mail_domain.js'
+import MailApiKey from './mail_api_key.js'
+import { cuid } from '@adonisjs/core/helpers'
 
 export default class Organization extends BaseModel {
   /**
    * Regular columns.
    */
   @column({ isPrimary: true })
-  declare id: number
+  declare id: string
 
   @column()
   declare name: string
@@ -45,11 +48,19 @@ export default class Organization extends BaseModel {
   })
   declare users: HasManyThrough<typeof User>
 
+  @hasMany(() => MailDomain)
+  declare mailDomains: HasMany<typeof MailDomain>
+
+  @hasMany(() => MailApiKey)
+  declare mailApiKeys: HasMany<typeof MailApiKey>
+
   /**
    * Hooks.
    */
   @beforeCreate()
-  static async assignSlug(organization: Organization) {
+  static async assignIdAndSlug(organization: Organization) {
+    organization.id = cuid()
+
     let slug = slugify(organization.name, { lower: true, replacement: '-' })
     while (await Organization.findBy('slug', slug)) {
       slug += '-' + generateRandomWord({ exactly: 1 })

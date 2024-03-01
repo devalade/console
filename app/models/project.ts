@@ -9,6 +9,8 @@ import { cuid } from '@adonisjs/core/helpers'
 import KanbanBoard from './kanban_board.js'
 import Organization from './organization.js'
 import StorageBucket from './storage_bucket.js'
+import DevMachine from './dev_machine.js'
+import AnalyticsWebsite from './analytics_website.js'
 
 export default class Project extends BaseModel {
   /**
@@ -43,6 +45,12 @@ export default class Project extends BaseModel {
 
   @hasMany(() => StorageBucket)
   declare storageBuckets: HasMany<typeof StorageBucket>
+
+  @hasMany(() => DevMachine)
+  declare devMachines: HasMany<typeof DevMachine>
+
+  @hasMany(() => AnalyticsWebsite)
+  declare analyticsWebsites: HasMany<typeof AnalyticsWebsite>
 
   /**
    * Hooks.

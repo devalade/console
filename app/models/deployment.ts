@@ -39,7 +39,7 @@ export default class Deployment extends BaseModel {
   declare currentFlyMachineBuilderId: string | null
 
   @column()
-  declare previousFlyMachineId: string | null
+  declare flyMachineDeleted: boolean
 
   /**
    * Relationships.

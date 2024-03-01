@@ -28,7 +28,7 @@ export default class extends BaseSchema {
       // Fly.io-related fields.
       table.string('current_fly_machine_id').nullable()
       table.string('current_fly_machine_builder_id').nullable()
-      table.string('previous_fly_machine_id').nullable()
+      table.boolean('fly_machine_deleted').defaultTo(false)
 
       table.timestamp('created_at')
       table.timestamp('updated_at')
