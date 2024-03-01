@@ -21,17 +21,31 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, application, wildca
         <CardContent>
           <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
             <div className="sm:col-span-1">
-              <dt className="text-sm font-medium text-zinc-900">Link to your application</dt>
+              <dt className="text-sm font-semibold text-zinc-900">Link to your application</dt>
               <dd className="mt-1 text-sm text-blue-100">
                 <a
                   className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
                   href={`https://${application.slug}.${wildcardDomain}`}
                   target="_blank"
                 >
-                  {application.slug}.{wildcardDomain}
+                  {application.hostname}
                 </a>
               </dd>
             </div>
+
+            {application.cpu && (
+              <div className="sm:col-span-1">
+                <dt className="text-sm font-semibold text-zinc-900">CPU Configuration</dt>
+                <dd className="mt-1 text-sm text-zinc-700">{application.cpu}</dd>
+              </div>
+            )}
+
+            {application.ram && (
+              <div className="sm:col-span-1">
+                <dt className="text-sm font-semibold text-zinc-900">RAM Configuration</dt>
+                <dd className="mt-1 text-sm text-zinc-700">{application.ram}</dd>
+              </div>
+            )}
           </dl>
         </CardContent>
       </Card>

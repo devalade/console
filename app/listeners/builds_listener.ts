@@ -1,6 +1,8 @@
 import Driver from '#drivers/driver'
 import Application from '#models/application'
 import Deployment, { DeploymentStatus } from '#models/deployment'
+import Organization from '#models/organization'
+import Project from '#models/project'
 import OctokitService from '#services/octokit_service'
 import { inject } from '@adonisjs/core'
 
@@ -8,7 +10,12 @@ import { inject } from '@adonisjs/core'
 export default class BuildsListener {
   constructor(private octokitService: OctokitService) {}
 
-  async onSuccess([application, deployment]: [Application, Deployment]) {
+  async onSuccess([organization, project, application, deployment]: [
+    Organization,
+    Project,
+    Application,
+    Deployment,
+  ]) {
     /**
      * Mark deployment as deploying.
      */
@@ -19,10 +26,10 @@ export default class BuildsListener {
      * Ignite the application.
      */
     const driver = Driver.getDriver()
-    await driver.deployments.igniteApplication(application, deployment)
+    await driver.deployments.igniteApplication(organization, project, application, deployment)
   }
 
-  async onFailure([_, deployment]: [Application, Deployment]) {
+  async onFailure([application, deployment]: [Application, Deployment]) {
     /**
      * Mark deployment as failed.
      */
@@ -33,7 +40,7 @@ export default class BuildsListener {
      * If the deployment's origin is GitHub, let's mark the GitHub check as failed.
      */
     if (deployment.origin === 'github') {
-      await this.octokitService.markFailure(deployment)
+      await this.octokitService.markFailure(application, deployment)
     }
   }
 }

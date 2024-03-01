@@ -21,7 +21,7 @@ export default function EditOrganizationCard({ organization }: EditOrganizationC
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     form.patch(`/organizations/${params.organizationSlug}`, {
-      onSuccess: successToast,
+      onSuccess: () => successToast(),
     })
   }
 

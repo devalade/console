@@ -2,13 +2,30 @@ import bindOrganization from '#decorators/bind_organization'
 import InviteMemberNotification from '#mails/invite_member_notification'
 import Organization from '#models/organization'
 import OrganizationMember from '#models/organization_member'
+import PresenceService from '#services/presence_service'
 import { createOrganizationValidator } from '#validators/create_organization_validator'
 import { updateOrganizationValidator } from '#validators/update_organization_validator'
 import type { HttpContext } from '@adonisjs/core/http'
+import emitter from '@adonisjs/core/services/emitter'
 import mail from '@adonisjs/mail/services/main'
+import vine from '@vinejs/vine'
 
 export default class OrganizationsController {
-  public async index({ inertia }: HttpContext) {
+  public async index({ auth, inertia, response }: HttpContext) {
+    /**
+     * If the current user is related to any organization,
+     * then redirect to the first organization.
+     */
+    await auth.user!.load('organizations')
+    if (auth.user!.organizations.length) {
+      const organization = auth.user!.organizations[0]
+      return response.redirect().toPath(`/organizations/${organization.slug}/projects`)
+    }
+
+    /**
+     * If the user is not related to any organization,
+     * then render a page allowing to create a new organization.
+     */
     return inertia.render('organizations/index')
   }
 
@@ -44,6 +61,9 @@ export default class OrganizationsController {
     organization: Organization,
     organizationMember: OrganizationMember
   ) {
+    if (organizationMember.role !== 'owner') {
+      return response.unauthorized()
+    }
     const isOwner = organizationMember.role === 'owner'
     if (!isOwner) {
       return response.unauthorized()
@@ -55,7 +75,14 @@ export default class OrganizationsController {
   }
 
   @bindOrganization
-  public async destroy({ response }: HttpContext, organization: Organization) {
+  public async destroy(
+    { response }: HttpContext,
+    organization: Organization,
+    organizationMember: OrganizationMember
+  ) {
+    if (organizationMember.role !== 'owner') {
+      return response.unauthorized()
+    }
     await organization.delete()
     return response.redirect().toPath('/organizations')
   }
@@ -66,6 +93,9 @@ export default class OrganizationsController {
     _organization: Organization,
     organizationMember: OrganizationMember
   ) {
+    if (organizationMember.role !== 'member') {
+      return response.unauthorized()
+    }
     await organizationMember.delete()
     return response.redirect().toPath('/organizations')
   }
@@ -76,13 +106,19 @@ export default class OrganizationsController {
     organization: Organization,
     organizationMember: OrganizationMember
   ) {
-    if (organizationMember.role === 'owner') {
+    if (organizationMember.role !== 'owner') {
       return response.unauthorized()
     }
-    const email = request.input('email')
-    await mail.send(new InviteMemberNotification(organization, email))
+    const payload = await request.validateUsing(
+      vine.compile(
+        vine.object({
+          email: vine.string().email(),
+        })
+      )
+    )
 
-    return response.redirect().back()
+    await mail.send(new InviteMemberNotification(organization, payload.email))
+    return response.redirect().toPath(`/organizations/${organization.slug}/edit`)
   }
 
   public async join({ auth, request, response }: HttpContext) {
@@ -90,10 +126,33 @@ export default class OrganizationsController {
       return response.redirect().toPath('/auth/sign_up')
     }
     const organization = await Organization.findByOrFail('slug', request.param('organizationSlug'))
-    await organization.related('members').create({
-      userId: auth.user!.id,
-      role: 'member',
-    })
+    await organization
+      .related('members')
+      .firstOrCreate(
+        { userId: auth.user!.id, role: 'member' },
+        { userId: auth.user!.id, role: 'member' }
+      )
     return response.redirect().toPath(`/organizations/${organization.slug}/projects`)
+  }
+
+  @bindOrganization
+  async streamPresence({ auth, response }: HttpContext, organization: Organization) {
+    response.prepareServerSentEventsHeaders()
+
+    await PresenceService.addUserToOrganizationPresence(organization, auth.user!)
+
+    const presence = await PresenceService.getOrganizationPresence(organization)
+    response.sendServerSentEvent({ presence })
+
+    emitter.on(`organizations:${organization.slug}:presence-update`, async (presence) => {
+      response.sendServerSentEvent({ presence })
+    })
+
+    response.response.on('close', async () => {
+      await PresenceService.removeUserFromOrganizationPresence(organization, auth.user!)
+      response.response.end()
+    })
+
+    return response.noContent()
   }
 }

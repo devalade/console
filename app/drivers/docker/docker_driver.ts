@@ -6,6 +6,8 @@ import DockerApplicationsService from './docker_applications_service.js'
 import DockerDeploymentsService from './docker_deployments_service.js'
 import DockerEventsWatcher from './docker_events_watcher.js'
 import { publicIpv4 } from 'public-ip'
+import DockerStorageBucketsService from './docker_storage_buckets_service.js'
+import DrapeauService from '#services/drapeau_service'
 
 export default class DockerDriver implements IDriver {
   private readonly docker: Docker
@@ -13,6 +15,7 @@ export default class DockerDriver implements IDriver {
   public applications: DockerApplicationsService
   public databases: DockerDatabasesService
   public deployments: DockerDeploymentsService
+  public storageBuckets: DockerStorageBucketsService
 
   public ipv4: string = '0.0.0.0'
 
@@ -23,6 +26,7 @@ export default class DockerDriver implements IDriver {
     this.applications = new DockerApplicationsService(this.docker)
     this.databases = new DockerDatabasesService(this.docker)
     this.deployments = new DockerDeploymentsService(this.docker)
+    this.storageBuckets = new DockerStorageBucketsService()
   }
 
   private async initializeSwarmIfNotInitialized() {
@@ -58,11 +62,11 @@ export default class DockerDriver implements IDriver {
   }
 
   async initializeDriver() {
-    await this.initializeSwarmIfNotInitialized()
-
-    await this.prepareBuilderImage()
-
     this.ipv4 = env.get('IPV4', await publicIpv4())
+
+    await this.initializeSwarmIfNotInitialized()
+    await this.prepareBuilderImage()
+    DrapeauService.defineFeatureFlag('storage_buckets', () => true)
 
     const dockerEventsWatcher = new DockerEventsWatcher(this.docker)
     dockerEventsWatcher.watchEvents()

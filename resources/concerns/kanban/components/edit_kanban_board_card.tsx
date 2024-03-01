@@ -23,7 +23,7 @@ const EditKanbanBoardCard: React.FunctionComponent<EditKanbanBoardCardProps> = (
     form.patch(
       `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}`,
       {
-        onSuccess: successToast,
+        onSuccess: () => successToast(),
       }
     )
   }

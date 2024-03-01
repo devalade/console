@@ -6,6 +6,7 @@ import {
   type TablerIconsProps,
 } from '@tabler/icons-react'
 import useOrganizations from '@/concerns/organizations/hooks/use_organizations'
+import isFeatureEnabled from '@/lib/is_feature_enabled'
 
 export default function useMainLayoutNavigation(): Array<{
   name: string
@@ -22,7 +23,7 @@ export default function useMainLayoutNavigation(): Array<{
       icon: IconLayoutGrid,
       current: page.url === `/organizations/${currentOrganization.slug}/projects`,
     },
-    {
+    isFeatureEnabled('chat') && {
       name: 'Chat',
       href: `/organizations/${currentOrganization.slug}/chat`,
       icon: IconMessageCircle,
@@ -34,5 +35,5 @@ export default function useMainLayoutNavigation(): Array<{
       icon: IconSettings,
       current: page.url === `/organizations/${currentOrganization.slug}/edit`,
     },
-  ]
+  ].filter(Boolean)
 }

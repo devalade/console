@@ -9,6 +9,7 @@ import Input from '@/components/input'
 import Button from '@/components/button'
 import useSuccessToast from '@/hooks/use_success_toast'
 import useParams from '@/hooks/use_params'
+import ResourcesConfigurator from './resources_configurator'
 
 export type AppSettingsCardProps = {
   project: Project
@@ -21,15 +22,17 @@ export default function ApplicationSettingsCard({ project, application }: AppSet
 
   const form = useForm({
     name: application.name,
+    cpu: application.cpu,
+    ram: application.ram,
   })
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     form.patch(
       `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`,
       {
-        onSuccess: successToast,
+        onSuccess: () => successToast(),
+        data: form.data,
       }
     )
   }
@@ -41,7 +44,7 @@ export default function ApplicationSettingsCard({ project, application }: AppSet
           <CardTitle>Application settings</CardTitle>
         </CardHeader>
         <CardContent className="!p-0 space-y-4">
-          <div className="grid gap-1 px-6 py-4">
+          <div className="grid gap-1 px-6 py-4 pt-6">
             <Label>Application name</Label>
             <Input
               id="name"
@@ -49,6 +52,10 @@ export default function ApplicationSettingsCard({ project, application }: AppSet
               value={form.data.name}
               onChange={(e) => form.setData('name', slugify(e.target.value))}
             />
+          </div>
+          <hr />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+            <ResourcesConfigurator form={form} />
           </div>
         </CardContent>
         <CardFooter>

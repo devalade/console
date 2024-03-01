@@ -1,6 +1,8 @@
+[![](https://dcbadge.vercel.app/api/server/DPrfmDttMb)](https://discord.gg/DPrfmDttMb)
+
 # [WIP] Software Citadel - Console
 
-> An open-source platform for development teams.
+> An open-source collaborative cloud platform for development teams.
 
 ## About
 
@@ -43,11 +45,36 @@ npm install
 # Create a .env file
 node ace install
 
-# Start the development server
+# Run the migrations
+node ace migration:run
+
+# Start development containers (define in zarf/dev/docker-compose.yml)
+# and the development server.
 npm run dev
 ```
 
-### Fly.io Setup
+### Set up GitHub OAuth
+
+1. Go to [GitHub Developer Settings](https://github.com/settings/apps) and create some new OAuth/regular app.
+
+2. Fill in the form with the following values :
+
+- Application name : `Software Citadel Console`
+- Homepage URL : `http://127.0.0.1:3333`
+- Callback URL : `http://127.0.0.1:3333/auth/github/callback`
+
+3. Once the app is created, you will be able to see the `Client ID` and `Client Secret`. Add them to the `.env` file :
+
+```env
+GITHUB_CLIENT_ID=<your_client_id>
+GITHUB_CLIENT_SECRET=<your_client_secret>
+```
+
+You now should be able to log in with GitHub.
+
+Please remember to use `http://127.0.0.1:3333` as your development URL, instead of `http://localhost:3333`.
+
+## Fly.io Setup
 
 ### Requirements
 
@@ -77,3 +104,29 @@ fly secrets set ORG=personal # Replace with something else if you're using some 
 fly secrets set HTTP_URL=<your_hostname>/fly/webhooks/logs
 fly secrets set HTTP_TOKEN=<replace_this_with_your_http_bearer>
 ```
+
+## FAQ
+
+### How to contribute?
+
+The best way to contribute is to solve one of the [issues](https://github.com/softwarecitadel/console/issues) marked with the `open for external contributions` tag. And please comment on the issue to let us know that you're working on it.
+
+To get started, you can fork the repository, create a new branch, and start working on the issue. Once you're done, you can create a pull request.
+
+For more information, you can contact us on the [Discord server](https://discord.gg/DPrfmDttMb) or through this [contact form](https://softwarecitadel.com/contact).
+
+If you want to contribute with a new feature, please open an issue first, so we can discuss it.
+
+### What if I want to use it with some not-supported orchestration driver?
+
+You can create a new driver by copy/pasting the blank driver like such :
+
+```bash
+cp -r app/drivers/blank app/drivers/<your_driver>
+```
+
+Then, you can iterate on the driver to make it work with your orchestration platform.
+
+For example, you might have to have to add some environment variables to the `.env` file, and validating them in the `start/env.ts` file, etc.
+
+If you need some help, feel free to [contact us](https://softwarecitadel.com/contact).

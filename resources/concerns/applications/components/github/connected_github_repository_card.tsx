@@ -37,7 +37,7 @@ export default function ConnectGitHubRepositoryCard({
     form.put(
       `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`,
       {
-        onSuccess: successToast,
+        onSuccess: () => successToast(),
       }
     )
   }
@@ -49,7 +49,7 @@ export default function ConnectGitHubRepositoryCard({
       `/organizations/${params.organizationSlug}/projects/${project.slug}/applications/${application.slug}`,
       {
         data,
-        onSuccess: successToast,
+        onSuccess: () => successToast(),
       }
     )
   }

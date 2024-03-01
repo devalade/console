@@ -20,7 +20,12 @@ export default await Env.create(new URL('../', import.meta.url), {
   LOG_LEVEL: Env.schema.string(),
   CACHE_VIEWS: Env.schema.boolean(),
 
-  DRIVER: Env.schema.enum(['docker', 'fly'] as const),
+  DRIVER: Env.schema.enum(['blank', 'docker', 'fly'] as const),
+
+  /**
+   * Variables for configuring the OpenAI API
+   */
+  OPENAI_API_KEY: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------
@@ -70,8 +75,8 @@ export default await Env.create(new URL('../', import.meta.url), {
   | Variables for configuring ally package
   |----------------------------------------------------------
   */
-  GITHUB_CLIENT_ID: Env.schema.string(),
-  GITHUB_CLIENT_SECRET: Env.schema.string(),
+  GITHUB_CLIENT_ID: Env.schema.string.optional(),
+  GITHUB_CLIENT_SECRET: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------

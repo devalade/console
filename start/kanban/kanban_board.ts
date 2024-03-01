@@ -3,7 +3,7 @@ import { middleware } from '../kernel.js'
 const KanbanBoardsController = () => import('#controllers/kanban/kanban_boards_controller')
 
 /**
- * Kanban routes.
+ * Kanban board
  */
 router
   .resource('organizations.projects.kanban_boards', KanbanBoardsController)
@@ -12,5 +12,4 @@ router
     projects: 'projectSlug',
     kanban_boards: 'kanbanBoardSlug',
   })
-  .use('*', middleware.auth())
   .use(['index', 'show', 'edit'], middleware.loadProjects())

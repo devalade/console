@@ -31,6 +31,9 @@ import Organization from '#models/organization'
 import OrganizationsController from '#controllers/organizations_controller'
 import ChatController from '#controllers/chat_controller'
 import ChannelsController from '#controllers/channels_controller'
+import MessagesController from '#controllers/messages_controller'
+import ConversationsController from '#controllers/conversations_controller'
+import StorageBucketsController from '#controllers/storage_buckets_controller'
 
 router.get('/', async ({ auth, response }) => {
   if (auth.isAuthenticated) {
@@ -71,8 +74,12 @@ router.post('/auth/sign_out', [SignOutController, 'handle'])
 /**
  * Github authentication.
  */
-router.get('/auth/github/redirect', [AuthGithubController, 'redirect'])
-router.get('/auth/github/callback', [AuthGithubController, 'callback'])
+router
+  .get('/auth/github/redirect', [AuthGithubController, 'redirect'])
+  .use(middleware.drapeau('sign_in:github'))
+router
+  .get('/auth/github/callback', [AuthGithubController, 'callback'])
+  .use(middleware.drapeau('sign_in:github'))
 
 /**
  * CLI authentication.
@@ -105,11 +112,23 @@ router
   .use('edit', middleware.loadProjects())
 
 router
+  .get('/organizations/:organizationSlug/join', [OrganizationsController, 'join'])
+  .use(middleware.auth())
+
+router
   .post('/organizations/:organizationSlug/quit', [OrganizationsController, 'quit'])
   .use(middleware.auth())
 
 router
-  .post('/organizations/:organizationSlug/join', [OrganizationsController, 'join'])
+  .post('/organizations/:organizationSlug/invite', [OrganizationsController, 'invite'])
+  .use(middleware.auth())
+
+router
+  .get('/organizations/:organizationSlug/chat/updates', [ChatController, 'streamUpdates'])
+  .use(middleware.auth())
+
+router
+  .get('/organizations/:organizationSlug/presence', [OrganizationsController, 'streamPresence'])
   .use(middleware.auth())
 
 /**
@@ -217,7 +236,7 @@ router
     '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/deployments',
     [DeploymentsController, 'store']
   )
-  .use([middleware.auth({ guards: ['api'] })])
+  .use([middleware.auth({ guards: ['api', 'web'] })])
 router
   .get(
     '/organizations/:organizationSlug/projects/:projectSlug/applications/:applicationSlug/deployments/updates',
@@ -243,6 +262,7 @@ router
     router.post('/webhooks', [GitHubDeploymentsController, 'handleWebhooks'])
   })
   .prefix('/api/github')
+  .use(middleware.drapeau('deployments:github'))
 
 /**
  * Fly webhooks (in order to retrieve logs)
@@ -252,16 +272,76 @@ router.post('/fly/webhooks/logs', [FlyWebhooksController, 'handleIncomingLogs'])
 /**
  * Kanban routes.
  */
-import './kanban/kanban_board.js'
-import './kanban/kanban_column.js'
-import './kanban/kanban_task.js'
-
 router
-  .get('/organizations/:organizationSlug/chat', [ChatController, 'index'])
+  .group(() => {
+    import('./kanban/kanban_board.js')
+    import('./kanban/kanban_column.js')
+    import('./kanban/kanban_task.js')
+  })
+  .use([middleware.auth(), middleware.drapeau('kanban')])
+
+/**
+ * Chat routes.
+ */
+router
+  .group(() => {
+    router.get('/organizations/:organizationSlug/chat', [ChatController, 'index'])
+
+    router
+      .resource('organizations.channels', ChannelsController)
+      .params({ organizations: 'organizationSlug', channels: 'channelSlug' })
+      .only(['store', 'update', 'destroy'])
+
+    router.patch('/organizations/:organizationSlug/channels/:channelSlug/move', [
+      ChannelsController,
+      'move',
+    ])
+
+    router.post('/organizations/:organizationSlug/messages', [MessagesController, 'store'])
+    router.patch('/organizations/:organizationSlug/messages/:messageId', [
+      MessagesController,
+      'update',
+    ])
+    router.delete('/organizations/:organizationSlug/messages/:messageId', [
+      MessagesController,
+      'destroy',
+    ])
+
+    router.post('/organizations/:organizationSlug/conversations', [
+      ConversationsController,
+      'store',
+    ])
+  })
+  .use([middleware.auth(), middleware.drapeau('chat')])
+
+/**
+ * Storage buckets.
+ */
+router
+  .group(() => {
+    router
+      .resource('organizations.projects.storage_buckets', StorageBucketsController)
+      .params({
+        organizations: 'organizationSlug',
+        projects: 'projectSlug',
+        storage_buckets: 'storageBucketSlug',
+      })
+      .use(['index', 'show', 'edit'], middleware.loadProjects())
+
+    router.post(
+      '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/upload',
+      [StorageBucketsController, 'uploadFile']
+    )
+
+    router.get(
+      '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/files/:filename',
+      [StorageBucketsController, 'downloadFile']
+    )
+
+    router.delete(
+      '/organizations/:organizationSlug/projects/:projectSlug/storage_buckets/:storageBucketSlug/files/:filename',
+      [StorageBucketsController, 'deleteFile']
+    )
+  })
   .use(middleware.auth())
-
-router
-  .resource('organizations.channels', ChannelsController)
-  .params({ organizations: 'organizationSlug' })
-  .use('*', middleware.auth())
-  .only(['store'])
+  .use(middleware.drapeau('storage_buckets'))

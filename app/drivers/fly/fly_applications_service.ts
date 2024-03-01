@@ -7,11 +7,17 @@ import { AddressType } from './api/fly_networks_api.js'
 import Certificate, { CertificateStatus } from '#models/certificate'
 import { DnsEntries } from '#types/dns'
 import emitter from '@adonisjs/core/services/emitter'
+import Organization from '#models/organization'
+import Project from '#models/project'
 
 export default class FlyApplicationsService implements IDriverApplicationsService {
   private readonly flyApi: FlyApi = new FlyApi()
 
-  async createApplication(application: Application) {
+  async createApplication(
+    _organization: Organization,
+    _project: Project,
+    application: Application
+  ) {
     /**
      * Create Fly.io applications for both the actual Software Citadel application and builder.
      */
@@ -42,7 +48,11 @@ export default class FlyApplicationsService implements IDriverApplicationsServic
     await application.save()
   }
 
-  async deleteApplication(application: Application) {
+  async deleteApplication(
+    _organization: Organization,
+    _project: Project,
+    application: Application
+  ) {
     const applicationName = this.flyApi.getFlyApplicationName(application.slug)
     const builderName = this.flyApi.getFlyApplicationName(application.slug, true)
 
@@ -50,7 +60,13 @@ export default class FlyApplicationsService implements IDriverApplicationsServic
     await this.flyApi.apps.deleteApplication(builderName)
   }
 
-  async streamLogs(application: Application, response: Response, scope: 'application' | 'builder') {
+  async streamLogs(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    response: Response,
+    scope: 'application' | 'builder'
+  ) {
     const flyApplicationName = this.flyApi.getFlyApplicationName(
       application.slug,
       scope === 'builder'
@@ -61,7 +77,12 @@ export default class FlyApplicationsService implements IDriverApplicationsServic
     })
   }
 
-  async createCertificate(application: Application, hostname: string): Promise<DnsEntries> {
+  async createCertificate(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    hostname: string
+  ): Promise<DnsEntries> {
     const appId = this.flyApi.getFlyApplicationName(application.slug)
     await this.flyApi.certificates.addCertificate(appId, hostname)
     return [
@@ -79,13 +100,20 @@ export default class FlyApplicationsService implements IDriverApplicationsServic
   }
 
   checkDnsConfiguration(
+    _organization: Organization,
+    _project: Project,
     application: Application,
     certificate: Certificate
   ): Promise<CertificateStatus> {
     return this.flyApi.certificates.checkCertificate(application, certificate.domain)
   }
 
-  async deleteCertificate(application: Application, hostname: string) {
+  async deleteCertificate(
+    _organization: Organization,
+    _project: Project,
+    application: Application,
+    hostname: string
+  ) {
     const appId = this.flyApi.getFlyApplicationName(application.slug)
     await this.flyApi.certificates.removeCertificate(appId, hostname)
   }

@@ -11,13 +11,19 @@ export default class LogsController {
   }
 
   @bindProjectAndApplication
-  async stream(ctx: HttpContext, _project: Project, application: Application) {
-    ctx.response.useServerSentEvents()
+  async stream(ctx: HttpContext, project: Project, application: Application) {
+    ctx.response.prepareServerSentEventsHeaders()
 
     const scope = ctx.request.qs().scope === 'builder' ? 'builder' : 'application'
 
     const driver = Driver.getDriver()
-    await driver.applications.streamLogs(application, ctx.response, scope)
+    await driver.applications.streamLogs(
+      project.organization,
+      project,
+      application,
+      ctx.response,
+      scope
+    )
 
     ctx.response.response.on('close', () => {
       ctx.response.response.end()

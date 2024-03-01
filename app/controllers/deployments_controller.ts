@@ -23,7 +23,7 @@ export default class DeploymentsController {
   }
 
   @bindProjectAndApplication
-  async store({ request, response }: HttpContext, _project: Project, application: Application) {
+  async store({ request, response }: HttpContext, project: Project, application: Application) {
     const tarball = request.file('tarball', {
       size: '20mb',
       extnames: ['tar.gz'],
@@ -42,6 +42,8 @@ export default class DeploymentsController {
 
     const driver = Driver.getDriver()
     const shouldMonitorHealthcheck = driver.deployments.shouldMonitorHealthcheck(
+      project.organization,
+      project,
       application,
       deployment
     )
@@ -54,11 +56,10 @@ export default class DeploymentsController {
 
   @bindProjectAndApplication
   async streamUpdates({ response }: HttpContext, _project: Project, application: Application) {
-    response.useServerSentEvents()
+    response.prepareServerSentEventsHeaders()
 
     emitter.on(`deployments:updated:${application.slug}`, (deployment: Deployment) => {
-      response.response.write(`data: ${JSON.stringify({ deployment })}\n\n`)
-      response.response.flushHeaders()
+      response.sendServerSentEvent({ deployment })
     })
 
     response.response.on('close', () => {

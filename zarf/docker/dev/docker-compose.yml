@@ -49,7 +49,7 @@ services:
       - 'traefik.http.routers.whoami.tls.certresolver=myresolver'
     networks:
       - traefik
-   
+
   minio:
     image: 'minio/minio:latest'
     ports:

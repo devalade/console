@@ -37,22 +37,11 @@ export default class Database extends BaseModel {
   @column()
   declare dbms: 'postgres' | 'mysql' | 'redis'
 
-  /**
-   * Custom getters.
-   */
-  get hostname(): string {
-    switch (env.get('DRIVER')) {
-      case 'docker':
-        return `${env.get('DOCKER_DATABASE_NAME_PREFIX', 'citadel-database')}-${this.slug}.${env.get(
-          'TRAEFIK_WILDCARD_DOMAIN',
-          'softwarecitadel.app'
-        )}`
-      case 'fly':
-        return `${env.get('FLY_DATABASE_NAME_PREFIX', 'citadel-database')}-${this.slug}.fly.dev`
-      default:
-        return ''
-    }
-  }
+  @column()
+  declare hostname: string
+
+  @column()
+  declare diskSize: number | null
 
   @computed()
   public get uri(): string {
@@ -70,22 +59,42 @@ export default class Database extends BaseModel {
    * Hooks.
    */
   @beforeCreate()
-  static async assignSlug(database: Database) {
+  static async assignSlugAndHostname(database: Database) {
     let slug = slugify(database.name, { lower: true, replacement: '-' })
     while (await Database.findBy('slug', slug)) {
       slug += '-' + generateRandomWord({ exactly: 1 })
     }
     database.slug = slug
+
+    switch (env.get('DRIVER')) {
+      case 'docker':
+        database.hostname = `${env.get('DOCKER_DATABASE_NAME_PREFIX', 'citadel-database')}-${database.slug}.${env.get(
+          'TRAEFIK_WILDCARD_DOMAIN',
+          'softwarecitadel.app'
+        )}`
+        break
+      case 'fly':
+        database.hostname = `${env.get('FLY_DATABASE_NAME_PREFIX', 'citadel-database')}-${database.slug}.fly.dev`
+        break
+      default:
+        database.hostname = ''
+    }
   }
 
   @afterCreate()
   static async emitCreatedEvent(database: Database) {
-    emitter.emit('databases:created', database)
+    await database.load('project', (query) => {
+      query.preload('organization')
+    })
+    emitter.emit('databases:created', [database.project.organization, database.project, database])
   }
 
   @beforeDelete()
   static async emitDeletedEvent(database: Database) {
-    emitter.emit('databases:deleted', database)
+    await database.load('project', (query) => {
+      query.preload('organization')
+    })
+    emitter.emit('databases:deleted', [database.project.organization, database.project, database])
   }
 
   /**

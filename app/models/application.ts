@@ -40,6 +40,15 @@ export default class Application extends BaseModel {
   @column()
   declare ipv6: string | null
 
+  @column()
+  declare cpu: string | null
+
+  @column()
+  declare ram: string | null
+
+  @column()
+  declare hostname: string
+
   /**
    * GitHub-related columns.
    */
@@ -71,12 +80,32 @@ export default class Application extends BaseModel {
    * Hooks.
    */
   @beforeCreate()
-  static async assignSlug(application: Application) {
+  static async assignSlugAndHostname(application: Application) {
+    /**
+     * Generate a unique slug for the application.
+     */
     let slug = slugify(application.name, { lower: true, replacement: '-' })
     while (await Application.findBy('slug', slug)) {
       slug += '-' + generateRandomWord({ exactly: 1 })
     }
     application.slug = slug
+
+    /**
+     * Generate a hostname for the application.
+     */
+    switch (env.get('DRIVER')) {
+      case 'docker':
+        application.hostname = `${env.get('DOCKER_APPLICATION_NAME_PREFIX', 'citadel-app')}-${application.slug}.${env.get(
+          'TRAEFIK_WILDCARD_DOMAIN',
+          'softwarecitadel.app'
+        )}`
+        break
+      case 'fly':
+        application.hostname = `${env.get('FLY_APPLICATION_NAME_PREFIX', 'citadel-app')}-${application.slug}.fly.dev`
+        break
+      default:
+        application.hostname = ''
+    }
   }
 
   @beforeCreate()
@@ -86,29 +115,26 @@ export default class Application extends BaseModel {
 
   @afterCreate()
   static async emitCreatedEvent(application: Application) {
-    emitter.emit('applications:created', application)
+    await application.load('project', (query) => {
+      query.preload('organization')
+    })
+    emitter.emit('applications:created', [
+      application.project.organization,
+      application.project,
+      application,
+    ])
   }
 
   @beforeDelete()
   static async emitDeletedEvent(application: Application) {
-    emitter.emit('applications:deleted', application)
-  }
-
-  /**
-   * Custom getters.
-   */
-  get hostname(): string {
-    switch (env.get('DRIVER')) {
-      case 'docker':
-        return `${env.get('DOCKER_APPLICATION_NAME_PREFIX', 'citadel-app')}-${this.slug}.${env.get(
-          'TRAEFIK_WILDCARD_DOMAIN',
-          'softwarecitadel.app'
-        )}`
-      case 'fly':
-        return `${env.get('FLY_APPLICATION_NAME_PREFIX', 'citadel-app')}-${this.slug}.fly.dev`
-      default:
-        return ''
-    }
+    await application.load('project', (query) => {
+      query.preload('organization')
+    })
+    emitter.emit('applications:deleted', [
+      application.project.organization,
+      application.project,
+      application,
+    ])
   }
 
   /**

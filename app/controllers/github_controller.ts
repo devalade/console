@@ -19,7 +19,7 @@ export default class GitHubController {
   }
 
   public async streamRepositoriesListUpdate({ auth, response }: HttpContext) {
-    response.useServerSentEvents()
+    response.prepareServerSentEventsHeaders()
 
     emitter.on(`github:installation:${auth.user!.id}`, async (user) => {
       response.response.write(`data: ${JSON.stringify({ loading: true })}\n\n`)

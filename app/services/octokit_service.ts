@@ -9,6 +9,7 @@ import {
   GithubRepositoryOwnersRecord,
   GithubRepositoryOwner,
 } from '#types/github_repository'
+import Application from '#models/application'
 
 export default class OctokitService {
   private readonly octokitApp: OctokitApp
@@ -52,16 +53,15 @@ export default class OctokitService {
     }
   }
 
-  public async markSuccess(deployment: Deployment): Promise<void> {
+  public async markSuccess(application: Application, deployment: Deployment): Promise<void> {
     try {
-      await deployment.load('application')
       const installation = await this.octokitApp.getInstallationOctokit(
-        deployment.application.githubInstallationId!
+        application.githubInstallationId!
       )
 
       await installation.rest.checks.update({
-        owner: deployment.application.githubRepository!.split('/')[0],
-        repo: deployment.application.githubRepository!.split('/')[1],
+        owner: application.githubRepository!.split('/')[0],
+        repo: application.githubRepository!.split('/')[1],
         check_run_id: deployment.githubCheckId!,
         status: 'completed',
         conclusion: 'success',
@@ -69,15 +69,14 @@ export default class OctokitService {
     } catch {}
   }
 
-  public async markFailure(deployment: Deployment): Promise<void> {
+  public async markFailure(application: Application, deployment: Deployment): Promise<void> {
     try {
-      await deployment.load('application')
       const installation = await this.octokitApp.getInstallationOctokit(
-        deployment.application.githubInstallationId!
+        application.githubInstallationId!
       )
       await installation.rest.checks.update({
-        owner: deployment.application.githubRepository!.split('/')[0],
-        repo: deployment.application.githubRepository!.split('/')[1],
+        owner: application.githubRepository!.split('/')[0],
+        repo: application.githubRepository!.split('/')[1],
         check_run_id: deployment.githubCheckId!,
         status: 'completed',
         conclusion: 'failure',

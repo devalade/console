@@ -40,11 +40,15 @@ export default class KanbanColumnsController {
         .andWhere('board_id', board.id)
         .firstOrFail()
 
+<<<<<<< HEAD
       firstColumn.order = newOrder
       secondColumn.order = oldOrder
       await secondColumn.save()
       await firstColumn.save()
     }
+=======
+    await Promise.all([firstColumn.save(), secondColumn.save()])
+>>>>>>> 92adc0812f081ae4859508bcfbd549dd09bee88d
 
     return response.redirect().back()
   }

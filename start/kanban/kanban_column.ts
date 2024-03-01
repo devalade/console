@@ -1,5 +1,4 @@
 import router from '@adonisjs/core/services/router'
-import { middleware } from '../kernel.js'
 const KanbanColumnsController = () => import('#controllers/kanban/kanban_columns_controller')
 
 router
@@ -11,4 +10,3 @@ router
     kanban_boards: 'kanbanBoardSlug',
     columns: 'kanbanColumnId',
   })
-  .use('*', middleware.auth())

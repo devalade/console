@@ -7,5 +7,7 @@ export const updateApplicationValidator = vine.compile(
     githubBranch: vine.string().trim().minLength(3).maxLength(255).optional(),
     githubInstallationId: vine.number().positive().optional(),
     action: vine.string().optional(),
+    cpu: vine.string().trim().minLength(3).maxLength(255).optional(),
+    ram: vine.string().trim().minLength(3).maxLength(255).optional(),
   })
 )

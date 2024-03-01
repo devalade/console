@@ -1,14 +1,16 @@
 import Driver from '#drivers/driver'
 import Application from '#models/application'
+import Organization from '#models/organization'
+import Project from '#models/project'
 
 export default class ApplicationsListener {
-  async onCreated(application: Application) {
+  async onCreated([organization, project, application]: [Organization, Project, Application]) {
     const driver = Driver.getDriver()
-    await driver.applications.createApplication(application)
+    await driver.applications.createApplication(organization, project, application)
   }
 
-  async onDeleted(application: Application) {
+  async onDeleted([organization, project, application]: [Organization, Project, Application]) {
     const driver = Driver.getDriver()
-    await driver.applications.deleteApplication(application)
+    await driver.applications.deleteApplication(organization, project, application)
   }
 }

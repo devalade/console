@@ -1,6 +1,7 @@
 import Organization from '#models/organization'
 import OrganizationMember from '#models/organization_member'
 import type { HttpContext } from '@adonisjs/core/http'
+import logger from '@adonisjs/core/services/logger'
 
 export default function bindOrganization(
   _target: any,
@@ -15,14 +16,13 @@ export default function bindOrganization(
       const organization = await Organization.query()
         .where('slug', params.organizationSlug)
         .firstOrFail()
-
       const organizationMember = await OrganizationMember.query()
-        .where('userId', ctx.auth.user!.id)
-        .andWhere('id', organization.id)
+        .where('user_id', ctx.auth.user!.id)
+        .andWhere('organization_id', organization.id)
         .firstOrFail()
-
       return await originalMethod.call(this, ctx, organization, organizationMember)
-    } catch {
+    } catch (error) {
+      logger.error(error, 'Failed to bind organization')
       return response.notFound()
     }
   }
