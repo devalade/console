@@ -40,11 +40,11 @@ function reorder<T>(items: T[], startIndex: number, endIndex: number) {
 
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
   const params = useParams()
-  const [sortedColumns, setSortedColums] = useState(board.columns.sort().sort((a, b) => {
-    if (a.order < b.order) return -1
-    if (a.order > b.order) return 1
-    return 0
-  }))
+  const [sortedColumns, setSortedColums] = useState(board.columns)
+
+  React.useEffect(() => {
+      console.log(board)
+  }, [board])
 
   function onDragEnd({ destination, source, type }: Result) {
     /**
