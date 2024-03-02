@@ -43,7 +43,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
   const [sortedColumns, setSortedColums] = useState(board.columns)
 
   React.useEffect(() => {
-      console.log(board)
+    setSortedColums(board.columns);
   }, [board])
 
   function onDragEnd({ destination, source, type }: Result) {
@@ -122,6 +122,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
 
         sourceColumn.tasks = reorderedCards;
         setSortedColums(newSortedColums);
+        // TODO: exchange the last column with the column before it
         router.patch(
           `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${source.droppableId}/tasks/${sourceColumn.tasks[source.index].id}`,
           { order: sourceColumn.tasks[destination.index].order }

@@ -9,7 +9,7 @@ import db from '@adonisjs/lucid/services/db'
 
 export default class KanbanTasksController {
   @bindProjectAndKanbanBoardAndKanbanColumn
-  public async store(
+  async store(
     { bouncer, request, response }: HttpContext,
     project: Project,
     _board: KanbanBoard,
@@ -24,7 +24,7 @@ export default class KanbanTasksController {
   }
 
   @bindProjectAndKanbanBoardAndKanbanColumnAndKanbanTask
-  public async update(
+  async update(
     { bouncer, request, response }: HttpContext,
     project: Project,
     _board: KanbanBoard,
@@ -71,7 +71,7 @@ export default class KanbanTasksController {
   }
 
   @bindProjectAndKanbanBoardAndKanbanColumnAndKanbanTask
-  public async destroy(
+  async destroy(
     { bouncer, response }: HttpContext,
     project: Project,
     _board: KanbanBoard,
