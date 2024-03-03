@@ -7,7 +7,7 @@ import { Column } from '../components/kanban_colomn'
 import { router } from '@inertiajs/react'
 import useParams from '@/hooks/use_params'
 import { CreateNewColumn } from '../components/form/create_kanban_column'
-import { useState } from "react";
+import { useState } from 'react'
 
 interface ShowProps {
   project: Project
@@ -31,11 +31,11 @@ type Result = {
 }
 
 function reorder<T>(items: T[], startIndex: number, endIndex: number) {
-  const result = Array.from(items);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
+  const result = Array.from(items)
+  const [removed] = result.splice(startIndex, 1)
+  result.splice(endIndex, 0, removed)
 
-  return result;
+  return result
 }
 
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
@@ -43,7 +43,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
   const [sortedColumns, setSortedColums] = useState(board.columns)
 
   React.useEffect(() => {
-    setSortedColums(board.columns);
+    setSortedColums(board.columns)
   }, [board])
 
   function onDragEnd({ destination, source, type }: Result) {
@@ -61,25 +61,20 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
      * The user moves a column.
      */
     if (type === 'column') {
-      const items = reorder(
-        sortedColumns,
-        source.index,
-        destination.index,
-      ).map((item, index) => ({ ...item, order: index + 1 }));
+      const items = reorder(sortedColumns, source.index, destination.index).map((item, index) => ({
+        ...item,
+        order: index + 1,
+      }))
 
-      setSortedColums(items);
-      /**
-       * Retrieve the first and second columns.
-       */
-      const firstColumn = board.columns[source.index]
-      const secondColumn = board.columns[destination.index]
+      setSortedColums(items)
 
       /**
        * Update the order of the columns.
        */
       router.put(
-        `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${firstColumn.id}`,
-        { order: secondColumn.order }
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${board.columns[source.index].id
+        }`,
+        { columns: items }
       )
     }
 
@@ -87,7 +82,7 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
      * The user moves a card.
      */
     if (type === 'card') {
-      let newSortedColums = [...sortedColumns];
+      let newSortedColums = [...sortedColumns]
       /**
        * Retrieve the source and destination columns.
        */
@@ -97,12 +92,12 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
 
       // Check if cards exists on the sourceList
       if (!sourceColumn.tasks) {
-        sourceColumn.tasks = [];
+        sourceColumn.tasks = []
       }
 
       // Check if cards exists on the destList
       if (!destColumn.tasks) {
-        destColumn.tasks = [];
+        destColumn.tasks = []
       }
 
       /**
@@ -110,53 +105,47 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
        * We only need to update the order of the cards.
        */
       if (source.droppableId === destination.droppableId) {
-        const reorderedCards = reorder(
-          sourceColumn.tasks,
-          source.index,
-          destination.index,
-        );
+        const reorderedTasks = reorder(sourceColumn.tasks, source.index, destination.index)
 
-        reorderedCards.forEach((task, idx) => {
-          task.order = idx + 1;
-        });
+        reorderedTasks.forEach((task, idx) => {
+          task.order = idx + 1
+        })
 
-        sourceColumn.tasks = reorderedCards;
-        setSortedColums(newSortedColums);
-        // TODO: exchange the last column with the column before it
+        sourceColumn.tasks = reorderedTasks
+        setSortedColums(newSortedColums)
+
         router.patch(
           `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${source.droppableId}/tasks/${sourceColumn.tasks[source.index].id}`,
-          { order: sourceColumn.tasks[destination.index].order }
+          { tasks: reorderedTasks }
         )
-
       } else {
-
         /**
          * Remove card from the source list
          */
-        const [movedTask] = sourceColumn.tasks.splice(source.index, 1);
+        const [movedTask] = sourceColumn.tasks.splice(source.index, 1)
 
         /**
          * Assign the new listId to the moved card
          */
-        movedTask.columnId = +destination.droppableId;
+        movedTask.columnId = +destination.droppableId
 
         /**
          * Add card to the destination list
          */
-        destColumn.tasks.splice(destination.index, 0, movedTask);
+        destColumn.tasks.splice(destination.index, 0, movedTask)
 
         sourceColumn.tasks.forEach((task, idx) => {
-          task.order = idx +1;
-        });
+          task.order = idx + 1
+        })
 
         /**
          * Update the order for each card in the destination list
          */
         destColumn.tasks.forEach((task, idx) => {
-          task.order = idx +1;
-        });
+          task.order = idx + 1
+        })
 
-        setSortedColums(newSortedColums);
+        setSortedColums(newSortedColums)
 
         /**
          * The card is moved to a different column.
@@ -166,7 +155,6 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
           `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${source.droppableId}/tasks/${sourceColumn.tasks[source.index].id}`,
           { order: sourceColumn.tasks[destination.index].order, columnId: destination.droppableId }
         )
-
       }
     }
   }

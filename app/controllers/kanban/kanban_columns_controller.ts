@@ -31,18 +31,10 @@ export default class KanbanColumnsController {
         .save()
     }
 
-    if (payload.order) {
-      const newOrder = payload.order
-      const oldOrder = firstColumn.order
-
-      const secondColumn = await KanbanColumn.query()
-        .where('order', newOrder)
-        .andWhere('board_id', board.id)
-        .firstOrFail()
-
-      firstColumn.order = newOrder
-      secondColumn.order = oldOrder
-      await Promise.all([firstColumn.save(), secondColumn.save()])
+    if (payload.columns) {
+      for (let i = 0; i < payload.columns.length; i++) {
+        await KanbanColumn.query().where('id', payload.columns[i].id).update(payload.columns[i])
+      }
     }
 
     return response.redirect().back()
