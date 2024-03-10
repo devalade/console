@@ -15,14 +15,18 @@ export function CreateNewTask(props: { columnId: number }) {
     title: '',
   })
 
+  function onCancel() {
+    reset()
+    toggle()
+  }
+
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     post(
       `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}/columns/${columnId}/tasks`,
       {
         onSuccess() {
-          reset()
-          toggle()
+          onCancel()
         },
       }
     )
@@ -44,7 +48,7 @@ export function CreateNewTask(props: { columnId: number }) {
           </Card>
           <div className="flex items-center mt-2">
             <Button>Add card</Button>
-            <Button variant="ghost">
+            <Button onClick={onCancel} variant="ghost" type="button">
               {' '}
               <IconX className="size-5" />{' '}
             </Button>

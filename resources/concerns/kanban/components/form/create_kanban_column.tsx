@@ -14,6 +14,11 @@ export function CreateNewColumn() {
     name: '',
   })
 
+  function onCancel() {
+    reset()
+    toggle()
+  }
+
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     post(
@@ -43,7 +48,7 @@ export function CreateNewColumn() {
           </Card>
           <div className="flex items-center mt-2">
             <Button>Add column</Button>
-            <Button onClick={toggle} variant="ghost" type="button">
+            <Button onClick={onCancel} variant="ghost" type="button">
               <IconX className="size-5" />{' '}
             </Button>
           </div>
