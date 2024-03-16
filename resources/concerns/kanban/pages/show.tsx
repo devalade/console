@@ -8,6 +8,9 @@ import { router } from '@inertiajs/react'
 import useParams from '@/hooks/use_params'
 import { CreateNewColumn } from '../components/form/create_kanban_column'
 import { useState } from 'react'
+import reorder from '@/lib/reorder'
+import type { KanbanColumn } from '../types/kanban_column'
+import type { KanbanTask } from '../types/kanban_task'
 
 interface ShowProps {
   project: Project
@@ -30,16 +33,9 @@ type Result = {
   combine: null
 }
 
-function reorder<T>(items: T[], startIndex: number, endIndex: number) {
-  const result = Array.from(items)
-  const [removed] = result.splice(startIndex, 1)
-  result.splice(endIndex, 0, removed)
-
-  return result
-}
-
 const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
   const params = useParams()
+
   const [sortedColumns, setSortedColums] = useState(board.columns)
 
   React.useEffect(() => {
@@ -72,7 +68,8 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
        * Update the order of the columns.
        */
       router.put(
-        `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${board.columns[source.index].id
+        `/organizations/${params.organizationSlug}/projects/${project.slug}/kanban_boards/${board.slug}/columns/${
+          board.columns[source.index].id
         }`,
         { columns: items }
       )
@@ -161,23 +158,23 @@ const Show: React.FunctionComponent<ShowProps> = ({ project, board }) => {
 
   return (
     <KanbanBoardLayout project={project} board={board}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="columns" type="column" direction="horizontal">
-          {(provided) => (
-            <ol
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="flex  gap-x-4 items-start w-full overflow-x-scroll  min-h-[calc(100vh_-_230px)] "
-            >
-              {sortedColumns.map((column, index) => (
-                <Column key={column.id} {...column} index={index} />
-              ))}
-              <CreateNewColumn />
-              {provided.placeholder}
-            </ol>
-          )}
-        </Droppable>
-      </DragDropContext>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="columns" type="column" direction="horizontal">
+            {(provided) => (
+              <ol
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="flex  gap-x-4 items-start w-full overflow-x-scroll  min-h-[calc(100vh_-_230px)] "
+              >
+                {sortedColumns.map((column, index) => (
+                  <Column key={column.id} {...column} index={index} />
+                ))}
+                <CreateNewColumn />
+                {provided.placeholder}
+              </ol>
+            )}
+          </Droppable>
+        </DragDropContext>
     </KanbanBoardLayout>
   )
 }

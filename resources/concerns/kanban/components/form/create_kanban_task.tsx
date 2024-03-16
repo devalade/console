@@ -10,7 +10,6 @@ export function CreateNewTask(props: { columnId: number }) {
   const { columnId } = props
   const [enabled, toggle] = useToggle(false)
   const params = useParams()
-
   const { data, setData, post, reset } = useForm({
     title: '',
   })
@@ -22,6 +21,7 @@ export function CreateNewTask(props: { columnId: number }) {
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+
     post(
       `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}/columns/${columnId}/tasks`,
       {

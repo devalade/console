@@ -15,16 +15,29 @@ import {
 import { useForm } from '@inertiajs/react'
 import useSuccessToast from '@/hooks/use_success_toast'
 import useParams from '@/hooks/use_params'
+import { CheckCircleIcon, EyeIcon, PencilIcon, TrashIcon } from 'lucide-react'
 
 export function ColumnItem(props: KanbanTask & { index: number }) {
   const { id, title, description, index, columnId } = props
   const params = useParams()
+  console.log(params)
   const successToast = useSuccessToast()
   const [enableEditing, onEnableEditing] = useToggle(false)
 
   const form = useForm()
 
   function onDelete() {
+    form.delete(
+      `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}/columns/${columnId}/taks/${id}`,
+      {
+        onSuccess() {
+          successToast('Task has been deleted successfully.')
+        },
+      }
+    )
+  }
+
+  function onCompleted() {
     form.patch(
       `/organizations/${params.organizationslug}/projects/${params.projectslug}/kanban_boards/${params.kanbanboardslug}`,
       {
@@ -34,6 +47,7 @@ export function ColumnItem(props: KanbanTask & { index: number }) {
       }
     )
   }
+
   return (
     <>
       {enableEditing ? (
@@ -109,11 +123,26 @@ function ColumnItemContextMenu({
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-      <ContextMenuContent className="w-60">
-        <ContextMenuItem onClick={onEnableEditing}>Edit this tasks title</ContextMenuItem>
-        <ContextMenuItem>Completed</ContextMenuItem>
-        <ContextMenuItem>Show details</ContextMenuItem>
-        <ContextMenuItem onClick={onDelete}>Delete Task</ContextMenuItem>
+      <ContextMenuContent className="w-60 font-medium">
+        <ContextMenuItem onClick={onEnableEditing} className="gap-x-2">
+          <PencilIcon className="size-4 stroke-primary" />
+          Edit this tasks title
+        </ContextMenuItem>
+        <ContextMenuItem className="gap-x-2">
+          <CheckCircleIcon className="size-4 stroke-primary" />
+          Completed
+        </ContextMenuItem>
+        <ContextMenuItem className="gap-x-2">
+          <EyeIcon className="size-4" />
+          Show details
+        </ContextMenuItem>
+        <ContextMenuItem
+          onClick={onDelete}
+          className="gap-x-2 focus:bg-destructive/10 text-destructive focus:text-destructive"
+        >
+          <TrashIcon className="size-4 stroke-destructive" />
+          Delete Task
+        </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   )

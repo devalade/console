@@ -25,8 +25,7 @@ export function CreateNewColumn() {
       `/organizations/${params.organizationSlug}/projects/${params.projectSlug}/kanban_boards/${params.kanbanBoardSlug}/columns`,
       {
         onSuccess() {
-          reset()
-          toggle()
+          reset();
         },
       }
     )

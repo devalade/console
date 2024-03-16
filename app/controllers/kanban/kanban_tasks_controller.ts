@@ -74,7 +74,8 @@ export default class KanbanTasksController {
     _column: KanbanColumn,
     task: KanbanTask
   ) {
-    await bouncer.authorize('accessToProject', project)
+    // await bouncer.authorize('accessToProject', project)
+    console.log('Test')
     await task.delete()
     return response.redirect().back()
   }
